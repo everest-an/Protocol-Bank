@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button.jsx'
 import { Card, CardContent } from '@/components/ui/card.jsx'
 import { 
@@ -13,14 +13,56 @@ import {
   EyeOff,
   ArrowDownLeft,
   ArrowUpRight,
-  MoreHorizontal
+  MoreHorizontal,
+  Wallet
 } from 'lucide-react'
 import './App.css'
 import protocolBankLogo from './assets/new-protocol-bank-logo.png'
+import PaymentsPage from './pages/PaymentsPage.jsx'
+import DeFiPage from './pages/DeFiPage.jsx'
+import BusinessPage from './pages/BusinessPage.jsx'
+import GlobalNetworkPage from './pages/GlobalNetworkPage.jsx'
 
 function App() {
   const [balanceVisible, setBalanceVisible] = useState(true)
   const [activeTab, setActiveTab] = useState('dashboard')
+  const [walletAddress, setWalletAddress] = useState(null)
+  const [isConnecting, setIsConnecting] = useState(false)
+
+  // Connect to MetaMask
+  const connectWallet = async () => {
+    if (typeof window.ethereum !== 'undefined') {
+      try {
+        setIsConnecting(true)
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+        setWalletAddress(accounts[0])
+      } catch (error) {
+        console.error('Error connecting wallet:', error)
+        alert('Failed to connect wallet. Please try again.')
+      } finally {
+        setIsConnecting(false)
+      }
+    } else {
+      alert('MetaMask is not installed. Please install MetaMask to use this feature.')
+    }
+  }
+
+  // Check if wallet is already connected
+  useEffect(() => {
+    const checkWalletConnection = async () => {
+      if (typeof window.ethereum !== 'undefined') {
+        try {
+          const accounts = await window.ethereum.request({ method: 'eth_accounts' })
+          if (accounts.length > 0) {
+            setWalletAddress(accounts[0])
+          }
+        } catch (error) {
+          console.error('Error checking wallet connection:', error)
+        }
+      }
+    }
+    checkWalletConnection()
+  }, [])
 
   const toggleBalanceVisibility = () => {
     setBalanceVisible(!balanceVisible)
@@ -38,11 +80,36 @@ function App() {
                 <span className="text-lg font-normal text-gray-900">Protocol Bank</span>
               </div>
               <nav className="hidden md:flex space-x-6">
-                <button className="text-sm text-gray-900 font-medium">Dashboard</button>
-                <button className="text-sm text-gray-500 hover:text-gray-900">Payments</button>
-                <button className="text-sm text-gray-500 hover:text-gray-900">DeFi</button>
-                <button className="text-sm text-gray-500 hover:text-gray-900">Business</button>
-                <button className="text-sm text-gray-500 hover:text-gray-900">Global Network</button>
+                <button 
+                  onClick={() => setActiveTab('dashboard')}
+                  className={`text-sm font-medium ${activeTab === 'dashboard' ? 'text-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
+                >
+                  Dashboard
+                </button>
+                <button 
+                  onClick={() => setActiveTab('payments')}
+                  className={`text-sm ${activeTab === 'payments' ? 'text-gray-900 font-medium' : 'text-gray-500 hover:text-gray-900'}`}
+                >
+                  Payments
+                </button>
+                <button 
+                  onClick={() => setActiveTab('defi')}
+                  className={`text-sm ${activeTab === 'defi' ? 'text-gray-900 font-medium' : 'text-gray-500 hover:text-gray-900'}`}
+                >
+                  DeFi
+                </button>
+                <button 
+                  onClick={() => setActiveTab('business')}
+                  className={`text-sm ${activeTab === 'business' ? 'text-gray-900 font-medium' : 'text-gray-500 hover:text-gray-900'}`}
+                >
+                  Business
+                </button>
+                <button 
+                  onClick={() => setActiveTab('network')}
+                  className={`text-sm ${activeTab === 'network' ? 'text-gray-900 font-medium' : 'text-gray-500 hover:text-gray-900'}`}
+                >
+                  Global Network
+                </button>
               </nav>
             </div>
             <div className="flex items-center space-x-4">
@@ -60,9 +127,23 @@ function App() {
               <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600">
                 <Settings className="h-5 w-5" />
               </Button>
-              <div className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center text-white text-sm font-medium">
-                U
-              </div>
+              {walletAddress ? (
+                <div className="flex items-center space-x-2 px-3 py-1.5 bg-gray-100 rounded-lg">
+                  <Wallet className="h-4 w-4 text-gray-600" />
+                  <span className="text-sm text-gray-700 font-medium">
+                    {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
+                  </span>
+                </div>
+              ) : (
+                <Button 
+                  onClick={connectWallet}
+                  disabled={isConnecting}
+                  className="bg-gray-900 hover:bg-gray-800 text-white text-sm px-4 py-2 h-9"
+                >
+                  <Wallet className="h-4 w-4 mr-2" />
+                  {isConnecting ? 'Connecting...' : 'Connect Wallet'}
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -162,63 +243,12 @@ function App() {
           </div>
         </div>
 
-        {/* Tabs */}
-        <div className="border-b border-gray-100 mb-6">
-          <div className="flex space-x-8">
-            <button 
-              onClick={() => setActiveTab('dashboard')}
-              className={`pb-3 text-sm font-medium border-b-2 transition-colors ${
-                activeTab === 'dashboard' 
-                  ? 'border-gray-900 text-gray-900' 
-                  : 'border-transparent text-gray-500 hover:text-gray-900'
-              }`}
-            >
-              Dashboard
-            </button>
-            <button 
-              onClick={() => setActiveTab('defi')}
-              className={`pb-3 text-sm font-medium border-b-2 transition-colors ${
-                activeTab === 'defi' 
-                  ? 'border-gray-900 text-gray-900' 
-                  : 'border-transparent text-gray-500 hover:text-gray-900'
-              }`}
-            >
-              DeFi Services
-            </button>
-            <button 
-              onClick={() => setActiveTab('business')}
-              className={`pb-3 text-sm font-medium border-b-2 transition-colors ${
-                activeTab === 'business' 
-                  ? 'border-gray-900 text-gray-900' 
-                  : 'border-transparent text-gray-500 hover:text-gray-900'
-              }`}
-            >
-              Business
-            </button>
-            <button 
-              onClick={() => setActiveTab('payments')}
-              className={`pb-3 text-sm font-medium border-b-2 transition-colors ${
-                activeTab === 'payments' 
-                  ? 'border-gray-900 text-gray-900' 
-                  : 'border-transparent text-gray-500 hover:text-gray-900'
-              }`}
-            >
-              Payments
-            </button>
-            <button 
-              onClick={() => setActiveTab('global')}
-              className={`pb-3 text-sm font-medium border-b-2 transition-colors ${
-                activeTab === 'global' 
-                  ? 'border-gray-900 text-gray-900' 
-                  : 'border-transparent text-gray-500 hover:text-gray-900'
-              }`}
-            >
-              Global Network
-            </button>
-          </div>
-        </div>
-
         {/* Tab Content */}
+        {activeTab === 'payments' && <PaymentsPage />}
+        {activeTab === 'defi' && <DeFiPage />}
+        {activeTab === 'business' && <BusinessPage />}
+        {activeTab === 'network' && <GlobalNetworkPage />}
+        
         {activeTab === 'dashboard' && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Recent Activity */}
