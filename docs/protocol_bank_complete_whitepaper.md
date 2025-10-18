@@ -95,28 +95,28 @@ Protocol Bank represents a significant step forward in the evolution of cross-bo
 
 ## High-Level Architecture
 
-![High-Level Architecture](./new-protocol-bank-logo.png)
+![High-Level Architecture](./high_level_architecture.png)
 
 
 
 
 ## Fiat Gateway Architecture
 
-![Fiat Gateway Architecture](./new-protocol-bank-logo.png)
+![Fiat Gateway Architecture](./fiat_gateway_architecture.png)
 
 
 
 
 ## Cross-Chain Bridge Architecture
 
-![Cross-Chain Bridge Architecture](./new-protocol-bank-logo.png)
+![Cross-Chain Bridge Architecture](./cross_chain_bridge_architecture.png)
 
 
 
 
 ## Detailed Transaction Flow
 
-![Detailed Transaction Flow](./new-protocol-bank-logo.png)
+![Detailed Transaction Flow](./detailed_transaction_flow.png)
 
 ## 5. Technical Specifications
 
@@ -183,7 +183,7 @@ The total supply of PBX is capped at 1 billion tokens. The tokens will be distri
 | **Ecosystem Fund** | 20% (200,000,000 PBX) | 4-year linear vesting |
 | **Public Sale** | 10% (100,000,000 PBX) | No vesting |
 
-![Tokenomics Model](./new-protocol-bank-logo.png)
+![Tokenomics Model](./tokenomics_model.png)
 
 ### 6.4. Value Accrual
 

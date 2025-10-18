@@ -6,6 +6,11 @@ This folder contains the official documentation and assets for Protocol Bank.
 
 - **protocol_bank_complete_whitepaper.md** - Complete whitepaper detailing Protocol Bank's vision, architecture, and tokenomics
 - **new-protocol-bank-logo.png** - Protocol Bank official logo
+- **high_level_architecture.png** - High-level system architecture diagram
+- **fiat_gateway_architecture.png** - Fiat gateway architecture diagram
+- **cross_chain_bridge_architecture.png** - Cross-chain bridge architecture diagram
+- **detailed_transaction_flow.png** - Detailed transaction flow diagram
+- **tokenomics_model.png** - Tokenomics model diagram
 
 ## Images
 
