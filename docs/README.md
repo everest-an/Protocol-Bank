@@ -5,8 +5,7 @@ This folder contains the official documentation and assets for Protocol Bank.
 ## Contents
 
 - **protocol_bank_complete_whitepaper.md** - Complete whitepaper detailing Protocol Bank's vision, architecture, and tokenomics
-- **new-protocol-bank-logo.png** - Protocol Bank logo (simple version)
-- **protocol-bank-logo-rings.png** - Protocol Bank logo with rings design and text
+- **new-protocol-bank-logo.png** - Protocol Bank official logo
 
 ## Images
 

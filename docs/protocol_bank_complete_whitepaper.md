@@ -1,6 +1,6 @@
 # Protocol Bank: A Comprehensive Whitepaper
 
-![Protocol Bank Logo](./protocol-bank-logo-rings.png)
+![Protocol Bank Logo](./new-protocol-bank-logo.png)
 
 ---
 
@@ -102,7 +102,7 @@ Protocol Bank represents a significant step forward in the evolution of cross-bo
 
 ## Fiat Gateway Architecture
 
-![Fiat Gateway Architecture](./protocol-bank-logo-rings.png)
+![Fiat Gateway Architecture](./new-protocol-bank-logo.png)
 
 
 
@@ -116,7 +116,7 @@ Protocol Bank represents a significant step forward in the evolution of cross-bo
 
 ## Detailed Transaction Flow
 
-![Detailed Transaction Flow](./protocol-bank-logo-rings.png)
+![Detailed Transaction Flow](./new-protocol-bank-logo.png)
 
 ## 5. Technical Specifications
 
