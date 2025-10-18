@@ -1,11 +1,8 @@
 # Protocol Bank: A Comprehensive Whitepaper
 
+![Protocol Bank Logo](./protocol-bank-logo-rings.png)
 
-
-
-
-
-
+---
 
 '''
 # Protocol Bank Whitepaper v2.0: The Future of Global Payments
@@ -98,28 +95,28 @@ Protocol Bank represents a significant step forward in the evolution of cross-bo
 
 ## High-Level Architecture
 
-![High-Level Architecture](/home/ubuntu/high_level_architecture.png)
+![High-Level Architecture](./new-protocol-bank-logo.png)
 
 
 
 
 ## Fiat Gateway Architecture
 
-![Fiat Gateway Architecture](/home/ubuntu/fiat_gateway_architecture.png)
+![Fiat Gateway Architecture](./protocol-bank-logo-rings.png)
 
 
 
 
 ## Cross-Chain Bridge Architecture
 
-![Cross-Chain Bridge Architecture](/home/ubuntu/cross_chain_bridge_architecture.png)
+![Cross-Chain Bridge Architecture](./new-protocol-bank-logo.png)
 
 
 
 
 ## Detailed Transaction Flow
 
-![Detailed Transaction Flow](/home/ubuntu/detailed_transaction_flow.png)
+![Detailed Transaction Flow](./protocol-bank-logo-rings.png)
 
 ## 5. Technical Specifications
 
@@ -186,7 +183,7 @@ The total supply of PBX is capped at 1 billion tokens. The tokens will be distri
 | **Ecosystem Fund** | 20% (200,000,000 PBX) | 4-year linear vesting |
 | **Public Sale** | 10% (100,000,000 PBX) | No vesting |
 
-![Tokenomics Model](/home/ubuntu/tokenomics_model.png)
+![Tokenomics Model](./new-protocol-bank-logo.png)
 
 ### 6.4. Value Accrual
 
