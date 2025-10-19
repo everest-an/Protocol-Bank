@@ -24,46 +24,65 @@ import PaymentsPage from './pages/PaymentsPage.jsx'
 import DeFiPage from './pages/DeFiPage.jsx'
 import BusinessPage from './pages/BusinessPage.jsx'
 import GlobalNetworkPage from './pages/GlobalNetworkPage.jsx'
+import LoginModal from './components/LoginModal.jsx'
 
 function App() {
   const [balanceVisible, setBalanceVisible] = useState(true)
   const [activeTab, setActiveTab] = useState('dashboard')
   const [walletAddress, setWalletAddress] = useState(null)
   const [isConnecting, setIsConnecting] = useState(false)
+  const [showLoginModal, setShowLoginModal] = useState(false)
+  const [userInfo, setUserInfo] = useState(null)
 
-  // Connect to MetaMask
-  const connectWallet = async () => {
-    if (typeof window.ethereum !== 'undefined') {
-      try {
-        setIsConnecting(true)
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
-        setWalletAddress(accounts[0])
-      } catch (error) {
-        console.error('Error connecting wallet:', error)
-        alert('Failed to connect wallet. Please try again.')
-      } finally {
-        setIsConnecting(false)
-      }
-    } else {
-      alert('MetaMask is not installed. Please install MetaMask to use this feature.')
+  // Open login modal
+  const openLoginModal = () => {
+    setShowLoginModal(true)
+  }
+
+  // Handle successful login
+  const handleLoginSuccess = (loginData) => {
+    setWalletAddress(loginData.address)
+    setUserInfo(loginData)
+    
+    // Store in localStorage
+    localStorage.setItem('protocolbank_user', JSON.stringify(loginData))
+    
+    // Show welcome message for new wallets
+    if (loginData.isNewWallet) {
+      console.log('New wallet created:', loginData.address)
     }
   }
 
-  // Check if wallet is already connected
+  // Check if user is already logged in
   useEffect(() => {
-    const checkWalletConnection = async () => {
+    const checkExistingLogin = async () => {
+      // Check localStorage for existing login
+      const savedUser = localStorage.getItem('protocolbank_user')
+      if (savedUser) {
+        try {
+          const userData = JSON.parse(savedUser)
+          setWalletAddress(userData.address)
+          setUserInfo(userData)
+        } catch (error) {
+          console.error('Error loading saved user:', error)
+          localStorage.removeItem('protocolbank_user')
+        }
+      }
+      
+      // Also check MetaMask connection
       if (typeof window.ethereum !== 'undefined') {
         try {
           const accounts = await window.ethereum.request({ method: 'eth_accounts' })
-          if (accounts.length > 0) {
+          if (accounts.length > 0 && !savedUser) {
             setWalletAddress(accounts[0])
+            setUserInfo({ address: accounts[0], method: 'metamask' })
           }
         } catch (error) {
           console.error('Error checking wallet connection:', error)
         }
       }
     }
-    checkWalletConnection()
+    checkExistingLogin()
   }, [])
 
   const toggleBalanceVisibility = () => {
@@ -156,12 +175,11 @@ function App() {
                 </div>
               ) : (
                 <Button 
-                  onClick={connectWallet}
-                  disabled={isConnecting}
+                  onClick={openLoginModal}
                   className="bg-gray-900 hover:bg-gray-800 text-white text-sm px-4 py-2 h-9"
                 >
                   <Wallet className="h-4 w-4 mr-2" />
-                  {isConnecting ? 'Connecting...' : 'Connect Wallet'}
+                  Connect Wallet
                 </Button>
               )}
             </div>
@@ -392,6 +410,13 @@ function App() {
           </div>
         )}
       </main>
+
+      {/* Login Modal */}
+      <LoginModal 
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        onLoginSuccess={handleLoginSuccess}
+      />
     </div>
   )
 }
