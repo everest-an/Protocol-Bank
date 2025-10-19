@@ -14,7 +14,9 @@ import {
   ArrowDownLeft,
   ArrowUpRight,
   MoreHorizontal,
-  Wallet
+  Wallet,
+  FileText,
+  MessageCircle
 } from 'lucide-react'
 import './App.css'
 import protocolBankLogo from './assets/new-protocol-bank-logo.png'
@@ -123,6 +125,24 @@ function App() {
               </div>
               <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600">
                 <Bell className="h-5 w-5" />
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="text-gray-400 hover:text-gray-600"
+                onClick={() => window.open('https://discord.gg/AbmGXYjr3U', '_blank')}
+                title="Join our Discord"
+              >
+                <MessageCircle className="h-5 w-5" />
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="text-gray-400 hover:text-gray-600"
+                onClick={() => window.open('https://github.com/everest-an/Protocol-Bank/blob/main/docs/protocol_bank_complete_whitepaper.md', '_blank')}
+                title="Read Whitepaper"
+              >
+                <FileText className="h-5 w-5" />
               </Button>
               <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600">
                 <Settings className="h-5 w-5" />
