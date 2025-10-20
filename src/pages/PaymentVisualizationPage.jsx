@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Wallet, RefreshCw, Users, Send, ExternalLink, AlertCircle } from 'lucide-react';
 import PaymentNetworkGraph from '../components/payment-visualization/PaymentNetworkGraph';
+import RegisterSupplierModal from '../components/modals/RegisterSupplierModal';
+import CreatePaymentModal from '../components/modals/CreatePaymentModal';
 import { useWeb3 } from '../hooks/useWeb3';
 import { useStreamContract } from '../hooks/useStreamContract';
 
@@ -414,7 +416,20 @@ export default function PaymentVisualizationPage() {
         )}
       </div>
 
-      {/* TODO: Add modals for register supplier and create payment */}
+      {/* Modals */}
+      {showRegisterModal && (
+        <RegisterSupplierModal
+          onClose={() => setShowRegisterModal(false)}
+          onRegister={handleRegisterSupplier}
+        />
+      )}
+      {showPaymentModal && (
+        <CreatePaymentModal
+          onClose={() => setShowPaymentModal(false)}
+          onCreate={handleCreatePayment}
+          suppliers={suppliers}
+        />
+      )}
     </div>
   );
 }
