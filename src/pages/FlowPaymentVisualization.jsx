@@ -10,6 +10,9 @@ import RegisterSupplierModal from '../components/modals/RegisterSupplierModal';
 import CreatePaymentModal from '../components/modals/CreatePaymentModal';
 import RealtimeNotifications from '../components/RealtimeNotifications';
 import LiveIndicator from '../components/LiveIndicator';
+import CurrencySelector from '../components/CurrencySelector';
+import { useExchangeRates } from '../hooks/useExchangeRates';
+import { formatWithConversion } from '../utils/currencyFormatter';
 
 export default function FlowPaymentVisualization() {
   const {
@@ -49,6 +52,8 @@ export default function FlowPaymentVisualization() {
   const { notifications, addNotification, removeNotification } = useRealtimeNotifications();
   const [testMode, setTestMode] = useState(false);
   const [mockData, setMockData] = useState(null);
+  const [selectedCurrency, setSelectedCurrency] = useState('ETH');
+  const { rates, loading: ratesLoading, lastUpdated, refreshRates } = useExchangeRates();
 
   // 生成测试数据
   useEffect(() => {
@@ -193,6 +198,15 @@ export default function FlowPaymentVisualization() {
               {/* Live 指示器 */}
               {isConnected && isSepolia && !testMode && <LiveIndicator />}
 
+              {/* 货币选择器 */}
+              <CurrencySelector
+                selectedCurrency={selectedCurrency}
+                onCurrencyChange={setSelectedCurrency}
+                lastUpdated={lastUpdated}
+                onRefresh={refreshRates}
+                loading={ratesLoading}
+              />
+
               {/* 测试模式 */}
               <button
                 onClick={() => setTestMode(!testMode)}
@@ -301,7 +315,7 @@ export default function FlowPaymentVisualization() {
               <div>
                 <p className="text-sm text-gray-500 dark:text-gray-300">总支付金额</p>
                 <p className="text-2xl font-light text-gray-900 dark:text-white mt-1 font-mono">
-                  {parseFloat(displayStats.totalAmount || 0).toFixed(2)} <span className="text-sm">ETH</span>
+                  {formatWithConversion(parseFloat(displayStats.totalAmount || 0), selectedCurrency, rates)}
                 </p>
               </div>
               <DollarSign className="w-8 h-8 text-green-500" />
@@ -325,7 +339,7 @@ export default function FlowPaymentVisualization() {
               <div>
                 <p className="text-sm text-gray-500 dark:text-gray-300">平均支付</p>
                 <p className="text-2xl font-light text-gray-900 dark:text-white mt-1 font-mono">
-                  {parseFloat(displayStats.averagePayment || 0).toFixed(2)} <span className="text-sm">ETH</span>
+                  {formatWithConversion(parseFloat(displayStats.averagePayment || 0), selectedCurrency, rates)}
                 </p>
               </div>
               <TrendingUp className="w-8 h-8 text-orange-500" />
@@ -341,7 +355,11 @@ export default function FlowPaymentVisualization() {
 
         {/* 企业级支付详情表格 */}
         <div className="mt-6">
-          <EnterprisePaymentTable payments={displayPayments} />
+          <EnterprisePaymentTable 
+            payments={displayPayments} 
+            selectedCurrency={selectedCurrency}
+            rates={rates}
+          />
         </div>
       </div>
 

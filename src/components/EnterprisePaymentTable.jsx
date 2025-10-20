@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { ExternalLink, TrendingUp, TrendingDown, AlertCircle, CheckCircle } from 'lucide-react';
+import { formatWithConversion } from '../utils/currencyFormatter';
 
-export default function EnterprisePaymentTable({ payments = [] }) {
+export default function EnterprisePaymentTable({ payments = [], selectedCurrency = 'ETH', rates = {} }) {
   const [sortField, setSortField] = useState('timestamp');
   const [sortDirection, setSortDirection] = useState('desc');
   const [filterCategory, setFilterCategory] = useState('all');
@@ -150,7 +151,7 @@ export default function EnterprisePaymentTable({ payments = [] }) {
                   </span>
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-mono text-gray-900 dark:text-white">
-                  {parseFloat(payment.amount || 0).toFixed(4)} ETH
+                  {formatWithConversion(parseFloat(payment.amount || 0), selectedCurrency, rates)}
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap text-center">
                   <div className="flex items-center justify-center">
@@ -192,15 +193,19 @@ export default function EnterprisePaymentTable({ payments = [] }) {
           <div>
             <p className="text-xs text-gray-500 dark:text-gray-300">Total Amount</p>
             <p className="text-lg font-mono text-gray-900 dark:text-white mt-1">
-              {filteredPayments.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0).toFixed(4)} ETH
+              {formatWithConversion(filteredPayments.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0), selectedCurrency, rates)}
             </p>
           </div>
           <div>
             <p className="text-xs text-gray-500 dark:text-gray-300">Average Payment</p>
             <p className="text-lg font-mono text-gray-900 dark:text-white mt-1">
-              {filteredPayments.length > 0
-                ? (filteredPayments.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0) / filteredPayments.length).toFixed(4)
-                : '0.0000'} ETH
+              {formatWithConversion(
+                filteredPayments.length > 0
+                  ? filteredPayments.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0) / filteredPayments.length
+                  : 0,
+                selectedCurrency,
+                rates
+              )}
             </p>
           </div>
           <div>
