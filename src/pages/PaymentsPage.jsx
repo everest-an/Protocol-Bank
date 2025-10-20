@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button.jsx'
 import { Card, CardContent } from '@/components/ui/card.jsx'
 import { Send, ArrowDownLeft, Clock, CheckCircle, XCircle, DollarSign, Euro, PoundSterling, Waves } from 'lucide-react'
 import StreamPaymentPage from './StreamPaymentPage.jsx'
+import NetworkPaymentPage from './NetworkPaymentPage.jsx'
 
 export default function PaymentsPage() {
   const [activeTab, setActiveTab] = useState('regular') // 'regular' or 'stream'
@@ -47,6 +48,11 @@ export default function PaymentsPage() {
     return <StreamPaymentPage />
   }
 
+  // If network tab is active, show NetworkPaymentPage
+  if (activeTab === 'network') {
+    return <NetworkPaymentPage />
+  }
+
   return (
     <div className="space-y-6">
       {/* Tab Navigation */}
@@ -69,13 +75,26 @@ export default function PaymentsPage() {
             onClick={() => setActiveTab('stream')}
             className={`pb-3 px-1 border-b-2 font-medium text-sm transition-colors ${
               activeTab === 'stream'
-                ? 'border-gray-900 text-gray-900'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-gray-900 text-gray-900 dark:border-gray-100 dark:text-gray-100'
+                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300'
             }`}
           >
             <div className="flex items-center space-x-2">
               <Waves className="h-4 w-4" />
               <span>流支付</span>
+            </div>
+          </button>
+          <button
+            onClick={() => setActiveTab('network')}
+            className={`pb-3 px-1 border-b-2 font-medium text-sm transition-colors ${
+              activeTab === 'network'
+                ? 'border-gray-900 text-gray-900 dark:border-gray-100 dark:text-gray-100'
+                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300'
+            }`}
+          >
+            <div className="flex items-center space-x-2">
+              <Waves className="h-4 w-4" />
+              <span>网络支付</span>
             </div>
           </button>
         </nav>

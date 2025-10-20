@@ -25,6 +25,8 @@ import DeFiPage from './pages/DeFiPage.jsx'
 import BusinessPage from './pages/BusinessPage.jsx'
 import GlobalNetworkPage from './pages/GlobalNetworkPage.jsx'
 import LoginModal from './components/LoginModal.jsx'
+import ThemeToggle from './components/ThemeToggle.jsx'
+import { Waves } from 'lucide-react'
 
 function App() {
   const [balanceVisible, setBalanceVisible] = useState(true)
@@ -90,9 +92,9 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors duration-200">
       {/* Header */}
-      <header className="border-b border-gray-100 sticky top-0 z-50 bg-white">
+      <header className="border-b border-gray-100 dark:border-gray-800 sticky top-0 z-50 bg-white dark:bg-gray-950 transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-8">
@@ -102,35 +104,33 @@ function App() {
               </div>
               <nav className="hidden md:flex space-x-6">
                 <button 
+                  onClick={() => setActiveTab('payments')}
+                  className={`flex items-center space-x-1.5 text-sm font-medium ${activeTab === 'payments' ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'}`}
+                  title="流支付"
+                >
+                  <Waves className="h-4 w-4" />
+                  <span>Flow</span>
+                </button>
+                <button 
                   onClick={() => setActiveTab('dashboard')}
-                  className={`text-sm font-medium ${activeTab === 'dashboard' ? 'text-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
+                  className={`text-sm font-medium ${activeTab === 'dashboard' ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'}`}
                 >
                   Dashboard
                 </button>
-                <button 
-                  onClick={() => setActiveTab('payments')}
-                  className={`text-sm ${activeTab === 'payments' ? 'text-gray-900 font-medium' : 'text-gray-500 hover:text-gray-900'}`}
-                >
-                  Payments
-                </button>
+
                 <button 
                   onClick={() => setActiveTab('defi')}
-                  className={`text-sm ${activeTab === 'defi' ? 'text-gray-900 font-medium' : 'text-gray-500 hover:text-gray-900'}`}
+                  className={`text-sm ${activeTab === 'defi' ? 'text-gray-900 dark:text-gray-100 font-medium' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'}`}
                 >
                   DeFi
                 </button>
                 <button 
                   onClick={() => setActiveTab('business')}
-                  className={`text-sm ${activeTab === 'business' ? 'text-gray-900 font-medium' : 'text-gray-500 hover:text-gray-900'}`}
+                  className={`text-sm ${activeTab === 'business' ? 'text-gray-900 dark:text-gray-100 font-medium' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'}`}
                 >
                   Business
                 </button>
-                <button 
-                  onClick={() => setActiveTab('network')}
-                  className={`text-sm ${activeTab === 'network' ? 'text-gray-900 font-medium' : 'text-gray-500 hover:text-gray-900'}`}
-                >
-                  Global Network
-                </button>
+
               </nav>
             </div>
             <div className="flex items-center space-x-4">
@@ -163,9 +163,7 @@ function App() {
               >
                 <FileText className="h-5 w-5" />
               </Button>
-              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600">
-                <Settings className="h-5 w-5" />
-              </Button>
+              <ThemeToggle />
               {walletAddress ? (
                 <div className="flex items-center space-x-2 px-3 py-1.5 bg-gray-100 rounded-lg">
                   <Wallet className="h-4 w-4 text-gray-600" />
@@ -417,6 +415,20 @@ function App() {
         onClose={() => setShowLoginModal(false)}
         onLoginSuccess={handleLoginSuccess}
       />
+
+      {/* Footer with Global Network link */}
+      <footer className="border-t border-gray-100 dark:border-gray-800 mt-12">
+        <div className="max-w-7xl mx-auto px-6 py-6">
+          <div className="flex justify-center">
+            <button
+              onClick={() => setActiveTab('network')}
+              className="text-sm text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
+            >
+              Global Network
+            </button>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }
