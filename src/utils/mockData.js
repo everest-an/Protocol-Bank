@@ -1,26 +1,29 @@
 // 生成丰富的测试数据用于演示
 
-export interface MockSupplier {
-  id: string;
-  name: string;
-  brand: string;
-  category: string;
-  profitMargin: number;
-  totalAmount: number;
-  paymentCount: number;
-  lastPayment: Date;
-}
+// JSDoc type definitions for better IDE support
+/**
+ * @typedef {Object} MockSupplier
+ * @property {string} id
+ * @property {string} name
+ * @property {string} brand
+ * @property {string} category
+ * @property {number} profitMargin
+ * @property {number} totalAmount
+ * @property {number} paymentCount
+ * @property {Date} lastPayment
+ */
 
-export interface MockPayment {
-  id: string;
-  from: string;
-  to: string;
-  amount: number;
-  category: string;
-  status: 'Pending' | 'Completed' | 'Failed';
-  timestamp: Date;
-  txHash: string;
-}
+/**
+ * @typedef {Object} MockPayment
+ * @property {string} id
+ * @property {string} from
+ * @property {string} to
+ * @property {number} amount
+ * @property {string} category
+ * @property {'Pending'|'Completed'|'Failed'} status
+ * @property {Date} timestamp
+ * @property {string} txHash
+ */
 
 const SUPPLIER_NAMES = [
   { name: 'TechCorp Solutions', brand: 'TechCorp', category: '技术服务' },
@@ -49,21 +52,21 @@ const CATEGORIES = [
 ];
 
 // 生成随机地址
-function generateAddress(): string {
+function generateAddress() {
   return '0x' + Array.from({ length: 40 }, () => 
     Math.floor(Math.random() * 16).toString(16)
   ).join('');
 }
 
 // 生成随机交易哈希
-function generateTxHash(): string {
+function generateTxHash() {
   return '0x' + Array.from({ length: 64 }, () => 
     Math.floor(Math.random() * 16).toString(16)
   ).join('');
 }
 
 // 生成随机日期(最近30天)
-function generateRandomDate(daysAgo: number = 30): Date {
+function generateRandomDate(daysAgo = 30) {
   const now = new Date();
   const randomDays = Math.floor(Math.random() * daysAgo);
   const randomHours = Math.floor(Math.random() * 24);
@@ -77,8 +80,12 @@ function generateRandomDate(daysAgo: number = 30): Date {
 }
 
 // 生成供应商数据
-export function generateMockSuppliers(count: number = 12): MockSupplier[] {
-  const suppliers: MockSupplier[] = [];
+/**
+ * @param {number} count
+ * @returns {MockSupplier[]}
+ */
+export function generateMockSuppliers(count = 12) {
+  const suppliers = [];
   
   for (let i = 0; i < count; i++) {
     const supplier = SUPPLIER_NAMES[i % SUPPLIER_NAMES.length];
@@ -102,13 +109,19 @@ export function generateMockSuppliers(count: number = 12): MockSupplier[] {
 }
 
 // 生成支付数据
+/**
+ * @param {MockSupplier[]} suppliers
+ * @param {string} mainWallet
+ * @param {number} count
+ * @returns {MockPayment[]}
+ */
 export function generateMockPayments(
-  suppliers: MockSupplier[],
-  mainWallet: string,
-  count: number = 50
-): MockPayment[] {
-  const payments: MockPayment[] = [];
-  const statuses: Array<'Pending' | 'Completed' | 'Failed'> = ['Completed', 'Completed', 'Completed', 'Pending', 'Failed'];
+  suppliers,
+  mainWallet,
+  count = 50
+) {
+  const payments = [];
+  const statuses = ['Completed', 'Completed', 'Completed', 'Pending', 'Failed'];
   
   for (let i = 0; i < count; i++) {
     const supplier = suppliers[Math.floor(Math.random() * suppliers.length)];
@@ -134,7 +147,10 @@ export function generateMockPayments(
 }
 
 // 生成统计数据
-export function generateMockStats(payments: MockPayment[]) {
+/**
+ * @param {MockPayment[]} payments
+ */
+export function generateMockStats(payments) {
   const completedPayments = payments.filter(p => p.status === 'Completed');
   const totalAmount = completedPayments.reduce((sum, p) => sum + p.amount, 0);
   const uniqueSuppliers = new Set(completedPayments.map(p => p.to)).size;
@@ -165,11 +181,15 @@ export function generateFullMockData() {
 }
 
 // 生成网络图数据
-export function generateNetworkGraphData(suppliers: MockSupplier[], payments: MockPayment[]) {
+/**
+ * @param {MockSupplier[]} suppliers
+ * @param {MockPayment[]} payments
+ */
+export function generateNetworkGraphData(suppliers, payments) {
   const mainWallet = payments[0]?.from || '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb0';
   
   // 计算每个供应商的总支付金额
-  const supplierAmounts = new Map<string, number>();
+  const supplierAmounts = new Map();
   payments
     .filter(p => p.status === 'Completed')
     .forEach(p => {
