@@ -1,10 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Wallet, RefreshCw, Users, Send, ExternalLink, AlertCircle } from 'lucide-react';
 import PaymentNetworkGraph from '../components/payment-visualization/PaymentNetworkGraph';
 import RegisterSupplierModal from '../components/modals/RegisterSupplierModal';
 import CreatePaymentModal from '../components/modals/CreatePaymentModal';
+import RealtimeNotifications from '../components/RealtimeNotifications';
+import LiveIndicator from '../components/LiveIndicator';
 import { useWeb3 } from '../hooks/useWeb3';
 import { useStreamContract } from '../hooks/useStreamContract';
+import { useContractEvents, useRealtimeNotifications } from '../hooks/useContractEvents';
 
 export default function PaymentVisualizationPage() {
   const {
@@ -43,6 +46,7 @@ export default function PaymentVisualizationPage() {
     averagePayment: '0',
   });
   const [loading, setLoading] = useState(false);
+  const { notifications, addNotification, removeNotification } = useRealtimeNotifications();
 
   // 加载数据
   const loadData = async () => {
@@ -73,6 +77,24 @@ export default function PaymentVisualizationPage() {
       setLoading(false);
     }
   };
+
+  // 实时事件监听
+  const handleContractEvent = useCallback(
+    (event) => {
+      console.log('Contract event received:', event);
+      addNotification({
+        type: 'success',
+        eventType: event.type,
+        data: event.data,
+      });
+      // 自动刷新数据
+      loadData();
+    },
+    [addNotification]
+  );
+
+  const { contract } = useStreamContract(signer, provider);
+  const { isListening } = useContractEvents(contract, handleContractEvent);
 
   useEffect(() => {
     if (isConnected && isSepolia) {
@@ -141,14 +163,15 @@ export default function PaymentVisualizationPage() {
                         <Send className="w-4 h-4 inline mr-2" />
                         Create Payment
                       </button>
-                      <button
-                        onClick={loadData}
-                        disabled={loading}
-                        className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
-                      >
-                        <RefreshCw className={`w-4 h-4 inline mr-2 ${loading ? 'animate-spin' : ''}`} />
-                        Refresh
-                      </button>
+              <LiveIndicator isLive={isListening} />
+              <button
+                onClick={loadData}
+                disabled={loading}
+                className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
+              >
+                <RefreshCw className={`w-4 h-4 inline mr-2 ${loading ? 'animate-spin' : ''}`} />
+                Refresh
+              </button>
                     </>
                   ) : (
                     <button
@@ -415,6 +438,12 @@ export default function PaymentVisualizationPage() {
           </div>
         )}
       </div>
+
+      {/* Realtime Notifications */}
+      <RealtimeNotifications
+        notifications={notifications}
+        onRemove={removeNotification}
+      />
 
       {/* Modals */}
       {showRegisterModal && (
