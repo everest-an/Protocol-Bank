@@ -1,10 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { Wallet, RefreshCw, Users, Send, TestTube2, TrendingUp } from 'lucide-react';
 import { useWeb3 } from '../hooks/useWeb3';
 import { useStreamContract } from '../hooks/useStreamContract';
 import { useContractEvents, useRealtimeNotifications } from '../hooks/useContractEvents';
 import { generateFullMockData } from '../utils/mockData';
-import PaymentNetworkGraph from '../components/payment-visualization/PaymentNetworkGraph';
+import EnterprisePaymentNetwork from '../components/EnterprisePaymentNetwork';
+import EnterprisePaymentTable from '../components/EnterprisePaymentTable';
 import RegisterSupplierModal from '../components/modals/RegisterSupplierModal';
 import CreatePaymentModal from '../components/modals/CreatePaymentModal';
 import RealtimeNotifications from '../components/RealtimeNotifications';
@@ -49,200 +50,212 @@ export default function FlowPaymentVisualization() {
   const [testMode, setTestMode] = useState(false);
   const [mockData, setMockData] = useState(null);
 
-  // 切换测试模式
-  const toggleTestMode = () => {
-    if (!testMode) {
+  // 生成测试数据
+  useEffect(() => {
+    if (testMode && !mockData) {
       const data = generateFullMockData();
       setMockData(data);
     }
-    setTestMode(!testMode);
-  };
+  }, [testMode, mockData]);
 
-  // 加载数据
+  // 加载链上数据
   const loadData = async () => {
     if (!isConnected || !isSepolia) return;
 
     setLoading(true);
     try {
-      const statsData = await getStatistics();
-      setStats(statsData);
+      const [suppliersData, paymentsData, statsData] = await Promise.all([
+        getSuppliers(),
+        getPayments(),
+        getStatistics(),
+      ]);
 
-      const supplierAddresses = await getSuppliers();
-      const suppliersData = await Promise.all(
-        supplierAddresses.map(async (addr) => {
-          const supplier = await getSupplier(addr);
-          return { address: addr, ...supplier };
-        })
-      );
-      setSuppliers(suppliersData.filter((s) => s !== null));
-
-      const paymentsData = await getPayments();
-      setPayments(paymentsData);
+      setSuppliers(suppliersData || []);
+      setPayments(paymentsData || []);
+      setStats(statsData || {
+        totalPayments: 0,
+        totalAmount: '0',
+        supplierCount: 0,
+        averagePayment: '0',
+      });
     } catch (error) {
-      console.error('加载数据失败:', error);
+      console.error('Failed to load data:', error);
+      addNotification({
+        type: 'error',
+        title: 'Load Failed',
+        message: error.message || 'Failed to load data from contract',
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  // 实时事件监听
-  const handleContractEvent = useCallback(
-    (event) => {
-      console.log('Contract event received:', event);
+  useEffect(() => {
+    if (isConnected && isSepolia && !testMode) {
+      loadData();
+    }
+  }, [isConnected, isSepolia, testMode]);
+
+  // 监听合约事件
+  useContractEvents(provider, {
+    onSupplierRegistered: (event) => {
       addNotification({
         type: 'success',
-        eventType: event.type,
-        data: event.data,
+        title: 'New Supplier Registered',
+        message: `${event.name} has been registered`,
       });
       loadData();
     },
-    [addNotification, loadData]
-  );
-
-  const { isListening } = useContractEvents(provider, handleContractEvent);
-
-  useEffect(() => {
-    if (isConnected && isSepolia) {
+    onPaymentCreated: (event) => {
+      addNotification({
+        type: 'success',
+        title: 'New Payment Created',
+        message: `Payment of ${event.amount} ETH created`,
+      });
       loadData();
-    }
-  }, [isConnected, isSepolia]);
+    },
+    onPaymentStatusUpdated: (event) => {
+      addNotification({
+        type: 'info',
+        title: 'Payment Status Updated',
+        message: `Payment status changed to ${event.status}`,
+      });
+      loadData();
+    },
+  });
 
-  // 处理注册供应商
   const handleRegisterSupplier = async (supplierData) => {
     try {
       await registerSupplier(supplierData);
+      addNotification({
+        type: 'success',
+        title: 'Supplier Registered',
+        message: `${supplierData.name} has been registered successfully`,
+      });
       setShowRegisterModal(false);
-      await loadData();
+      loadData();
     } catch (error) {
-      console.error('注册供应商失败:', error);
-      throw error;
+      console.error('Failed to register supplier:', error);
+      addNotification({
+        type: 'error',
+        title: 'Registration Failed',
+        message: error.message || 'Failed to register supplier',
+      });
     }
   };
 
-  // 处理创建支付
   const handleCreatePayment = async (paymentData) => {
     try {
       await createPayment(paymentData);
+      addNotification({
+        type: 'success',
+        title: 'Payment Created',
+        message: `Payment of ${paymentData.amount} ETH created successfully`,
+      });
       setShowPaymentModal(false);
-      await loadData();
+      loadData();
     } catch (error) {
-      console.error('创建支付失败:', error);
-      throw error;
+      console.error('Failed to create payment:', error);
+      addNotification({
+        type: 'error',
+        title: 'Payment Failed',
+        message: error.message || 'Failed to create payment',
+      });
     }
   };
 
-  // 获取显示数据
-  const displayData = testMode ? mockData : { suppliers, payments, stats };
+  const displaySuppliers = testMode ? mockData?.suppliers || [] : suppliers;
+  const displayPayments = testMode ? mockData?.payments || [] : payments;
+  const displayStats = testMode ? mockData?.stats || stats : stats;
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950">
       {/* 实时通知 */}
-      <RealtimeNotifications notifications={notifications} onClose={removeNotification} />
-
-      {/* 注册供应商模态框 */}
-      {showRegisterModal && (
-        <RegisterSupplierModal
-          onClose={() => setShowRegisterModal(false)}
-          onSubmit={handleRegisterSupplier}
-        />
-      )}
-
-      {/* 创建支付模态框 */}
-      {showPaymentModal && (
-        <CreatePaymentModal
-          suppliers={displayData?.suppliers || []}
-          onClose={() => setShowPaymentModal(false)}
-          onSubmit={handleCreatePayment}
-        />
-      )}
+      <RealtimeNotifications
+        notifications={notifications}
+        onClose={removeNotification}
+      />
 
       {/* 顶部栏 */}
-      <div className="border-b border-gray-100 dark:border-gray-800 sticky top-16 z-10 bg-white dark:bg-gray-950">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+      <div className="border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900">
+        <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-light text-gray-900 dark:text-gray-100">
                 Flow Payment Network
               </h1>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                实时支付网络可视化系统 - Sepolia 测试网
+                Real-time payment network visualization on Sepolia
               </p>
             </div>
 
             <div className="flex items-center gap-3">
-              {/* 测试模式按钮 */}
+              {/* Live 指示器 */}
+              {isConnected && isSepolia && !testMode && <LiveIndicator />}
+
+              {/* 测试模式 */}
               <button
-                onClick={toggleTestMode}
-                className={`px-4 py-2 text-sm font-normal rounded-lg transition-all ${
+                onClick={() => setTestMode(!testMode)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   testMode
-                    ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-800'
-                    : 'border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900'
+                    ? 'bg-purple-600 text-white hover:bg-purple-700'
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                 }`}
               >
-                <TestTube2 className="w-4 h-4 inline mr-2" />
+                <TestTube2 className="w-4 h-4" />
                 {testMode ? '退出测试模式' : '测试模式'}
               </button>
 
-              {isConnected && isSepolia && !testMode && (
-                <>
-                  <button
-                    onClick={() => setShowRegisterModal(true)}
-                    className="px-4 py-2 text-sm font-normal text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg transition-colors"
-                  >
-                    <Users className="w-4 h-4 inline mr-2" />
-                    注册供应商
-                  </button>
-                  <button
-                    onClick={() => setShowPaymentModal(true)}
-                    className="px-4 py-2 text-sm font-normal text-white bg-gray-900 dark:bg-gray-100 dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-200 rounded-lg transition-colors"
-                  >
-                    <Send className="w-4 h-4 inline mr-2" />
-                    创建支付
-                  </button>
-                  <LiveIndicator isLive={isListening} />
-                </>
-              )}
+              {/* 刷新 */}
+              <button
+                onClick={loadData}
+                disabled={loading || !isConnected || testMode}
+                className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+                刷新
+              </button>
 
-              {!testMode && (
+              {/* 注册供应商 */}
+              {isConnected && isSepolia && !testMode && (
                 <button
-                  onClick={loadData}
-                  disabled={loading}
-                  className="px-4 py-2 text-sm font-normal text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg transition-colors disabled:opacity-50"
+                  onClick={() => setShowRegisterModal(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors"
                 >
-                  <RefreshCw className={`w-4 h-4 inline mr-2 ${loading ? 'animate-spin' : ''}`} />
-                  刷新
+                  <Users className="w-4 h-4" />
+                  注册供应商
                 </button>
               )}
 
-              {!testMode && (
-                <>
-                  {isConnected ? (
-                    isSepolia ? (
-                      <button
-                        onClick={disconnect}
-                        className="px-4 py-2 text-sm font-normal text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg transition-colors"
-                      >
-                        {account?.slice(0, 6)}...{account?.slice(-4)}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={switchToSepolia}
-                        className="px-4 py-2 text-sm font-normal text-white bg-orange-600 hover:bg-orange-700 rounded-lg transition-colors"
-                      >
-                        切换到 Sepolia
-                      </button>
-                    )
-                  ) : (
-                    <button
-                      onClick={connect}
-                      disabled={isConnecting || !isMetaMaskInstalled}
-                      className="px-4 py-2 text-sm font-normal text-white bg-gray-900 dark:bg-gray-100 dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50"
-                    >
-                      <Wallet className="w-4 h-4 inline mr-2" />
-                      {isConnecting ? '连接中...' : 'Connect Wallet'}
-                    </button>
-                  )}
-                </>
+              {/* 创建支付 */}
+              {isConnected && isSepolia && !testMode && (
+                <button
+                  onClick={() => setShowPaymentModal(true)}
+                  disabled={suppliers.length === 0}
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Send className="w-4 h-4" />
+                  创建支付
+                </button>
+              )}
+
+              {/* 连接钱包 */}
+              {!isConnected ? (
+                <button
+                  onClick={connect}
+                  disabled={isConnecting || !isMetaMaskInstalled}
+                  className="flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Wallet className="w-4 h-4" />
+                  {isConnecting ? 'Connecting...' : 'Connect Wallet'}
+                </button>
+              ) : (
+                <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-sm text-gray-700 dark:text-gray-300 font-mono">
+                    {account?.slice(0, 6)}...{account?.slice(-4)}
+                  </span>
+                </div>
               )}
             </div>
           </div>
@@ -250,7 +263,8 @@ export default function FlowPaymentVisualization() {
       </div>
 
       {/* 主内容区 */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="container mx-auto px-4 py-6">
+        {/* 测试模式提示 */}
         {testMode && (
           <div className="mb-6 p-4 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg">
             <div className="flex items-start gap-3">
@@ -261,7 +275,7 @@ export default function FlowPaymentVisualization() {
                 </h3>
                 <p className="text-sm text-purple-700 dark:text-purple-300 mt-1">
                   当前显示的是模拟数据,包含 {mockData?.suppliers?.length || 0} 个供应商和{' '}
-                  {mockData?.payments?.length || 0} 笔支付记录。演示不需要连接钱包的资金流效果。
+                  {mockData?.payments?.length || 0} 笔支付记录。用于演示系统的资金流效果。
                 </p>
               </div>
             </div>
@@ -269,146 +283,83 @@ export default function FlowPaymentVisualization() {
         )}
 
         {/* 统计卡片 */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-lg p-6">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-500 dark:text-gray-400">总支付次数</span>
-              <TrendingUp className="w-4 h-4 text-blue-500" />
-            </div>
-            <div className="text-2xl font-light text-gray-900 dark:text-gray-100">
-              {displayData?.stats?.totalPayments || 0}
-            </div>
-          </div>
-
-          <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-lg p-6">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-500 dark:text-gray-400">总支付金额</span>
-              <span className="text-green-500">$</span>
-            </div>
-            <div className="text-2xl font-light text-gray-900 dark:text-gray-100">
-              {displayData?.stats?.totalAmount || '0.00'} mETH
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-500 dark:text-gray-400">总支付次数</p>
+                <p className="text-2xl font-light text-gray-900 dark:text-gray-100 mt-1">
+                  {displayStats.totalPayments || 0}
+                </p>
+              </div>
+              <TrendingUp className="w-8 h-8 text-blue-500" />
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-lg p-6">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-500 dark:text-gray-400">供应商数量</span>
-              <Users className="w-4 h-4 text-purple-500" />
-            </div>
-            <div className="text-2xl font-light text-gray-900 dark:text-gray-100">
-              {displayData?.stats?.supplierCount || 0}
+          <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-500 dark:text-gray-400">总支付金额</p>
+                <p className="text-2xl font-light text-gray-900 dark:text-gray-100 mt-1 font-mono">
+                  {parseFloat(displayStats.totalAmount || 0).toFixed(2)} <span className="text-sm">ETH</span>
+                </p>
+              </div>
+              <DollarSign className="w-8 h-8 text-green-500" />
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-lg p-6">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-500 dark:text-gray-400">平均支付</span>
-              <TrendingUp className="w-4 h-4 text-orange-500" />
-            </div>
-            <div className="text-2xl font-light text-gray-900 dark:text-gray-100">
-              {displayData?.stats?.averagePayment || '0.00'} mETH
+          <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-500 dark:text-gray-400">供应商数量</p>
+                <p className="text-2xl font-light text-gray-900 dark:text-gray-100 mt-1">
+                  {displayStats.supplierCount || displaySuppliers.length}
+                </p>
+              </div>
+              <Users className="w-8 h-8 text-purple-500" />
             </div>
           </div>
-        </div>
 
-        {/* 支付网络可视化 */}
-        <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-lg p-6 mb-8">
-          <h2 className="text-lg font-light text-gray-900 dark:text-gray-100 mb-4">
-            支付网络可视化
-          </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
-            主钱包到供应商的资金流向图 (模拟数据)
-          </p>
-          <div className="h-[500px]">
-            <PaymentNetworkGraph
-              suppliers={displayData?.suppliers || []}
-              payments={displayData?.payments || []}
-            />
+          <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-500 dark:text-gray-400">平均支付</p>
+                <p className="text-2xl font-light text-gray-900 dark:text-gray-100 mt-1 font-mono">
+                  {parseFloat(displayStats.averagePayment || 0).toFixed(2)} <span className="text-sm">ETH</span>
+                </p>
+              </div>
+              <TrendingUp className="w-8 h-8 text-orange-500" />
+            </div>
           </div>
         </div>
 
-        {/* 支付详情表格 */}
-        <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-lg p-6">
-          <h2 className="text-lg font-light text-gray-900 dark:text-gray-100 mb-4">支付详情</h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
-            共 {displayData?.payments?.length || 0} 笔支付记录
-          </p>
-          
-          {(!displayData?.payments || displayData.payments.length === 0) ? (
-            <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-              没有支付记录
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-gray-100 dark:border-gray-800">
-                    <th className="text-left py-3 px-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                      ID
-                    </th>
-                    <th className="text-left py-3 px-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                      发送方
-                    </th>
-                    <th className="text-left py-3 px-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                      接收方
-                    </th>
-                    <th className="text-left py-3 px-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                      金额
-                    </th>
-                    <th className="text-left py-3 px-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                      类别
-                    </th>
-                    <th className="text-left py-3 px-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                      时间
-                    </th>
-                    <th className="text-left py-3 px-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                      状态
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {displayData.payments.map((payment, index) => (
-                    <tr
-                      key={payment.id || index}
-                      className="border-b border-gray-50 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
-                    >
-                      <td className="py-3 px-4 text-sm text-gray-900 dark:text-gray-100">
-                        {payment.id || index + 1}
-                      </td>
-                      <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400 font-mono">
-                        {payment.sender?.slice(0, 6)}...{payment.sender?.slice(-4)}
-                      </td>
-                      <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400 font-mono">
-                        {payment.recipient?.slice(0, 6)}...{payment.recipient?.slice(-4)}
-                      </td>
-                      <td className="py-3 px-4 text-sm text-gray-900 dark:text-gray-100">
-                        {payment.amount} ETH
-                      </td>
-                      <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">
-                        {payment.category || '-'}
-                      </td>
-                      <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">
-                        {new Date(payment.timestamp).toLocaleDateString()}
-                      </td>
-                      <td className="py-3 px-4">
-                        <span
-                          className={`inline-block px-2 py-1 text-xs rounded ${
-                            payment.status === 'completed'
-                              ? 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400'
-                              : 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400'
-                          }`}
-                        >
-                          {payment.status === 'completed' ? '已完成' : '处理中'}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+        {/* 企业级支付网络可视化 */}
+        <EnterprisePaymentNetwork
+          suppliers={displaySuppliers}
+          payments={displayPayments}
+        />
+
+        {/* 企业级支付详情表格 */}
+        <div className="mt-6">
+          <EnterprisePaymentTable payments={displayPayments} />
         </div>
       </div>
+
+      {/* 模态框 */}
+      {showRegisterModal && (
+        <RegisterSupplierModal
+          onClose={() => setShowRegisterModal(false)}
+          onSubmit={handleRegisterSupplier}
+        />
+      )}
+
+      {showPaymentModal && (
+        <CreatePaymentModal
+          suppliers={suppliers}
+          onClose={() => setShowPaymentModal(false)}
+          onSubmit={handleCreatePayment}
+        />
+      )}
     </div>
   );
 }
