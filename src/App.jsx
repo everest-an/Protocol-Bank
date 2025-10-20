@@ -25,6 +25,7 @@ import DeFiPage from './pages/DeFiPage.jsx'
 import BusinessPage from './pages/BusinessPage.jsx'
 import GlobalNetworkPage from './pages/GlobalNetworkPage.jsx'
 import PaymentVisualizationPage from './pages/PaymentVisualizationPage.jsx'
+import FlowPaymentVisualization from './pages/FlowPaymentVisualization.jsx'
 import LoginModal from './components/LoginModal.jsx'
 import ThemeToggle from './components/ThemeToggle.jsx'
 import { Waves } from 'lucide-react'
@@ -302,7 +303,7 @@ function App() {
         </div>
 
         {/* Tab Content */}
-        {activeTab === 'payments' && <PaymentsPage />}
+        {activeTab === 'payments' && <FlowPaymentVisualization />}
         {activeTab === 'defi' && <DeFiPage />}
         {activeTab === 'business' && <BusinessPage />}
         {activeTab === 'network' && <GlobalNetworkPage />}
