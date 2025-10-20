@@ -28,6 +28,7 @@ import PaymentVisualizationPage from './pages/PaymentVisualizationPage.jsx'
 import FlowPaymentVisualization from './pages/FlowPaymentVisualization.jsx'
 import LoginModal from './components/LoginModal.jsx'
 import ThemeToggle from './components/ThemeToggle.jsx'
+import ErrorBoundary from './components/ErrorBoundary.jsx'
 import { Waves } from 'lucide-react'
 
 function App() {
@@ -303,7 +304,11 @@ function App() {
         </div>
 
         {/* Tab Content */}
-        {activeTab === 'payments' && <FlowPaymentVisualization />}
+        {activeTab === 'payments' && (
+          <ErrorBoundary>
+            <FlowPaymentVisualization />
+          </ErrorBoundary>
+        )}
         {activeTab === 'defi' && <DeFiPage />}
         {activeTab === 'business' && <BusinessPage />}
         {activeTab === 'network' && <GlobalNetworkPage />}
