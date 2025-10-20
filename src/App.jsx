@@ -140,37 +140,52 @@ function App() {
 
               </nav>
             </div>
-            <div className="flex items-center space-x-4">
-              <div className="relative hidden md:block">
+            <div className="flex items-center space-x-3">
+              {/* 搜索框 - 桌面端显示 */}
+              <div className="relative hidden lg:block">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <input 
                   type="text" 
                   placeholder="Search transactions..." 
-                  className="pl-10 pr-4 py-2 bg-gray-50 border-0 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-200 text-sm w-64"
+                  className="pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-900 border-0 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-200 dark:focus:ring-gray-700 text-sm w-56 transition-colors"
                 />
               </div>
-              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600">
+              
+              {/* 通知图标 */}
+              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                 <Bell className="h-5 w-5" />
               </Button>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="text-gray-400 hover:text-gray-600"
-                onClick={() => window.open('https://discord.gg/AbmGXYjr3U', '_blank')}
-                title="Join our Discord"
-              >
-                <MessageCircle className="h-5 w-5" />
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="text-gray-400 hover:text-gray-600"
-                onClick={() => window.open('https://github.com/everest-an/Protocol-Bank/blob/main/docs/protocol_bank_complete_whitepaper.md', '_blank')}
-                title="Read Whitepaper"
-              >
-                <FileText className="h-5 w-5" />
-              </Button>
+              
+              {/* 更多菜单 */}
+              <div className="relative group">
+                <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                  </svg>
+                </Button>
+                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-900 rounded-lg shadow-lg border border-gray-100 dark:border-gray-800 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                  <button
+                    onClick={() => window.open('https://discord.gg/AbmGXYjr3U', '_blank')}
+                    className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center space-x-2 rounded-t-lg"
+                  >
+                    <MessageCircle className="h-4 w-4" />
+                    <span>Join Discord</span>
+                  </button>
+                  <button
+                    onClick={() => window.open('https://github.com/everest-an/Protocol-Bank/blob/main/docs/protocol_bank_complete_whitepaper.md', '_blank')}
+                    className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center space-x-2 rounded-b-lg"
+                  >
+                    <FileText className="h-4 w-4" />
+                    <span>Whitepaper</span>
+                  </button>
+                </div>
+              </div>
+              
+              {/* 主题切换 */}
               <ThemeToggle />
+              
+              {/* 分隔线 */}
+              <div className="h-6 w-px bg-gray-200 dark:bg-gray-800"></div>
               {walletAddress ? (
                 <div className="flex items-center space-x-2 px-3 py-1.5 bg-gray-100 rounded-lg">
                   <Wallet className="h-4 w-4 text-gray-600" />
