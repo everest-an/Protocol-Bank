@@ -1,115 +1,11 @@
 import { useState, useRef } from 'react';
 import { Upload, Download, Plus, Trash2, Check, X, AlertCircle, Loader, Send } from 'lucide-react';
-import { useWeb3 } from '../hooks/useWeb3';
-import { ethers } from 'ethers';
-import { formatWithConversion } from '../utils/currencyFormatter';
-import { useExchangeRates } from '../hooks/useExchangeRates';
-import CurrencySelector from '../components/CurrencySelector';
 
 export default function BatchPayment() {
-  const { account, provider, isConnected } = useWeb3();
-  const { rates, selectedCurrency, setSelectedCurrency, lastUpdated, refreshRates, loading: ratesLoading } = useExchangeRates();
-  
   const [recipients, setRecipients] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [processing, setProcessing] = useState(false);
-  const [progress, setProgress] = useState({ completed: 0, total: 0 });
-  const [results, setResults] = useState([]);
   const fileInputRef = useRef(null);
-
-  // CSV 解析函数
-  const parseCSV = (text) => {
-    const lines = text.trim().split('\\n');
-    if (lines.length < 2) {
-      throw new Error('CSV file must contain at least a header row and one data row');
-    }
-
-    const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
-    const requiredHeaders = ['address', 'amount'];
-    
-    for (const required of requiredHeaders) {
-      if (!headers.includes(required)) {
-        throw new Error(`Missing required column: ${required}`);
-      }
-    }
-
-    const addressIndex = headers.indexOf('address');
-    const amountIndex = headers.indexOf('amount');
-    const noteIndex = headers.indexOf('note');
-    const categoryIndex = headers.indexOf('category');
-
-    const data = [];
-    const errors = [];
-
-    for (let i = 1; i < lines.length; i++) {
-      const line = lines[i].trim();
-      if (!line) continue;
-
-      const values = line.split(',').map(v => v.trim());
-      const address = values[addressIndex];
-      const amount = values[amountIndex];
-      const note = noteIndex >= 0 ? values[noteIndex] : '';
-      const category = categoryIndex >= 0 ? values[categoryIndex] : '';
-
-      // 验证地址
-      if (!ethers.isAddress(address)) {
-        errors.push(`Row ${i + 1}: Invalid Ethereum address: ${address}`);
-        continue;
-      }
-
-      // 验证金额
-      const parsedAmount = parseFloat(amount);
-      if (isNaN(parsedAmount) || parsedAmount <= 0) {
-        errors.push(`Row ${i + 1}: Invalid amount: ${amount}`);
-        continue;
-      }
-
-      data.push({
-        id: Date.now() + i,
-        address,
-        amount: parsedAmount.toString(),
-        note,
-        category,
-        status: 'pending'
-      });
-    }
-
-    return { data, errors };
-  };
-
-  // 处理文件上传
-  const handleFileUpload = async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    if (!file.name.endsWith('.csv')) {
-      alert('Please upload a CSV file');
-      return;
-    }
-
-    setUploading(true);
-    try {
-      const text = await file.text();
-      const { data, errors } = parseCSV(text);
-
-      if (errors.length > 0) {
-        alert(`Found ${errors.length} errors:\\n\\n${errors.join('\\n')}`);
-      }
-
-      if (data.length > 0) {
-        setRecipients(prev => [...prev, ...data]);
-      } else {
-        alert('No valid recipients found in the CSV file');
-      }
-    } catch (error) {
-      alert(`Error parsing CSV: ${error.message}`);
-    } finally {
-      setUploading(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-    }
-  };
 
   // 下载 CSV 模板
   const downloadTemplate = () => {
@@ -159,139 +55,11 @@ export default function BatchPayment() {
     }, 0);
   };
 
-  // 验证所有收款人
-  const validateRecipients = () => {
-    const errors = [];
-    recipients.forEach((r, index) => {
-      if (!ethers.isAddress(r.address)) {
-        errors.push(`Recipient ${index + 1}: Invalid address`);
-      }
-      const amount = parseFloat(r.amount);
-      if (isNaN(amount) || amount <= 0) {
-        errors.push(`Recipient ${index + 1}: Invalid amount`);
-      }
-    });
-    return errors;
-  };
-
-  // 执行批量支付
-  const executeBatchPayment = async () => {
-    if (!isConnected) {
-      alert('Please connect your wallet first');
-      return;
-    }
-
-    if (recipients.length === 0) {
-      alert('Please add at least one recipient');
-      return;
-    }
-
-    const errors = validateRecipients();
-    if (errors.length > 0) {
-      alert(`Please fix the following errors:\\n\\n${errors.join('\\n')}`);
-      return;
-    }
-
-    const total = calculateTotal();
-    const confirmed = window.confirm(
-      `You are about to send ${total.toFixed(4)} ETH to ${recipients.length} recipients.\\n\\nDo you want to continue?`
-    );
-
-    if (!confirmed) return;
-
-    setProcessing(true);
-    setProgress({ completed: 0, total: recipients.length });
-    const newResults = [];
-
-    try {
-      const signer = await provider.getSigner();
-
-      for (let i = 0; i < recipients.length; i++) {
-        const recipient = recipients[i];
-        
-        try {
-          // 发送交易
-          const tx = await signer.sendTransaction({
-            to: recipient.address,
-            value: ethers.parseEther(recipient.amount)
-          });
-
-          // 更新状态为处理中
-          setRecipients(prev => prev.map(r => 
-            r.id === recipient.id ? { ...r, status: 'processing' } : r
-          ));
-
-          // 等待交易确认
-          const receipt = await tx.wait();
-
-          // 更新状态为成功
-          setRecipients(prev => prev.map(r => 
-            r.id === recipient.id ? { ...r, status: 'success' } : r
-          ));
-
-          newResults.push({
-            ...recipient,
-            status: 'success',
-            txHash: receipt.hash
-          });
-
-          setProgress(prev => ({ ...prev, completed: prev.completed + 1 }));
-        } catch (error) {
-          console.error(`Failed to send to ${recipient.address}:`, error);
-          
-          // 更新状态为失败
-          setRecipients(prev => prev.map(r => 
-            r.id === recipient.id ? { ...r, status: 'failed' } : r
-          ));
-
-          newResults.push({
-            ...recipient,
-            status: 'failed',
-            error: error.message
-          });
-
-          setProgress(prev => ({ ...prev, completed: prev.completed + 1 }));
-        }
-      }
-
-      setResults(newResults);
-      alert(`Batch payment completed!\\n\\nSuccess: ${newResults.filter(r => r.status === 'success').length}\\nFailed: ${newResults.filter(r => r.status === 'failed').length}`);
-    } catch (error) {
-      console.error('Batch payment error:', error);
-      alert(`Error: ${error.message}`);
-    } finally {
-      setProcessing(false);
-    }
-  };
-
   // 清空所有收款人
   const clearAll = () => {
     if (window.confirm('Are you sure you want to clear all recipients?')) {
       setRecipients([]);
-      setResults([]);
-      setProgress({ completed: 0, total: 0 });
     }
-  };
-
-  // 导出结果
-  const exportResults = () => {
-    if (results.length === 0) {
-      alert('No results to export');
-      return;
-    }
-
-    const csv = [
-      'address,amount,category,note,status,txHash,error',
-      ...results.map(r => `${r.address},${r.amount},${r.category || ''},${r.note || ''},${r.status},${r.txHash || ''},${r.error || ''}`)
-    ].join('\\n');
-
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `batch_payment_results_${Date.now()}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
   };
 
   const getStatusIcon = (status) => {
@@ -323,15 +91,6 @@ export default function BatchPayment() {
             </div>
 
             <div className="flex items-center gap-3">
-              {/* 货币选择器 */}
-              <CurrencySelector
-                selectedCurrency={selectedCurrency}
-                onCurrencyChange={setSelectedCurrency}
-                lastUpdated={lastUpdated}
-                onRefresh={refreshRates}
-                loading={ratesLoading}
-              />
-
               {/* 下载模板 */}
               <button
                 onClick={downloadTemplate}
@@ -354,7 +113,6 @@ export default function BatchPayment() {
                 ref={fileInputRef}
                 type="file"
                 accept=".csv"
-                onChange={handleFileUpload}
                 className="hidden"
               />
             </div>
@@ -376,24 +134,21 @@ export default function BatchPayment() {
           <div className="bg-white dark:bg-black border border-gray-100 dark:border-gray-700 rounded-lg p-4">
             <p className="text-sm text-gray-500 dark:text-gray-300">Total Amount</p>
             <p className="text-2xl font-light text-gray-900 dark:text-white mt-1 font-mono">
-              {formatWithConversion(calculateTotal(), selectedCurrency, rates)}
+              {calculateTotal().toFixed(4)} <span className="text-sm">ETH</span>
             </p>
           </div>
 
           <div className="bg-white dark:bg-black border border-gray-100 dark:border-gray-700 rounded-lg p-4">
-            <p className="text-sm text-gray-500 dark:text-gray-300">Completed</p>
+            <p className="text-sm text-gray-500 dark:text-gray-300">Status</p>
             <p className="text-2xl font-light text-gray-900 dark:text-white mt-1">
-              {progress.completed} / {progress.total || recipients.length}
+              Ready
             </p>
           </div>
 
           <div className="bg-white dark:bg-black border border-gray-100 dark:border-gray-700 rounded-lg p-4">
-            <p className="text-sm text-gray-500 dark:text-gray-300">Success Rate</p>
+            <p className="text-sm text-gray-500 dark:text-gray-300">Network</p>
             <p className="text-2xl font-light text-gray-900 dark:text-white mt-1">
-              {progress.total > 0 
-                ? `${((results.filter(r => r.status === 'success').length / progress.total) * 100).toFixed(1)}%`
-                : '0%'
-              }
+              Ethereum
             </p>
           </div>
         </div>
@@ -419,19 +174,8 @@ export default function BatchPayment() {
 
           <div className="flex-1"></div>
 
-          {results.length > 0 && (
-            <button
-              onClick={exportResults}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-            >
-              <Download className="w-4 h-4" />
-              Export Results
-            </button>
-          )}
-
           <button
-            onClick={executeBatchPayment}
-            disabled={!isConnected || recipients.length === 0 || processing}
+            disabled={recipients.length === 0 || processing}
             className="flex items-center gap-2 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {processing ? (
