@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Wallet, RefreshCw, Users, Send, ExternalLink, AlertCircle } from 'lucide-react';
+import { Wallet, RefreshCw, Users, Send, ExternalLink, AlertCircle, TestTube2 } from 'lucide-react';
 import PaymentNetworkGraph from '../components/payment-visualization/PaymentNetworkGraph';
 import RegisterSupplierModal from '../components/modals/RegisterSupplierModal';
 import CreatePaymentModal from '../components/modals/CreatePaymentModal';
@@ -8,6 +8,7 @@ import LiveIndicator from '../components/LiveIndicator';
 import { useWeb3 } from '../hooks/useWeb3';
 import { useStreamContract } from '../hooks/useStreamContract';
 import { useContractEvents, useRealtimeNotifications } from '../hooks/useContractEvents';
+import { generateFullMockData, generateNetworkGraphData } from '../utils/mockData';
 
 export default function PaymentVisualizationPage() {
   const {
@@ -39,6 +40,15 @@ export default function PaymentVisualizationPage() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [suppliers, setSuppliers] = useState([]);
   const [payments, setPayments] = useState([]);
+  // 切换测试模式
+  const toggleTestMode = () => {
+    if (!testMode) {
+      const data = generateFullMockData();
+      setMockData(data);
+    }
+    setTestMode(!testMode);
+  };
+
   const [stats, setStats] = useState({
     totalPayments: 0,
     totalAmount: '0',
@@ -47,6 +57,8 @@ export default function PaymentVisualizationPage() {
   });
   const [loading, setLoading] = useState(false);
   const { notifications, addNotification, removeNotification } = useRealtimeNotifications();
+  const [testMode, setTestMode] = useState(false);
+  const [mockData, setMockData] = useState(null);
 
   // 加载数据
   const loadData = async () => {
@@ -163,6 +175,17 @@ export default function PaymentVisualizationPage() {
                         <Send className="w-4 h-4 inline mr-2" />
                         Create Payment
                       </button>
+              <button
+                onClick={toggleTestMode}
+                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  testMode
+                    ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
+                    : 'border border-purple-500 text-purple-600 hover:bg-purple-50'
+                }`}
+              >
+                <TestTube2 className="w-4 h-4 inline mr-2" />
+                {testMode ? 'Exit Test Mode' : 'Test Mode'}
+              </button>
               <LiveIndicator isLive={isListening} />
               <button
                 onClick={loadData}
