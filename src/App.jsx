@@ -27,6 +27,7 @@ import GlobalNetworkPage from './pages/GlobalNetworkPage.jsx'
 import PaymentVisualizationPage from './pages/PaymentVisualizationPage.jsx'
 import FlowPaymentVisualization from './pages/FlowPaymentVisualization.jsx'
 import BatchPayment from './pages/BatchPayment.jsx'
+import ScheduledPayment from './pages/ScheduledPayment.jsx'
 import LoginModal from './components/LoginModal.jsx'
 import ThemeToggle from './components/ThemeToggle.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
@@ -145,6 +146,12 @@ function App() {
                   className={`text-sm ${activeTab === 'batch' ? 'text-gray-900 dark:text-gray-100 font-medium' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'}`}
                 >
                   Batch
+                </button>
+                <button
+                  onClick={() => setActiveTab('schedule')}
+                  className={`text-sm ${activeTab === 'schedule' ? 'text-gray-900 dark:text-gray-100 font-medium' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'}`}
+                >
+                  Schedule
                 </button>
 
               </nav>
@@ -321,6 +328,7 @@ function App() {
         {activeTab === 'network' && <GlobalNetworkPage />}
         {activeTab === 'visualization' && <PaymentVisualizationPage />}
         {activeTab === 'batch' && <BatchPayment />}
+        {activeTab === 'schedule' && <ScheduledPayment />}
         
         {activeTab === 'dashboard' && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
