@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Wallet, RefreshCw, Users, Send, TestTube2, TrendingUp } from 'lucide-react';
+import { Wallet, RefreshCw, Users, Send, TestTube2, TrendingUp, DollarSign } from 'lucide-react';
 import { useWeb3 } from '../hooks/useWeb3';
 import { useStreamContract } from '../hooks/useStreamContract';
 import { useContractEvents, useRealtimeNotifications } from '../hooks/useContractEvents';
