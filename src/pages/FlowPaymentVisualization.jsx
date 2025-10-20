@@ -169,7 +169,7 @@ export default function FlowPaymentVisualization() {
   const displayStats = testMode ? mockData?.stats || stats : stats;
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950">
+    <div className="min-h-screen bg-white dark:bg-black">
       {/* 实时通知 */}
       <RealtimeNotifications
         notifications={notifications}
@@ -177,14 +177,14 @@ export default function FlowPaymentVisualization() {
       />
 
       {/* 顶部栏 */}
-      <div className="border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900">
+      <div className="border-b border-gray-100 dark:border-gray-700 bg-white dark:bg-black">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-light text-gray-900 dark:text-gray-100">
+              <h1 className="text-2xl font-light text-gray-900 dark:text-white">
                 Flow Payment Network
               </h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              <p className="text-sm text-gray-500 dark:text-gray-300 mt-1">
                 Real-time payment network visualization on Sepolia
               </p>
             </div>
@@ -199,7 +199,7 @@ export default function FlowPaymentVisualization() {
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   testMode
                     ? 'bg-purple-600 text-white hover:bg-purple-700'
-                    : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                    : 'bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700'
                 }`}
               >
                 <TestTube2 className="w-4 h-4" />
@@ -210,7 +210,7 @@ export default function FlowPaymentVisualization() {
               <button
                 onClick={loadData}
                 disabled={loading || !isConnected || testMode}
-                className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
                 刷新
@@ -250,9 +250,9 @@ export default function FlowPaymentVisualization() {
                   {isConnecting ? 'Connecting...' : 'Connect Wallet'}
                 </button>
               ) : (
-                <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
+                <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-900 rounded-lg">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span className="text-sm text-gray-700 dark:text-gray-300 font-mono">
+                  <span className="text-sm text-gray-700 dark:text-white font-mono">
                     {account?.slice(0, 6)}...{account?.slice(-4)}
                   </span>
                 </div>
@@ -284,11 +284,11 @@ export default function FlowPaymentVisualization() {
 
         {/* 统计卡片 */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-lg p-4">
+          <div className="bg-white dark:bg-black border border-gray-100 dark:border-gray-700 rounded-lg p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">总支付次数</p>
-                <p className="text-2xl font-light text-gray-900 dark:text-gray-100 mt-1">
+                <p className="text-sm text-gray-500 dark:text-gray-300">总支付次数</p>
+                <p className="text-2xl font-light text-gray-900 dark:text-white mt-1">
                   {displayStats.totalPayments || 0}
                 </p>
               </div>
@@ -296,11 +296,11 @@ export default function FlowPaymentVisualization() {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-lg p-4">
+          <div className="bg-white dark:bg-black border border-gray-100 dark:border-gray-700 rounded-lg p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">总支付金额</p>
-                <p className="text-2xl font-light text-gray-900 dark:text-gray-100 mt-1 font-mono">
+                <p className="text-sm text-gray-500 dark:text-gray-300">总支付金额</p>
+                <p className="text-2xl font-light text-gray-900 dark:text-white mt-1 font-mono">
                   {parseFloat(displayStats.totalAmount || 0).toFixed(2)} <span className="text-sm">ETH</span>
                 </p>
               </div>
@@ -308,11 +308,11 @@ export default function FlowPaymentVisualization() {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-lg p-4">
+          <div className="bg-white dark:bg-black border border-gray-100 dark:border-gray-700 rounded-lg p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">供应商数量</p>
-                <p className="text-2xl font-light text-gray-900 dark:text-gray-100 mt-1">
+                <p className="text-sm text-gray-500 dark:text-gray-300">供应商数量</p>
+                <p className="text-2xl font-light text-gray-900 dark:text-white mt-1">
                   {displayStats.supplierCount || displaySuppliers.length}
                 </p>
               </div>
@@ -320,11 +320,11 @@ export default function FlowPaymentVisualization() {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-lg p-4">
+          <div className="bg-white dark:bg-black border border-gray-100 dark:border-gray-700 rounded-lg p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">平均支付</p>
-                <p className="text-2xl font-light text-gray-900 dark:text-gray-100 mt-1 font-mono">
+                <p className="text-sm text-gray-500 dark:text-gray-300">平均支付</p>
+                <p className="text-2xl font-light text-gray-900 dark:text-white mt-1 font-mono">
                   {parseFloat(displayStats.averagePayment || 0).toFixed(2)} <span className="text-sm">ETH</span>
                 </p>
               </div>

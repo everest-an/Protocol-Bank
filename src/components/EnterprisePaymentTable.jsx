@@ -54,14 +54,14 @@ export default function EnterprisePaymentTable({ payments = [] }) {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-lg overflow-hidden">
+    <div className="bg-white dark:bg-black border border-gray-100 dark:border-gray-700 rounded-lg overflow-hidden">
       {/* 表头 */}
-      <div className="p-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+      <div className="p-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-light text-gray-900 dark:text-gray-100">
+          <h3 className="text-lg font-light text-gray-900 dark:text-white">
             Payment Transactions
           </h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+          <p className="text-sm text-gray-500 dark:text-gray-300 mt-1">
             {filteredPayments.length} transactions
           </p>
         </div>
@@ -75,7 +75,7 @@ export default function EnterprisePaymentTable({ payments = [] }) {
               className={`px-3 py-1 text-xs rounded-full transition-colors ${
                 filterCategory === cat
                   ? 'bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900'
-                  : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
+                  : 'bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
               }`}
             >
               {cat === 'all' ? 'All' : cat}
@@ -87,47 +87,47 @@ export default function EnterprisePaymentTable({ payments = [] }) {
       {/* 表格 */}
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-800">
+          <thead className="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-100 dark:border-gray-700">
             <tr>
               <th
                 onClick={() => handleSort('timestamp')}
-                className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
+                className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
               >
                 Date
                 {sortField === 'timestamp' && (
                   <span className="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
                 )}
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                 Supplier
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                 Category
               </th>
               <th
                 onClick={() => handleSort('amount')}
-                className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
+                className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
               >
                 Amount
                 {sortField === 'amount' && (
                   <span className="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
                 )}
               </th>
-              <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                 Status
               </th>
-              <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                 Tx Hash
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+          <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
             {filteredPayments.map((payment, index) => (
               <tr
                 key={index}
                 className="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors"
               >
-                <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 font-mono">
+                <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-white font-mono">
                   {new Date(payment.timestamp).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'short',
@@ -136,20 +136,20 @@ export default function EnterprisePaymentTable({ payments = [] }) {
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap">
                   <div>
-                    <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <div className="text-sm font-medium text-gray-900 dark:text-white">
                       {payment.supplierName || payment.brand || 'Unknown'}
                     </div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400 font-mono">
+                    <div className="text-xs text-gray-500 dark:text-gray-300 font-mono">
                       {payment.recipient?.slice(0, 6)}...{payment.recipient?.slice(-4)}
                     </div>
                   </div>
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
                     {payment.category || 'Other'}
                   </span>
                 </td>
-                <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-mono text-gray-900 dark:text-gray-100">
+                <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-mono text-gray-900 dark:text-white">
                   {parseFloat(payment.amount || 0).toFixed(4)} ETH
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap text-center">
@@ -181,31 +181,31 @@ export default function EnterprisePaymentTable({ payments = [] }) {
       </div>
 
       {/* 表格底部统计 */}
-      <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/30">
+      <div className="p-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/30">
         <div className="grid grid-cols-4 gap-4">
           <div>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Total Transactions</p>
-            <p className="text-lg font-mono text-gray-900 dark:text-gray-100 mt-1">
+            <p className="text-xs text-gray-500 dark:text-gray-300">Total Transactions</p>
+            <p className="text-lg font-mono text-gray-900 dark:text-white mt-1">
               {filteredPayments.length}
             </p>
           </div>
           <div>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Total Amount</p>
-            <p className="text-lg font-mono text-gray-900 dark:text-gray-100 mt-1">
+            <p className="text-xs text-gray-500 dark:text-gray-300">Total Amount</p>
+            <p className="text-lg font-mono text-gray-900 dark:text-white mt-1">
               {filteredPayments.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0).toFixed(4)} ETH
             </p>
           </div>
           <div>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Average Payment</p>
-            <p className="text-lg font-mono text-gray-900 dark:text-gray-100 mt-1">
+            <p className="text-xs text-gray-500 dark:text-gray-300">Average Payment</p>
+            <p className="text-lg font-mono text-gray-900 dark:text-white mt-1">
               {filteredPayments.length > 0
                 ? (filteredPayments.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0) / filteredPayments.length).toFixed(4)
                 : '0.0000'} ETH
             </p>
           </div>
           <div>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Unique Suppliers</p>
-            <p className="text-lg font-mono text-gray-900 dark:text-gray-100 mt-1">
+            <p className="text-xs text-gray-500 dark:text-gray-300">Unique Suppliers</p>
+            <p className="text-lg font-mono text-gray-900 dark:text-white mt-1">
               {new Set(filteredPayments.map(p => p.recipient)).size}
             </p>
           </div>

@@ -154,14 +154,14 @@ export default function EnterprisePaymentNetwork({ suppliers = [], payments = []
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
       {/* 左侧: 可视化画布 */}
       <div className="lg:col-span-3">
-        <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-lg overflow-hidden">
+        <div className="bg-white dark:bg-black border border-gray-100 dark:border-gray-700 rounded-lg overflow-hidden">
           {/* 顶部控制栏 */}
-          <div className="p-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+          <div className="p-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-light text-gray-900 dark:text-gray-100">
+              <h3 className="text-lg font-light text-gray-900 dark:text-white">
                 Payment Network Graph
               </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              <p className="text-sm text-gray-500 dark:text-gray-300 mt-1">
                 {filteredData.suppliers.length} suppliers · {filteredData.payments.length} transactions
               </p>
             </div>
@@ -178,7 +178,7 @@ export default function EnterprisePaymentNetwork({ suppliers = [], payments = []
                   onChange={(e) => setTimeRange({ ...timeRange, start: parseInt(e.target.value) })}
                   className="w-32"
                 />
-                <span className="text-sm text-gray-600 dark:text-gray-400 font-mono">
+                <span className="text-sm text-gray-600 dark:text-gray-300 font-mono">
                   {timeRange.start} - {timeRange.end}
                 </span>
               </div>
@@ -204,26 +204,26 @@ export default function EnterprisePaymentNetwork({ suppliers = [], payments = []
           </div>
 
           {/* 底部图例 */}
-          <div className="p-4 border-t border-gray-100 dark:border-gray-800 flex items-center gap-6">
+          <div className="p-4 border-t border-gray-100 dark:border-gray-700 flex items-center gap-6">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-cyan-500"></div>
-              <span className="text-xs text-gray-600 dark:text-gray-400">Main Wallet</span>
+              <span className="text-xs text-gray-600 dark:text-gray-300">Main Wallet</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-              <span className="text-xs text-gray-600 dark:text-gray-400">Technology</span>
+              <span className="text-xs text-gray-600 dark:text-gray-300">Technology</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-purple-500"></div>
-              <span className="text-xs text-gray-600 dark:text-gray-400">Cloud Services</span>
+              <span className="text-xs text-gray-600 dark:text-gray-300">Cloud Services</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-orange-500"></div>
-              <span className="text-xs text-gray-600 dark:text-gray-400">Logistics</span>
+              <span className="text-xs text-gray-600 dark:text-gray-300">Logistics</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-pink-500"></div>
-              <span className="text-xs text-gray-600 dark:text-gray-400">Marketing</span>
+              <span className="text-xs text-gray-900 dark:text-white">Marketing</span>
             </div>
           </div>
         </div>
@@ -232,15 +232,15 @@ export default function EnterprisePaymentNetwork({ suppliers = [], payments = []
       {/* 右侧: 信息面板 */}
       <div className="space-y-4">
         {/* 分类统计 */}
-        <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-lg p-4">
-          <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">
+        <div className="bg-white dark:bg-black border border-gray-100 dark:border-gray-700 rounded-lg p-4">
+          <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-3">
             Categories
           </h4>
           <div className="space-y-2">
             {Object.entries(categoryStats).map(([category, stats]) => (
               <div key={category} className="flex items-center justify-between text-xs">
-                <span className="text-gray-600 dark:text-gray-400">{category}</span>
-                <span className="text-gray-900 dark:text-gray-100 font-mono">
+                <span className="text-gray-600 dark:text-gray-300">{category}</span>
+                <span className="text-gray-900 dark:text-white font-mono">
                   {stats.count} · {stats.amount.toFixed(2)} ETH
                 </span>
               </div>
@@ -250,13 +250,13 @@ export default function EnterprisePaymentNetwork({ suppliers = [], payments = []
 
         {/* 选中节点详情 */}
         {selectedNode && (
-          <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-lg p-4">
+          <div className="bg-white dark:bg-black border border-gray-100 dark:border-gray-700 rounded-lg p-4">
             <div className="flex items-start justify-between mb-3">
               <div>
-                <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                <h4 className="text-sm font-medium text-gray-900 dark:text-white">
                   {selectedNode.name || selectedNode.brand}
                 </h4>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                <p className="text-xs text-gray-500 dark:text-gray-300 mt-1">
                   {selectedNode.category}
                 </p>
               </div>
@@ -273,31 +273,31 @@ export default function EnterprisePaymentNetwork({ suppliers = [], payments = []
               return (
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500 dark:text-gray-400">Total Payments</span>
-                    <span className="text-sm font-mono text-gray-900 dark:text-gray-100">
+                    <span className="text-xs text-gray-500 dark:text-gray-300">Total Payments</span>
+                    <span className="text-sm font-mono text-gray-900 dark:text-white">
                       {stats.totalPayments}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500 dark:text-gray-400">Total Amount</span>
-                    <span className="text-sm font-mono text-gray-900 dark:text-gray-100">
+                    <span className="text-xs text-gray-500 dark:text-gray-300">Total Amount</span>
+                    <span className="text-sm font-mono text-gray-900 dark:text-white">
                       {stats.totalAmount} ETH
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500 dark:text-gray-400">Avg Payment</span>
-                    <span className="text-sm font-mono text-gray-900 dark:text-gray-100">
+                    <span className="text-xs text-gray-500 dark:text-gray-300">Avg Payment</span>
+                    <span className="text-sm font-mono text-gray-900 dark:text-white">
                       {stats.avgAmount} ETH
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500 dark:text-gray-400">Last Payment</span>
-                    <span className="text-sm font-mono text-gray-900 dark:text-gray-100">
+                    <span className="text-xs text-gray-500 dark:text-gray-300">Last Payment</span>
+                    <span className="text-sm font-mono text-gray-900 dark:text-white">
                       {stats.lastPayment}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500 dark:text-gray-400">Trend</span>
+                    <span className="text-xs text-gray-500 dark:text-gray-300">Trend</span>
                     <span className="flex items-center gap-1">
                       {stats.trend === 'up' ? (
                         <TrendingUp className="w-3 h-3 text-green-500" />
@@ -313,35 +313,35 @@ export default function EnterprisePaymentNetwork({ suppliers = [], payments = []
         )}
 
         {/* 关键指标 */}
-        <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-lg p-4">
-          <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">
+        <div className="bg-white dark:bg-black border border-gray-100 dark:border-gray-700 rounded-lg p-4">
+          <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-3">
             Key Metrics
           </h4>
           <div className="space-y-3">
             <div>
               <div className="flex items-center justify-between mb-1">
-                <span className="text-xs text-gray-500 dark:text-gray-400">Network Health</span>
+                <span className="text-xs text-gray-500 dark:text-gray-300">Network Health</span>
                 <span className="text-xs text-green-600 dark:text-green-400">Healthy</span>
               </div>
-              <div className="w-full h-1.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+              <div className="w-full h-1.5 bg-gray-100 dark:bg-gray-900 rounded-full overflow-hidden">
                 <div className="h-full bg-green-500" style={{ width: '85%' }}></div>
               </div>
             </div>
             <div>
               <div className="flex items-center justify-between mb-1">
-                <span className="text-xs text-gray-500 dark:text-gray-400">Payment Velocity</span>
+                <span className="text-xs text-gray-500 dark:text-gray-300">Payment Velocity</span>
                 <span className="text-xs text-blue-600 dark:text-blue-400">High</span>
               </div>
-              <div className="w-full h-1.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+              <div className="w-full h-1.5 bg-gray-100 dark:bg-gray-900 rounded-full overflow-hidden">
                 <div className="h-full bg-blue-500" style={{ width: '72%' }}></div>
               </div>
             </div>
             <div>
               <div className="flex items-center justify-between mb-1">
-                <span className="text-xs text-gray-500 dark:text-gray-400">Concentration Risk</span>
+                <span className="text-xs text-gray-500 dark:text-gray-300">Concentration Risk</span>
                 <span className="text-xs text-yellow-600 dark:text-yellow-400">Medium</span>
               </div>
-              <div className="w-full h-1.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+              <div className="w-full h-1.5 bg-gray-100 dark:bg-gray-900 rounded-full overflow-hidden">
                 <div className="h-full bg-yellow-500" style={{ width: '45%' }}></div>
               </div>
             </div>
@@ -349,8 +349,8 @@ export default function EnterprisePaymentNetwork({ suppliers = [], payments = []
         </div>
 
         {/* 快速操作 */}
-        <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-lg p-4">
-          <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">
+        <div className="bg-white dark:bg-black border border-gray-100 dark:border-gray-700 rounded-lg p-4">
+          <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-3">
             Quick Actions
           </h4>
           <div className="space-y-2">
