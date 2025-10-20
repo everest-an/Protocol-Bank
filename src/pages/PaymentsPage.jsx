@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button.jsx'
 import { Card, CardContent } from '@/components/ui/card.jsx'
-import { Send, ArrowDownLeft, Clock, CheckCircle, XCircle, DollarSign, Euro, PoundSterling } from 'lucide-react'
+import { Send, ArrowDownLeft, Clock, CheckCircle, XCircle, DollarSign, Euro, PoundSterling, Waves } from 'lucide-react'
+import StreamPaymentPage from './StreamPaymentPage.jsx'
 
 export default function PaymentsPage() {
+  const [activeTab, setActiveTab] = useState('regular') // 'regular' or 'stream'
   const [selectedCurrency, setSelectedCurrency] = useState('USD')
   const [amount, setAmount] = useState('')
   const [recipient, setRecipient] = useState('')
@@ -40,8 +42,45 @@ export default function PaymentsPage() {
     }
   }
 
+  // If stream tab is active, show StreamPaymentPage
+  if (activeTab === 'stream') {
+    return <StreamPaymentPage />
+  }
+
   return (
     <div className="space-y-6">
+      {/* Tab Navigation */}
+      <div className="border-b border-gray-200">
+        <nav className="flex space-x-8">
+          <button
+            onClick={() => setActiveTab('regular')}
+            className={`pb-3 px-1 border-b-2 font-medium text-sm transition-colors ${
+              activeTab === 'regular'
+                ? 'border-gray-900 text-gray-900'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            <div className="flex items-center space-x-2">
+              <Send className="h-4 w-4" />
+              <span>常规支付</span>
+            </div>
+          </button>
+          <button
+            onClick={() => setActiveTab('stream')}
+            className={`pb-3 px-1 border-b-2 font-medium text-sm transition-colors ${
+              activeTab === 'stream'
+                ? 'border-gray-900 text-gray-900'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            <div className="flex items-center space-x-2">
+              <Waves className="h-4 w-4" />
+              <span>流支付</span>
+            </div>
+          </button>
+        </nav>
+      </div>
+
       <div>
         <h2 className="text-2xl font-normal text-gray-900 mb-2">Cross-Border Payments</h2>
         <p className="text-sm text-gray-500">Send and receive payments globally with real-time settlement</p>
