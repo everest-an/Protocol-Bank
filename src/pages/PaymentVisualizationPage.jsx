@@ -152,8 +152,21 @@ export default function PaymentVisualizationPage() {
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-semibold text-gray-900">Payment Visualization</h1>
-              <p className="text-sm text-gray-500 mt-1">Real-time payment network on Sepolia</p>
+              <div className="flex items-center gap-3">
+                <div>
+                  <h1 className="text-2xl font-semibold text-gray-900">Payment Visualization</h1>
+                  <p className="text-sm text-gray-500 mt-1">Real-time payment network on Sepolia</p>
+                </div>
+                <a
+                  href="/demo"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-2 py-1 text-xs text-gray-400 hover:text-gray-600 border border-gray-200 hover:border-gray-300 rounded transition-colors"
+                  title="View UI Examples"
+                >
+                  example
+                </a>
+              </div>
             </div>
             
             <div className="flex items-center gap-3">
