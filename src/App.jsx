@@ -20,12 +20,8 @@ import {
 } from 'lucide-react'
 import './App.css'
 import protocolBankLogo from './assets/new-protocol-bank-logo.png'
-import PaymentsPage from './pages/PaymentsPage.jsx'
-import DeFiPage from './pages/DeFiPage.jsx'
-import BusinessPage from './pages/BusinessPage.jsx'
-import GlobalNetworkPage from './pages/GlobalNetworkPage.jsx'
-import PaymentVisualizationPage from './pages/PaymentVisualizationPage.jsx'
 import FlowPaymentVisualization from './pages/FlowPaymentVisualization.jsx'
+import SuppliersPage from './pages/SuppliersPage.jsx'
 import BatchPayment from './pages/BatchPayment.jsx'
 import ScheduledPayment from './pages/ScheduledPayment.jsx'
 import DataAnalytics from './pages/DataAnalytics.jsx'
@@ -110,57 +106,30 @@ function App() {
               </div>
               <nav className="hidden md:flex space-x-6">
                 <button 
-                  onClick={() => setActiveTab('payments')}
-                  className={`flex items-center space-x-1.5 text-sm font-medium ${activeTab === 'payments' ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'}`}
-                  title="流支付"
-                >
-                  <Waves className="h-4 w-4" />
-                  <span>Flow</span>
-                </button>
-                <button 
                   onClick={() => setActiveTab('dashboard')}
                   className={`text-sm font-medium ${activeTab === 'dashboard' ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'}`}
                 >
                   Dashboard
                 </button>
-
                 <button 
-                  onClick={() => setActiveTab('defi')}
-                  className={`text-sm ${activeTab === 'defi' ? 'text-gray-900 dark:text-gray-100 font-medium' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'}`}
+                  onClick={() => setActiveTab('payments')}
+                  className={`flex items-center space-x-1.5 text-sm font-medium ${activeTab === 'payments' || activeTab === 'batch' || activeTab === 'schedule' ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'}`}
                 >
-                  DeFi
+                  <Waves className="h-4 w-4" />
+                  <span>Payments</span>
                 </button>
                 <button 
-                  onClick={() => setActiveTab('business')}
-                  className={`text-sm ${activeTab === 'business' ? 'text-gray-900 dark:text-gray-100 font-medium' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'}`}
+                  onClick={() => setActiveTab('suppliers')}
+                  className={`text-sm font-medium ${activeTab === 'suppliers' ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'}`}
                 >
-                  Business
-                </button>
-                <button 
-                  onClick={() => setActiveTab('visualization')}
-                  className={`text-sm ${activeTab === 'visualization' ? 'text-gray-900 dark:text-gray-100 font-medium' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'}`}
-                >
-                  Visualization
-                </button>
-                <button 
-                  onClick={() => setActiveTab('batch')}
-                  className={`text-sm ${activeTab === 'batch' ? 'text-gray-900 dark:text-gray-100 font-medium' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'}`}
-                >
-                  Batch
-                </button>
-                <button
-                  onClick={() => setActiveTab('schedule')}
-                  className={`text-sm ${activeTab === 'schedule' ? 'text-gray-900 dark:text-gray-100 font-medium' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'}`}
-                >
-                  Schedule
+                  Suppliers
                 </button>
                 <button
                   onClick={() => setActiveTab('analytics')}
-                  className={`text-sm ${activeTab === 'analytics' ? 'text-gray-900 dark:text-gray-100 font-medium' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'}`}
+                  className={`text-sm font-medium ${activeTab === 'analytics' ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'}`}
                 >
                   Analytics
                 </button>
-
               </nav>
             </div>
             <div className="flex items-center space-x-3">
@@ -330,12 +299,9 @@ function App() {
             <FlowPaymentVisualization />
           </ErrorBoundary>
         )}
-        {activeTab === 'defi' && <DeFiPage />}
-        {activeTab === 'business' && <BusinessPage />}
-        {activeTab === 'network' && <GlobalNetworkPage />}
-        {activeTab === 'visualization' && <PaymentVisualizationPage />}
         {activeTab === 'batch' && <BatchPayment />}
         {activeTab === 'schedule' && <ScheduledPayment />}
+        {activeTab === 'suppliers' && <SuppliersPage />}
         {activeTab === 'analytics' && <DataAnalytics />}
         
         {activeTab === 'dashboard' && (
