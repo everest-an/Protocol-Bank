@@ -217,7 +217,7 @@ export default function FlowPaymentVisualization() {
                 }`}
               >
                 <TestTube2 className="w-4 h-4" />
-                {testMode ? '退出测试模式' : '测试模式'}
+                {testMode ? 'Exit Test Mode' : 'Test Mode'}
               </button>
 
               {/* 刷新 */}
@@ -227,7 +227,7 @@ export default function FlowPaymentVisualization() {
                 className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-                刷新
+                Refresh
               </button>
 
               {/* 注册供应商 */}
@@ -237,7 +237,7 @@ export default function FlowPaymentVisualization() {
                   className="flex items-center gap-2 px-4 py-2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors"
                 >
                   <Users className="w-4 h-4" />
-                  注册供应商
+                  Register Supplier
                 </button>
               )}
 
@@ -249,7 +249,7 @@ export default function FlowPaymentVisualization() {
                   className="flex items-center gap-2 px-4 py-2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Send className="w-4 h-4" />
-                  创建支付
+                  Create Payment
                 </button>
               )}
 
@@ -285,11 +285,11 @@ export default function FlowPaymentVisualization() {
               <TestTube2 className="w-5 h-5 text-purple-600 dark:text-purple-400 mt-0.5" />
               <div>
                 <h3 className="text-sm font-medium text-purple-900 dark:text-purple-100">
-                  测试模式已启用
+                  Test Mode Enabled
                 </h3>
                 <p className="text-sm text-purple-700 dark:text-purple-300 mt-1">
-                  当前显示的是模拟数据,包含 {mockData?.suppliers?.length || 0} 个供应商和{' '}
-                  {mockData?.payments?.length || 0} 笔支付记录。用于演示系统的资金流效果。
+                  Currently displaying mock data with {mockData?.suppliers?.length || 0} suppliers and{' '}
+                  {mockData?.payments?.length || 0} payment records for demonstration purposes.
                 </p>
               </div>
             </div>
@@ -301,7 +301,7 @@ export default function FlowPaymentVisualization() {
           <div className="bg-white dark:bg-black border border-gray-100 dark:border-gray-700 rounded-lg p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-300">总支付次数</p>
+                <p className="text-sm text-gray-500 dark:text-gray-300">Total Payments</p>
                 <p className="text-2xl font-light text-gray-900 dark:text-white mt-1">
                   {displayStats.totalPayments || 0}
                 </p>
@@ -313,7 +313,7 @@ export default function FlowPaymentVisualization() {
           <div className="bg-white dark:bg-black border border-gray-100 dark:border-gray-700 rounded-lg p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-300">总支付金额</p>
+                <p className="text-sm text-gray-500 dark:text-gray-300">Total Amount</p>
                 <p className="text-2xl font-light text-gray-900 dark:text-white mt-1 font-mono">
                   {formatWithConversion(parseFloat(displayStats.totalAmount || 0), selectedCurrency, rates)}
                 </p>
@@ -325,7 +325,7 @@ export default function FlowPaymentVisualization() {
           <div className="bg-white dark:bg-black border border-gray-100 dark:border-gray-700 rounded-lg p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-300">供应商数量</p>
+                <p className="text-sm text-gray-500 dark:text-gray-300">Suppliers</p>
                 <p className="text-2xl font-light text-gray-900 dark:text-white mt-1">
                   {displayStats.supplierCount || displaySuppliers.length}
                 </p>
@@ -337,7 +337,7 @@ export default function FlowPaymentVisualization() {
           <div className="bg-white dark:bg-black border border-gray-100 dark:border-gray-700 rounded-lg p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-300">平均支付</p>
+                <p className="text-sm text-gray-500 dark:text-gray-300">Average Payment</p>
                 <p className="text-2xl font-light text-gray-900 dark:text-white mt-1 font-mono">
                   {formatWithConversion(parseFloat(displayStats.averagePayment || 0), selectedCurrency, rates)}
                 </p>
