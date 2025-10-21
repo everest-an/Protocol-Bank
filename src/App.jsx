@@ -28,6 +28,7 @@ import PaymentVisualizationPage from './pages/PaymentVisualizationPage.jsx'
 import FlowPaymentVisualization from './pages/FlowPaymentVisualization.jsx'
 import BatchPayment from './pages/BatchPayment.jsx'
 import ScheduledPayment from './pages/ScheduledPayment.jsx'
+import DataAnalytics from './pages/DataAnalytics.jsx'
 import LoginModal from './components/LoginModal.jsx'
 import ThemeToggle from './components/ThemeToggle.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
@@ -152,6 +153,12 @@ function App() {
                   className={`text-sm ${activeTab === 'schedule' ? 'text-gray-900 dark:text-gray-100 font-medium' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'}`}
                 >
                   Schedule
+                </button>
+                <button
+                  onClick={() => setActiveTab('analytics')}
+                  className={`text-sm ${activeTab === 'analytics' ? 'text-gray-900 dark:text-gray-100 font-medium' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'}`}
+                >
+                  Analytics
                 </button>
 
               </nav>
@@ -329,6 +336,7 @@ function App() {
         {activeTab === 'visualization' && <PaymentVisualizationPage />}
         {activeTab === 'batch' && <BatchPayment />}
         {activeTab === 'schedule' && <ScheduledPayment />}
+        {activeTab === 'analytics' && <DataAnalytics />}
         
         {activeTab === 'dashboard' && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
