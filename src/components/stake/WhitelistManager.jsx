@@ -125,7 +125,7 @@ export default function WhitelistManager({
                     </td>
                     <td className="py-3 px-2">
                       <div className="text-sm font-mono text-gray-600 dark:text-gray-400">
-                        {entry.recipient.slice(0, 6)}...{entry.recipient.slice(-4)}
+                        {entry.recipient ? `${entry.recipient.slice(0, 6)}...${entry.recipient.slice(-4)}` : 'N/A'}
                       </div>
                     </td>
                     <td className="py-3 px-2">

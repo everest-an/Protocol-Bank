@@ -141,13 +141,13 @@ export default function EscrowPoolCard({
           <div className="flex justify-between">
             <span className="text-gray-600 dark:text-gray-400">Staker (VC/LP):</span>
             <span className="text-gray-900 dark:text-white font-mono text-xs">
-              {poolData.staker.slice(0, 6)}...{poolData.staker.slice(-4)}
+              {poolData.staker ? `${poolData.staker.slice(0, 6)}...${poolData.staker.slice(-4)}` : 'N/A'}
             </span>
           </div>
           <div className="flex justify-between">
             <span className="text-gray-600 dark:text-gray-400">Company:</span>
             <span className="text-gray-900 dark:text-white font-mono text-xs">
-              {poolData.company.slice(0, 6)}...{poolData.company.slice(-4)}
+              {poolData.company ? `${poolData.company.slice(0, 6)}...${poolData.company.slice(-4)}` : 'N/A'}
             </span>
           </div>
           <div className="flex justify-between">

@@ -107,12 +107,12 @@ export default function PaymentHistoryTable({ poolId, payments = [] }) {
                     </td>
                     <td className="py-3 px-2">
                       <div className="text-sm font-mono text-gray-600 dark:text-gray-400">
-                        {payment.from.slice(0, 6)}...{payment.from.slice(-4)}
+                        {payment.from ? `${payment.from.slice(0, 6)}...${payment.from.slice(-4)}` : 'N/A'}
                       </div>
                     </td>
                     <td className="py-3 px-2">
                       <div className="text-sm font-mono text-gray-600 dark:text-gray-400">
-                        {payment.to.slice(0, 6)}...{payment.to.slice(-4)}
+                        {payment.to ? `${payment.to.slice(0, 6)}...${payment.to.slice(-4)}` : 'N/A'}
                       </div>
                     </td>
                     <td className="py-3 px-2">

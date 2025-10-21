@@ -110,7 +110,7 @@ export default function ExecutePaymentModal({
                 <option value="">Select recipient...</option>
                 {approvedWhitelist.map((entry, index) => (
                   <option key={index} value={entry.recipient}>
-                    {entry.name} ({entry.category}) - {entry.recipient.slice(0, 6)}...{entry.recipient.slice(-4)}
+                    {entry.name} ({entry.category}) - {entry.recipient ? `${entry.recipient.slice(0, 6)}...${entry.recipient.slice(-4)}` : 'N/A'}
                   </option>
                 ))}
               </select>
