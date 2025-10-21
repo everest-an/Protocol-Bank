@@ -30,7 +30,6 @@ import SuppliersPage from './pages/SuppliersPage.jsx'
 import BatchPayment from './pages/BatchPayment.jsx'
 import ScheduledPayment from './pages/ScheduledPaymentV2.jsx'
 import DataAnalytics from './pages/DataAnalyticsV3.jsx'
-import DashboardWithFlowPayment from './pages/DashboardWithFlowPayment.jsx'
 import LoginModal from './components/LoginModal.jsx'
 import ThemeToggle from './components/ThemeToggle.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
@@ -39,7 +38,7 @@ import { generateFullMockData } from './utils/mockData.js'
 
 function App() {
   const [balanceVisible, setBalanceVisible] = useState(true)
-  const [activeTab, setActiveTab] = useState('dashboard')
+  const [activeTab, setActiveTab] = useState('payments')
   const [walletAddress, setWalletAddress] = useState(null)
   const [isConnecting, setIsConnecting] = useState(false)
   const [showLoginModal, setShowLoginModal] = useState(false)
@@ -112,12 +111,6 @@ function App() {
                 <span className="text-lg font-normal text-gray-900 dark:text-white">Protocol Bank</span>
               </div>
               <nav className="hidden md:flex space-x-6">
-                <button 
-                  onClick={() => setActiveTab('dashboard')}
-                  className={`text-sm font-medium ${activeTab === 'dashboard' ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'}`}
-                >
-                  Dashboard
-                </button>
                 <DropdownMenu
                   label="Payments"
                   items={[
@@ -213,98 +206,6 @@ function App() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-8">
-        {/* Welcome Section */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-2xl font-normal text-gray-900 dark:text-white mb-1">Welcome to the Future of Global Payments</h1>
-              <p className="text-sm text-gray-500 dark:text-gray-300">Protocol Bank: Your SWIFT alternative for seamless cross-border transactions.</p>
-            </div>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={toggleBalanceVisibility}
-              className="text-gray-400 hover:text-gray-600"
-            >
-              {balanceVisible ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
-            </Button>
-          </div>
-
-          {/* Balance Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            {/* Total Balance */}
-            <Card className="border border-gray-100 shadow-sm">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Total Balance</div>
-                  <MoreHorizontal className="h-4 w-4 text-gray-400" />
-                </div>
-                <div className="text-3xl font-light text-gray-900 dark:text-white mb-2">
-                  {balanceVisible ? '$125,847.32' : '••••••••'}
-                </div>
-                <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
-                  <TrendingUp className="h-3 w-3 mr-1" />
-                  +12.5% this month
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Crypto Assets */}
-            <Card className="border border-gray-100 shadow-sm">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Crypto Assets</div>
-                  <MoreHorizontal className="h-4 w-4 text-gray-400" />
-                </div>
-                <div className="text-2xl font-light text-gray-900 dark:text-white mb-2">
-                  {balanceVisible ? '$89,234.56' : '••••••••'}
-                </div>
-                <div className="flex items-center text-xs text-green-600">
-                  <ArrowUpRight className="h-3 w-3 mr-1" />
-                  +3.2% today
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Fiat Accounts */}
-            <Card className="border border-gray-100 shadow-sm">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Fiat Accounts</div>
-                  <MoreHorizontal className="h-4 w-4 text-gray-400" />
-                </div>
-                <div className="text-2xl font-light text-gray-900 dark:text-white mb-2">
-                  {balanceVisible ? '$36,612.76' : '••••••••'}
-                </div>
-                <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
-                  <span className="w-2 h-2 bg-gray-400 rounded-full mr-1"></span>
-                  3 accounts
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="grid grid-cols-4 gap-3 mb-8">
-            <Button variant="outline" className="h-14 flex items-center justify-center space-x-2 border-gray-200 hover:bg-gray-50">
-              <Send className="h-4 w-4" />
-              <span className="text-sm">Send</span>
-            </Button>
-            <Button variant="outline" className="h-14 flex items-center justify-center space-x-2 border-gray-200 hover:bg-gray-50">
-              <Plus className="h-4 w-4" />
-              <span className="text-sm">Request</span>
-            </Button>
-            <Button variant="outline" className="h-14 flex items-center justify-center space-x-2 border-gray-200 hover:bg-gray-50">
-              <Repeat className="h-4 w-4" />
-              <span className="text-sm">Exchange</span>
-            </Button>
-            <Button variant="outline" className="h-14 flex items-center justify-center space-x-2 border-gray-200 hover:bg-gray-50">
-              <TrendingUp className="h-4 w-4" />
-              <span className="text-sm">Invest</span>
-            </Button>
-          </div>
-        </div>
-
         {/* Tab Content */}
         {activeTab === 'payments' && (
           <ErrorBoundary>
@@ -325,11 +226,6 @@ function App() {
           </div>
         )}
         
-        {activeTab === 'dashboard' && (
-          <ErrorBoundary>
-            <DashboardWithFlowPayment />
-          </ErrorBoundary>
-        )}
         
         {activeTab === 'dashboard_old' && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
