@@ -62,6 +62,81 @@ export default function BatchPayment() {
     }
   };
 
+  // 验证以太坊地址
+  const isValidAddress = (address) => {
+    return /^0x[a-fA-F0-9]{40}$/.test(address);
+  };
+
+  // 处理 CSV 文件上传
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      try {
+        const text = e.target.result;
+        const lines = text.split('\n').filter(line => line.trim());
+        
+        // 跳过表头
+        const dataLines = lines.slice(1);
+        const newRecipients = [];
+        const errors = [];
+
+        dataLines.forEach((line, index) => {
+          const [address, amount, category, note] = line.split(',').map(s => s.trim());
+          
+          // 验证地址
+          if (!isValidAddress(address)) {
+            errors.push(`Line ${index + 2}: Invalid address ${address}`);
+            return;
+          }
+
+          // 验证金额
+          const parsedAmount = parseFloat(amount);
+          if (isNaN(parsedAmount) || parsedAmount <= 0) {
+            errors.push(`Line ${index + 2}: Invalid amount ${amount}`);
+            return;
+          }
+
+          newRecipients.push({
+            id: Date.now() + index,
+            address,
+            amount: parsedAmount.toString(),
+            category: category || '',
+            note: note || '',
+            status: 'pending'
+          });
+        });
+
+        if (errors.length > 0) {
+          alert(`CSV import completed with errors:\n${errors.join('\n')}`);
+        }
+
+        if (newRecipients.length > 0) {
+          setRecipients(prev => [...prev, ...newRecipients]);
+          alert(`Successfully imported ${newRecipients.length} recipients!`);
+        } else {
+          alert('No valid recipients found in CSV file.');
+        }
+      } catch (error) {
+        alert('Error parsing CSV file: ' + error.message);
+      } finally {
+        setUploading(false);
+        event.target.value = ''; // 重置文件输入
+      }
+    };
+
+    reader.onerror = () => {
+      alert('Error reading file');
+      setUploading(false);
+    };
+
+    reader.readAsText(file);
+  };
+
   const getStatusIcon = (status) => {
     switch (status) {
       case 'success':
@@ -113,6 +188,7 @@ export default function BatchPayment() {
                 ref={fileInputRef}
                 type="file"
                 accept=".csv"
+                onChange={handleFileUpload}
                 className="hidden"
               />
             </div>
