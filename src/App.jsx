@@ -30,6 +30,7 @@ import SuppliersPage from './pages/SuppliersPage.jsx'
 import BatchPayment from './pages/BatchPayment.jsx'
 import ScheduledPayment from './pages/ScheduledPaymentV2.jsx'
 import DataAnalytics from './pages/DataAnalyticsV3.jsx'
+import DashboardWithFlowPayment from './pages/DashboardWithFlowPayment.jsx'
 import LoginModal from './components/LoginModal.jsx'
 import ThemeToggle from './components/ThemeToggle.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
@@ -325,6 +326,12 @@ function App() {
         )}
         
         {activeTab === 'dashboard' && (
+          <ErrorBoundary>
+            <DashboardWithFlowPayment />
+          </ErrorBoundary>
+        )}
+        
+        {activeTab === 'dashboard_old' && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Recent Activity */}
             <Card className="border border-gray-100 shadow-sm">
