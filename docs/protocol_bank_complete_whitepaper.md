@@ -193,3 +193,43 @@ The PBX token is designed to accrue value through the following mechanisms:
 - **Buyback and Burn:** A portion of the transaction fees will be used to buy back and burn PBX tokens, reducing the total supply and increasing the value of the remaining tokens.
 - **Staking Yield:** PBX stakers will earn a competitive yield on their staked tokens, further incentivizing participation in the network.
 
+
+
+
+## 7. Flow Payment (Stake): Escrow and Traceability for Venture Capital
+
+### 7.1. The Problem: Lack of Post-Investment Transparency
+
+A significant challenge in venture capital and private equity is the lack of transparency and control over how invested funds are utilized. After wiring capital to a portfolio company, VCs and LPs often have limited visibility into the company's expenditures. This creates several risks:
+
+- **Misuse of Funds**: Capital intended for growth and operations could be diverted for unapproved purposes.
+- **Lack of Accountability**: Without a clear audit trail, it is difficult to hold companies accountable for their spending.
+- **Operational Inefficiencies**: Manual tracking and reporting of fund usage is time-consuming and prone to errors.
+
+### 7.2. The Solution: StakedPaymentEscrow Smart Contract
+
+Protocol Bank introduces **Flow Payment (Stake)**, an innovative solution that leverages a smart contract-based escrow system to provide unprecedented transparency and control for investors. This feature is powered by the `StakedPaymentEscrow` smart contract, deployed on the Sepolia testnet at `0x44a55360BaBc86d6443471Aa473E9Fa693037f04`.
+
+#### 7.2.1. Core Concepts
+
+- **Escrow Pool**: The VC/LP (staker) deposits funds into a dedicated escrow pool for a specific portfolio company.
+- **Whitelist Mechanism**: The company can only make payments to suppliers, employees, or vendors that have been added to a whitelist and explicitly approved by the staker.
+- **Complete Traceability**: Every transaction is executed on-chain, creating an immutable and fully auditable record of how funds are spent.
+- **Real-time Visualization**: A dedicated dashboard provides a real-time, force-directed graph of the payment flows, from the staker to the company and out to the approved recipients.
+
+### 7.3. Workflow
+
+1. **Pool Creation**: The VC/LP creates an escrow pool and stakes an initial amount of ETH, designating the portfolio company's address.
+2. **Whitelist Proposal**: The company proposes a new recipient (e.g., a key supplier) by adding their address, name, and category to the whitelist.
+3. **Whitelist Approval**: The VC/LP receives a notification and must approve the new recipient before any funds can be sent to them.
+4. **Payment Execution**: Once a recipient is approved, the company can execute payments from the escrow pool to that recipient, providing a purpose for each transaction.
+5. **Monitoring**: The VC/LP can monitor all activities in real-time through the Flow Payment (Stake) dashboard, including the current balance, total spent, and a complete history of payments.
+
+### 7.4. Benefits
+
+- **For VCs/LPs**: Drastically reduces investment risk, ensures capital is used as intended, and provides a real-time, auditable trail of all expenditures.
+- **For Companies**: Builds trust with investors by providing full transparency, and streamlines the payment approval process.
+- **For Suppliers/Employees**: Guarantees payment from a funded escrow pool, reducing payment uncertainty.
+
+This feature positions Protocol Bank not just as a payment platform, but as a comprehensive financial management tool for the venture capital ecosystem.
+

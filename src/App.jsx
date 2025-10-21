@@ -19,11 +19,13 @@ import {
   MessageCircle,
   Waves,
   Calendar,
+  Lock,
   Users as UsersIcon
 } from 'lucide-react'
 import './App.css'
 import protocolBankLogo from './assets/new-protocol-bank-logo.png'
 import FlowPaymentVisualization from './pages/FlowPaymentVisualization.jsx'
+import FlowPaymentStakePage from './pages/FlowPaymentStakePage.jsx'
 import SuppliersPage from './pages/SuppliersPage.jsx'
 import BatchPayment from './pages/BatchPayment.jsx'
 import ScheduledPayment from './pages/ScheduledPaymentV2.jsx'
@@ -119,12 +121,13 @@ function App() {
                   label="Payments"
                   items={[
                     { id: 'payments', label: 'Flow Payment', icon: Waves, description: 'Real-time payment streams' },
+                    { id: 'stake', label: 'Flow Payment (Stake)', icon: Lock, description: 'Escrow-based payments with VC/LP monitoring' },
                     { id: 'batch', label: 'Batch Payment', icon: Send, description: 'Multiple payments at once' },
                     { id: 'schedule', label: 'Scheduled Payment', icon: Calendar, description: 'Recurring payments' }
                   ]}
                   activeItem={activeTab}
                   onItemClick={setActiveTab}
-                  isActive={activeTab === 'payments' || activeTab === 'batch' || activeTab === 'schedule'}
+                  isActive={activeTab === 'payments' || activeTab === 'stake' || activeTab === 'batch' || activeTab === 'schedule'}
                 />
                 <button 
                   onClick={() => setActiveTab('suppliers')}
@@ -305,6 +308,11 @@ function App() {
         {activeTab === 'payments' && (
           <ErrorBoundary>
             <FlowPaymentVisualization />
+          </ErrorBoundary>
+        )}
+        {activeTab === 'stake' && (
+          <ErrorBoundary>
+            <FlowPaymentStakePage walletAddress={walletAddress} />
           </ErrorBoundary>
         )}
         {activeTab === 'batch' && <BatchPayment />}

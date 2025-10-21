@@ -38,6 +38,7 @@ Protocol Bank directly tackles these issues by offering a decentralized, efficie
 
 - **Dual Fiat and Cryptocurrency Support**: Seamlessly manage both traditional currencies and digital assets.
 - **Global Payment Network Integration**: Direct integration with major clearing networks like CHIPS, CHAPS, Fedwire, TARGET2, and CIPS for rapid cross-border transactions.
+- **Flow Payment (Stake)**: An innovative escrow and traceability system for VC/LP fund monitoring, ensuring that invested capital is spent on approved vendors and employees.
 - **Automated DeFi Lending**: Leverage decentralized finance for automated lending and borrowing.
 - **Automated Payment Splitting**: Businesses can automatically split payments for suppliers and vendors, optimizing supply chain finance.
 - **Streaming Payments**: Enable real-time, continuous payments for freelancers and subscription services.
@@ -52,149 +53,54 @@ Protocol Bank directly tackles these issues by offering a decentralized, efficie
 
 ### 📜 Deployed Contracts
 
-Protocol Bank utilizes smart contracts on both **Ethereum** and **Solana** blockchains for maximum compatibility and efficiency.
+Protocol Bank utilizes smart contracts on the **Ethereum** blockchain for maximum compatibility and efficiency.
 
 #### **Ethereum Contracts**
 
 | Contract Name | Network | Address | Purpose |
 |--------------|---------|---------|---------|
+| **StakedPaymentEscrow** | Sepolia Testnet | `0x44a55360BaBc86d6443471Aa473E9Fa693037f04` | VC/LP fund escrow and traceability |
 | **StreamPayment** | Sepolia Testnet | `0x5FbDB2315678afecb367f032d93F642f64180aa3` | Real-time streaming payments |
 | **MockERC20 (USDC)** | Sepolia Testnet | `0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512` | Test token for payments |
 
-#### **Contract Features**
+#### **StakedPaymentEscrow Contract Features**
 
-**StreamPayment Contract**:
+- ✅ **Fund Escrow**: VCs/LPs can stake funds into a secure smart contract.
+- ✅ **Whitelist Management**: Companies can only pay addresses approved by the staker.
+- ✅ **Complete Traceability**: All transactions are recorded on-chain for full transparency.
+- ✅ **Real-time Monitoring**: Stakers can monitor fund usage in real-time through the dashboard.
+- ✅ **Role-based Access Control**: Different permissions for stakers (VC/LP) and companies.
+
+**Key Functions**:
+```solidity
+// VC/LP creates an escrow pool and stakes funds
+function createPool(address company) external payable returns (uint256)
+
+// Company adds a supplier/employee to the whitelist for approval
+function addToWhitelist(uint256 poolId, address recipient, string memory name, string memory category)
+
+// VC/LP approves a whitelist entry
+function approveWhitelist(uint256 poolId, address recipient)
+
+// Company executes a payment to an approved recipient
+function executePayment(uint256 poolId, address to, uint256 amount, string memory purpose)
+```
+
+#### **StreamPayment Contract Features**
+
 - ✅ Real-time payment streaming
 - ✅ Automated payment splitting to multiple suppliers
 - ✅ Payment scheduling and automation
 - ✅ Supplier registration and management
 - ✅ Payment visualization and tracking
 
-**Key Functions**:
-```solidity
-// Register a supplier for payment splitting
-function registerSupplier(address supplier, string memory name, uint256 percentage)
-
-// Create a streaming payment
-function createPayment(address recipient, uint256 amount, uint256 duration)
-
-// Split payment to multiple suppliers
-function splitPayment(uint256 totalAmount, address[] memory suppliers)
-```
-
-### 📊 Smart Contract Examples
-
-#### **Example 1: Streaming Payment**
-```javascript
-// Create a 30-day streaming payment of 1000 USDC
-await streamPayment.createPayment(
-  recipientAddress,
-  ethers.utils.parseUnits("1000", 18),
-  30 * 24 * 60 * 60 // 30 days in seconds
-);
-```
-
-#### **Example 2: Automated Payment Splitting**
-```javascript
-// Register suppliers
-await streamPayment.registerSupplier(supplier1, "Supplier A", 40); // 40%
-await streamPayment.registerSupplier(supplier2, "Supplier B", 35); // 35%
-await streamPayment.registerSupplier(supplier3, "Supplier C", 25); // 25%
-
-// Split 10,000 USDC payment
-await streamPayment.splitPayment(
-  ethers.utils.parseUnits("10000", 18),
-  [supplier1, supplier2, supplier3]
-);
-```
-
-#### **Example 3: Query Payment Status**
-```javascript
-// Get payment details
-const payment = await streamPayment.getPayment(paymentId);
-console.log("Amount:", payment.amount);
-console.log("Duration:", payment.duration);
-console.log("Start Time:", payment.startTime);
-```
-
-### 🔧 Contract Deployment
-
-For detailed deployment instructions, see:
-- [Ethereum Contract Deployment Guide](./contracts/ethereum/DEPLOYMENT_GUIDE.md)
-- [Smart Contract Implementation Report](./SMART_CONTRACT_IMPLEMENTATION_REPORT.md)
-- [Quick Start Guide](./QUICKSTART.md)
-
----
-
-## 🏗️ Technical Architecture
-
-Protocol Bank is built with a robust and scalable architecture:
-
-- **Frontend**: React.js with a minimalist UI design (inspired by mirror.xyz and N26), utilizing Aeonik font and a white/gray/frosted glass color palette.
-- **Backend**: Flask RESTful API with PostgreSQL database for persistent storage and Redis caching for performance.
-- **Blockchain**: 
-  - **Solana**: Primary blockchain for high-speed, low-cost transactions
-  - **Ethereum**: Smart contracts for DeFi integration and cross-chain compatibility
-- **Security**: JWT authentication (EdDSA/ES256), Multi-factor authentication (MFA), facial recognition with liveness detection, NFC payment system, and device fingerprinting.
-- **Messaging**: ISO 20022 standard for financial messaging, ensuring interoperability with traditional systems.
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-- Node.js 18+
-- Python 3.9+
-- PostgreSQL 14+
-- Redis 6+
-- MetaMask or compatible Web3 wallet
-
-### Quick Start
-
-1. **Clone the repository**
-```bash
-git clone https://github.com/everest-an/Protocol-Bank.git
-cd Protocol-Bank
-```
-
-2. **Install dependencies**
-```bash
-npm install
-```
-
-3. **Configure environment**
-```bash
-cp .env.example .env
-# Edit .env with your configuration
-```
-
-4. **Start development server**
-```bash
-npm run dev
-```
-
-5. **Visit the application**
-```
-http://localhost:5173
-```
-
-For detailed setup instructions, see [QUICKSTART.md](./QUICKSTART.md)
-
----
-
-## 📚 Documentation
-
-- [Comprehensive Whitepaper (v2.0)](./docs/protocol_bank_complete_whitepaper.md)
-- [Smart Contract Implementation Report](./SMART_CONTRACT_IMPLEMENTATION_REPORT.md)
-- [Backend API Integration Guide](./backend_api_integration_guide.md)
-- [Deployment Guide](./deployment_guide.md)
-- [Quick Start Guide](./QUICKSTART.md)
-- [Dual Chain Compatibility Research](./dual_chain_compatibility_research.md)
-- [Multi-Chain Smart Contract Strategy](./multi_chain_smart_contract_strategy.md)
-
 ---
 
 ## 🎨 Features Showcase
+
+### 🔒 Flow Payment (Stake)
+
+A groundbreaking feature for venture capital and limited partners to monitor and control how their invested funds are used. By staking funds in an escrow smart contract, investors gain complete transparency and assurance that payments are only made to whitelisted and approved suppliers or employees. The system provides a real-time, interactive visualization of the payment flow, from the VC/LP to the company, and out to the final recipients.
 
 ### 💳 Payment Visualization
 Interactive payment network graph showing real-time payment flows and supplier relationships.
@@ -213,24 +119,52 @@ Direct integration with major payment networks (CHIPS, CHAPS, Fedwire, TARGET2, 
 
 ---
 
-## 🧪 Testing
+## 🏗️ Technical Architecture
 
-### Smart Contract Testing
+Protocol Bank is built with a robust and scalable architecture:
+
+- **Frontend**: React.js with a minimalist UI design, utilizing `shadcn/ui`, `tailwindcss`, and `d3.js` for visualizations.
+- **Blockchain**: 
+  - **Ethereum**: Smart contracts for DeFi integration and cross-chain compatibility (Sepolia Testnet).
+- **Web3 Integration**: `ethers.js` for wallet connection and smart contract interaction.
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js 18+
+- MetaMask or compatible Web3 wallet
+
+### Quick Start
+
+1. **Clone the repository**
 ```bash
-cd contracts/ethereum
-npm test
+git clone https://github.com/everest-an/Protocol-Bank.git
+cd Protocol-Bank
 ```
 
-### Integration Testing
+2. **Install dependencies**
 ```bash
-npm run test:integration
+npm install
 ```
 
-### Demo Script
+3. **Start development server**
 ```bash
-cd contracts/ethereum
-node scripts/demo-stream-payment.js
+npm run dev
 ```
+
+4. **Visit the application**
+```
+http://localhost:5173
+```
+
+---
+
+## 📚 Documentation
+
+- [Comprehensive Whitepaper (v2.0)](./docs/protocol_bank_complete_whitepaper.md)
+- [Flow Payment (Stake) Feature Documentation](./flow_payment_stake_complete.md)
 
 ---
 
@@ -240,6 +174,7 @@ node scripts/demo-stream-payment.js
 
 **Test Features**:
 - ✅ Wallet connection (MetaMask)
+- ✅ Flow Payment (Stake) - VC/LP fund monitoring
 - ✅ Payment visualization
 - ✅ Streaming payment creation
 - ✅ Supplier management
@@ -269,14 +204,5 @@ This project is submitted to **ETHShanghai 2025 Hackathon**.
 
 **Track**: DeFi × Infra
 
-**Submission Date**: October 20, 2025
-
----
-
-## 🔗 Additional Resources
-
-- **Official Website**: [https://www.protocolbanks.com/](https://www.protocolbanks.com/)
-- **Smart Contracts**: [Ethereum Contracts](./contracts/ethereum/)
-- **API Documentation**: [Backend API Guide](./backend_api_integration_guide.md)
-- **Whitepaper**: [Full Whitepaper](./docs/protocol_bank_complete_whitepaper.md)
+**Submission Date**: October 22, 2025
 
