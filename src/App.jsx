@@ -23,7 +23,7 @@ import {
 } from 'lucide-react'
 import './App.css'
 import protocolBankLogo from './assets/new-protocol-bank-logo.png'
-import FlowPaymentVisualization from './pages/FlowPaymentVisualization.jsx'
+import FlowPaymentVisualization from './pages/FlowPaymentVisualizationV2.jsx'
 import SuppliersPage from './pages/SuppliersPage.jsx'
 import BatchPayment from './pages/BatchPayment.jsx'
 import ScheduledPayment from './pages/ScheduledPayment.jsx'
