@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button.jsx'
 import { Card, CardContent } from '@/components/ui/card.jsx'
-import { Lock, Send, AlertCircle, RefreshCw } from 'lucide-react'
+import { Lock, Send, AlertCircle, RefreshCw, FileText } from 'lucide-react'
+import { generateStakeReportPDF } from '../utils/pdfExport.js'
 import { useStakeContract } from '../hooks/useStakeContract'
 import EscrowPoolCard from '../components/stake/EscrowPoolCard'
 import WhitelistManager from '../components/stake/WhitelistManager'
@@ -248,6 +249,15 @@ export default function FlowPaymentStakePage({ walletAddress }) {
           >
             <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
             Refresh
+          </Button>
+          <Button
+            onClick={() => generateStakeReportPDF(poolData, whitelist, payments)}
+            disabled={!selectedPoolId}
+            variant="outline"
+            size="sm"
+          >
+            <FileText className="h-4 w-4 mr-2" />
+            Export PDF
           </Button>
           {userRole === 'company' && selectedPoolId && (
             <Button
