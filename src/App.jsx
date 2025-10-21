@@ -16,7 +16,10 @@ import {
   MoreHorizontal,
   Wallet,
   FileText,
-  MessageCircle
+  MessageCircle,
+  Waves,
+  Calendar,
+  Users as UsersIcon
 } from 'lucide-react'
 import './App.css'
 import protocolBankLogo from './assets/new-protocol-bank-logo.png'
@@ -28,7 +31,7 @@ import DataAnalytics from './pages/DataAnalytics.jsx'
 import LoginModal from './components/LoginModal.jsx'
 import ThemeToggle from './components/ThemeToggle.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
-import { Waves } from 'lucide-react'
+import DropdownMenu from './components/DropdownMenu.jsx'
 
 function App() {
   const [balanceVisible, setBalanceVisible] = useState(true)
@@ -94,39 +97,43 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors duration-200">
+    <div className="min-h-screen bg-white dark:bg-black transition-colors duration-200">
       {/* Header */}
-      <header className="border-b border-gray-100 dark:border-gray-800 sticky top-0 z-50 bg-white dark:bg-gray-950 transition-colors duration-200">
+      <header className="border-b border-gray-100 dark:border-gray-700 sticky top-0 z-50 bg-white dark:bg-black transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-8">
               <div className="flex items-center space-x-2">
                 <img src={protocolBankLogo} alt="Protocol Bank" className="h-8 w-8" />
-                <span className="text-lg font-normal text-gray-900">Protocol Bank</span>
+                <span className="text-lg font-normal text-gray-900 dark:text-white">Protocol Bank</span>
               </div>
               <nav className="hidden md:flex space-x-6">
                 <button 
                   onClick={() => setActiveTab('dashboard')}
-                  className={`text-sm font-medium ${activeTab === 'dashboard' ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'}`}
+                  className={`text-sm font-medium ${activeTab === 'dashboard' ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'}`}
                 >
                   Dashboard
                 </button>
-                <button 
-                  onClick={() => setActiveTab('payments')}
-                  className={`flex items-center space-x-1.5 text-sm font-medium ${activeTab === 'payments' || activeTab === 'batch' || activeTab === 'schedule' ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'}`}
-                >
-                  <Waves className="h-4 w-4" />
-                  <span>Payments</span>
-                </button>
+                <DropdownMenu
+                  label="Payments"
+                  items={[
+                    { id: 'payments', label: 'Flow Payment', icon: Waves, description: 'Real-time payment streams' },
+                    { id: 'batch', label: 'Batch Payment', icon: Send, description: 'Multiple payments at once' },
+                    { id: 'schedule', label: 'Scheduled Payment', icon: Calendar, description: 'Recurring payments' }
+                  ]}
+                  activeItem={activeTab}
+                  onItemClick={setActiveTab}
+                  isActive={activeTab === 'payments' || activeTab === 'batch' || activeTab === 'schedule'}
+                />
                 <button 
                   onClick={() => setActiveTab('suppliers')}
-                  className={`text-sm font-medium ${activeTab === 'suppliers' ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'}`}
+                  className={`text-sm font-medium ${activeTab === 'suppliers' ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'}`}
                 >
                   Suppliers
                 </button>
                 <button
                   onClick={() => setActiveTab('analytics')}
-                  className={`text-sm font-medium ${activeTab === 'analytics' ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'}`}
+                  className={`text-sm font-medium ${activeTab === 'analytics' ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'}`}
                 >
                   Analytics
                 </button>
