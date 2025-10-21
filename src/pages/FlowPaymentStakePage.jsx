@@ -225,10 +225,14 @@ export default function FlowPaymentStakePage({ walletAddress }) {
     }
   }
 
-  // Show test mode if no wallet connected
-  if (!walletAddress && !testMode) {
-    setTestMode(true)
-  }
+  // Update testMode when wallet connection changes
+  useEffect(() => {
+    if (!walletAddress) {
+      setTestMode(true)
+    } else {
+      setTestMode(false)
+    }
+  }, [walletAddress])
 
   return (
     <div className="space-y-6">
