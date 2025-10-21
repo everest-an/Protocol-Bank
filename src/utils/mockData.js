@@ -166,10 +166,11 @@ export function generateMockStats(payments) {
 }
 
 // 生成完整的测试数据集
-export function generateFullMockData() {
+export function generateFullMockData(supplierCount = 12) {
   const mainWallet = '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb0'; // 主钱包
-  const suppliers = generateMockSuppliers(12);
-  const payments = generateMockPayments(suppliers, mainWallet, 50);
+  const suppliers = generateMockSuppliers(supplierCount);
+  const paymentCount = Math.max(50, supplierCount * 4); // Scale payments with suppliers
+  const payments = generateMockPayments(suppliers, mainWallet, paymentCount);
   const stats = generateMockStats(payments);
   
   return {

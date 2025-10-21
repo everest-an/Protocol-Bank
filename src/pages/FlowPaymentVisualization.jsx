@@ -52,16 +52,19 @@ export default function FlowPaymentVisualization() {
   const { notifications, addNotification, removeNotification } = useRealtimeNotifications();
   const [testMode, setTestMode] = useState(false);
   const [mockData, setMockData] = useState(null);
+  const [supplierCount, setSupplierCount] = useState(100);
   const [selectedCurrency, setSelectedCurrency] = useState('ETH');
   const { rates, loading: ratesLoading, lastUpdated, refreshRates } = useExchangeRates();
 
   // 生成测试数据
   useEffect(() => {
-    if (testMode && !mockData) {
-      const data = generateFullMockData();
+    if (testMode) {
+      const data = generateFullMockData(supplierCount);
       setMockData(data);
+    } else {
+      setMockData(null);
     }
-  }, [testMode, mockData]);
+  }, [testMode, supplierCount]);
 
   // 加载链上数据
   const loadData = async () => {
@@ -291,6 +294,20 @@ export default function FlowPaymentVisualization() {
                   Currently displaying mock data with {mockData?.suppliers?.length || 0} suppliers and{' '}
                   {mockData?.payments?.length || 0} payment records for demonstration purposes.
                 </p>
+                <div className="mt-3 flex items-center gap-4">
+                  <label className="text-sm font-medium text-purple-900 dark:text-purple-100">
+                    Suppliers: {supplierCount}
+                  </label>
+                  <input
+                    type="range"
+                    min="50"
+                    max="500"
+                    step="50"
+                    value={supplierCount}
+                    onChange={(e) => setSupplierCount(Number(e.target.value))}
+                    className="flex-1 max-w-xs h-2 bg-purple-200 dark:bg-purple-800 rounded-lg appearance-none cursor-pointer"
+                  />
+                </div>
               </div>
             </div>
           </div>
