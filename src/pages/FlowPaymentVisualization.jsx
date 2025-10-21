@@ -297,53 +297,6 @@ export default function FlowPaymentVisualization() {
 
       {/* 主内容区 */}
       <div className="container mx-auto px-4 py-6">
-        {/* 测试模式提示 */}
-        {testMode && (
-          <div className="mb-6 p-4 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg">
-            <div className="flex items-start gap-3">
-              <TestTube2 className="w-5 h-5 text-purple-600 dark:text-purple-400 mt-0.5" />
-              <div>
-                <h3 className="text-sm font-medium text-purple-900 dark:text-purple-100">
-                  Test Mode Enabled
-                </h3>
-                <p className="text-sm text-purple-700 dark:text-purple-300 mt-1">
-                  Currently displaying mock data with {mockData?.suppliers?.length || 0} suppliers and{' '}
-                  {mockData?.payments?.length || 0} payment records for demonstration purposes.
-                </p>
-                <div className="mt-3 flex items-center gap-4">
-                  <label className="text-sm font-medium text-purple-900 dark:text-purple-100">
-                    Suppliers: {supplierCount}
-                  </label>
-                  <input
-                    type="range"
-                    min="50"
-                    max="500"
-                    step="50"
-                    value={supplierCount}
-                    onChange={(e) => setSupplierCount(Number(e.target.value))}
-                    className="flex-1 max-w-xs h-2 bg-purple-200 dark:bg-purple-800 rounded-lg appearance-none cursor-pointer"
-                  />
-                </div>
-                <div className="mt-3 flex items-center gap-3">
-                  <label className="text-sm font-medium text-purple-900 dark:text-purple-100">
-                    Demo Case:
-                  </label>
-                  <select
-                    value={demoCase}
-                    onChange={(e) => setDemoCase(e.target.value)}
-                    className="px-3 py-1.5 bg-white dark:bg-gray-800 border border-purple-200 dark:border-purple-700 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  >
-                    <option value="simple">Simple (HQ → Suppliers)</option>
-                    <option value="two-tier">Two-Tier (HQ → Subsidiaries → Suppliers)</option>
-                    <option value="three-tier">Three-Tier (HQ → Regional → Branches → Suppliers)</option>
-                    <option value="complex">Complex (Multiple Companies)</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* 统计卡片 */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div className="bg-white dark:bg-black border border-gray-100 dark:border-gray-700 rounded-lg p-4">
@@ -403,6 +356,53 @@ export default function FlowPaymentVisualization() {
           mockData={mockData}
           demoCase={demoCase}
         />
+
+        {/* 测试模式提示 */}
+        {testMode && (
+          <div className="mt-6 p-4 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg">
+            <div className="flex items-start gap-3">
+              <TestTube2 className="w-5 h-5 text-purple-600 dark:text-purple-400 mt-0.5" />
+              <div className="flex-1">
+                <h3 className="text-sm font-medium text-purple-900 dark:text-purple-100">
+                  Test Mode Enabled
+                </h3>
+                <p className="text-sm text-purple-700 dark:text-purple-300 mt-1">
+                  Currently displaying mock data with {mockData?.suppliers?.length || 0} suppliers and{' '}
+                  {mockData?.payments?.length || 0} payment records for demonstration purposes.
+                </p>
+                <div className="mt-3 flex items-center gap-4">
+                  <label className="text-sm font-medium text-purple-900 dark:text-purple-100">
+                    Suppliers: {supplierCount}
+                  </label>
+                  <input
+                    type="range"
+                    min="50"
+                    max="500"
+                    step="50"
+                    value={supplierCount}
+                    onChange={(e) => setSupplierCount(Number(e.target.value))}
+                    className="flex-1 max-w-xs h-2 bg-purple-200 dark:bg-purple-800 rounded-lg appearance-none cursor-pointer"
+                  />
+                </div>
+                <div className="mt-3 flex items-center gap-3">
+                  <label className="text-sm font-medium text-purple-900 dark:text-purple-100">
+                    Demo Case:
+                  </label>
+                  <select
+                    value={demoCase}
+                    onChange={(e) => setDemoCase(e.target.value)}
+                    className="px-3 py-1.5 bg-white dark:bg-gray-800 border border-purple-200 dark:border-purple-700 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  >
+                    <option value="simple">Simple (HQ → Suppliers)</option>
+                    <option value="two-tier">Two-Tier (HQ → Subsidiaries → Suppliers)</option>
+                    <option value="three-tier">Three-Tier (HQ → Regional → Branches → Suppliers)</option>
+                    <option value="complex">Complex (Multiple Companies)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* 企业级支付详情表格 */}
         <div className="mt-6">
