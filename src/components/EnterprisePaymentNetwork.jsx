@@ -1,370 +1,317 @@
-import { useState, useEffect, useRef } from 'react';
-import { X, TrendingUp, TrendingDown, AlertTriangle, Calendar, DollarSign, Users, Activity } from 'lucide-react';
+import React, { useRef, useEffect, useState } from 'react';
+import * as d3 from 'd3';
+import { X, DollarSign, Users, Activity } from 'lucide-react';
 
-export default function EnterprisePaymentNetwork({ suppliers = [], payments = [] }) {
+export default function EnterprisePaymentNetwork({ suppliers = [], payments = [], testMode = false, mockData = null }) {
   const canvasRef = useRef(null);
   const [selectedNode, setSelectedNode] = useState(null);
-  const [timeRange, setTimeRange] = useState({ start: 2024, end: 2025 });
-  const [filteredData, setFilteredData] = useState({ suppliers: [], payments: [] });
   const [hoveredNode, setHoveredNode] = useState(null);
-  const [categoryStats, setCategoryStats] = useState({});
+  const simulationRef = useRef(null);
 
-  // 计算分类统计
-  useEffect(() => {
-    const stats = {};
-    suppliers.forEach(supplier => {
-      const category = supplier.category || 'Other';
-      if (!stats[category]) {
-        stats[category] = { count: 0, amount: 0 };
-      }
-      stats[category].count++;
-      
-      const supplierPayments = payments.filter(p => p.recipient === supplier.address);
-      const totalAmount = supplierPayments.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0);
-      stats[category].amount += totalAmount;
-    });
-    setCategoryStats(stats);
-  }, [suppliers, payments]);
-
-  // 时间筛选
-  useEffect(() => {
-    const filtered = payments.filter(p => {
-      const year = new Date(p.timestamp).getFullYear();
-      return year >= timeRange.start && year <= timeRange.end;
-    });
-    
-    const supplierAddresses = new Set(filtered.map(p => p.recipient));
-    const filteredSuppliers = suppliers.filter(s => supplierAddresses.has(s.address));
-    
-    setFilteredData({ suppliers: filteredSuppliers, payments: filtered });
-  }, [timeRange, suppliers, payments]);
-
-  // Canvas 绘制
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
-    const width = canvas.width = canvas.offsetWidth * 2;
-    const height = canvas.height = canvas.offsetHeight * 2;
-    ctx.scale(2, 2);
+    const width = canvas.offsetWidth;
+    const height = canvas.offsetHeight;
+    const dpr = window.devicePixelRatio || 1;
 
-    const centerX = width / 4;
-    const centerY = height / 4;
-    const radius = Math.min(width, height) / 5;
+    // Set canvas size
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+    ctx.scale(dpr, dpr);
 
-    // 清空画布
-    ctx.fillStyle = '#0a0a0a';
-    ctx.fillRect(0, 0, width / 2, height / 2);
+    // Prepare data
+    const nodes = [];
+    const links = [];
 
-    // 绘制星空背景
-    for (let i = 0; i < 200; i++) {
-      ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.3})`;
-      ctx.fillRect(Math.random() * width / 2, Math.random() * height / 2, 1, 1);
-    }
-
-    // 绘制连接线
-    filteredData.suppliers.forEach((supplier, index) => {
-      const angle = (index / filteredData.suppliers.length) * Math.PI * 2;
-      const x = centerX + Math.cos(angle) * radius;
-      const y = centerY + Math.sin(angle) * radius;
-
-      const supplierPayments = filteredData.payments.filter(p => p.recipient === supplier.address);
-      const totalAmount = supplierPayments.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0);
-      
-      ctx.beginPath();
-      ctx.moveTo(centerX, centerY);
-      ctx.lineTo(x, y);
-      ctx.strokeStyle = `rgba(34, 211, 238, ${Math.min(totalAmount / 10, 0.8)})`;
-      ctx.lineWidth = Math.max(totalAmount / 5, 1);
-      ctx.stroke();
+    // Add company node
+    nodes.push({
+      id: 'company',
+      label: 'Your Company',
+      type: 'company',
+      size: 30,
+      color: '#6366f1',
+      x: width / 2,
+      y: height / 2
     });
 
-    // 绘制中心节点
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, 20, 0, Math.PI * 2);
-    ctx.fillStyle = '#22d3ee';
-    ctx.fill();
-    ctx.strokeStyle = '#06b6d4';
-    ctx.lineWidth = 2;
-    ctx.stroke();
+    // Use test data or real data
+    const dataSource = testMode && mockData ? mockData.suppliers : suppliers;
+    const paymentsSource = testMode && mockData ? mockData.payments : payments;
 
-    ctx.fillStyle = '#fff';
-    ctx.font = '12px monospace';
-    ctx.textAlign = 'center';
-    ctx.fillText('Main', centerX, centerY - 30);
-    ctx.fillText('Wallet', centerX, centerY - 18);
+    // Add supplier nodes
+    dataSource.forEach((supplier, index) => {
+      const supplierPayments = paymentsSource.filter(p => 
+        p.recipient === supplier.address || p.supplier === supplier.name
+      );
+      const totalAmount = supplierPayments.reduce((sum, p) => 
+        sum + parseFloat(p.amount || 0), 0
+      );
 
-    // 绘制供应商节点
-    filteredData.suppliers.forEach((supplier, index) => {
-      const angle = (index / filteredData.suppliers.length) * Math.PI * 2;
-      const x = centerX + Math.cos(angle) * radius;
-      const y = centerY + Math.sin(angle) * radius;
-
-      const isHovered = hoveredNode === supplier.address;
-      const isSelected = selectedNode?.address === supplier.address;
-
-      ctx.beginPath();
-      ctx.arc(x, y, isHovered || isSelected ? 12 : 8, 0, Math.PI * 2);
-      
-      // 根据类别设置颜色
-      const colors = {
+      const categoryColors = {
         'Technology': '#3b82f6',
+        'Marketing': '#ef4444',
         'Cloud Services': '#8b5cf6',
         'Logistics': '#f59e0b',
-        'Marketing': '#ec4899',
-        'Design': '#10b981',
+        'Design': '#ec4899',
+        'Consulting': '#10b981',
+        'Manufacturing': '#06b6d4',
+        'Professional Services': '#84cc16',
+        'Legal': '#f97316',
+        'Finance': '#a855f7'
       };
-      ctx.fillStyle = colors[supplier.category] || '#6b7280';
-      ctx.fill();
 
-      if (isHovered || isSelected) {
-        ctx.strokeStyle = '#fff';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-      }
+      nodes.push({
+        id: `supplier-${index}`,
+        label: supplier.name || `Supplier ${index + 1}`,
+        type: 'supplier',
+        size: Math.max(8, Math.min(20, Math.log10(totalAmount + 1) * 4)),
+        color: categoryColors[supplier.category] || '#6b7280',
+        amount: totalAmount,
+        transactions: supplierPayments.length,
+        category: supplier.category || 'Other',
+        address: supplier.address
+      });
 
-      // 绘制标签
-      ctx.fillStyle = '#fff';
-      ctx.font = isHovered || isSelected ? 'bold 11px sans-serif' : '10px sans-serif';
-      ctx.textAlign = 'center';
-      const name = supplier.name || supplier.brand || 'Unknown';
-      ctx.fillText(name, x, y + 25);
+      links.push({
+        source: 'company',
+        target: `supplier-${index}`,
+        value: totalAmount
+      });
     });
 
-  }, [filteredData, hoveredNode, selectedNode]);
+    // Create force simulation
+    const simulation = d3.forceSimulation(nodes)
+      .force('link', d3.forceLink(links).id(d => d.id).distance(d => {
+        if (d.source.type === 'company') return 120;
+        return 60;
+      }))
+      .force('charge', d3.forceManyBody().strength(d => {
+        if (d.type === 'company') return -800;
+        return -30;
+      }))
+      .force('center', d3.forceCenter(width / 2, height / 2))
+      .force('collision', d3.forceCollide().radius(d => d.size + 3));
 
-  // 计算供应商统计
-  const getSupplierStats = (supplier) => {
-    const supplierPayments = payments.filter(p => p.recipient === supplier.address);
-    const totalAmount = supplierPayments.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0);
-    const avgAmount = supplierPayments.length > 0 ? totalAmount / supplierPayments.length : 0;
-    const lastPayment = supplierPayments.sort((a, b) => b.timestamp - a.timestamp)[0];
-    
-    return {
-      totalPayments: supplierPayments.length,
-      totalAmount: totalAmount.toFixed(4),
-      avgAmount: avgAmount.toFixed(4),
-      lastPayment: lastPayment ? new Date(lastPayment.timestamp).toLocaleDateString() : 'N/A',
-      trend: supplierPayments.length > 1 ? 'up' : 'stable',
+    simulationRef.current = simulation;
+
+    // Transform for zoom/pan
+    let transform = d3.zoomIdentity;
+
+    // Zoom behavior
+    const zoom = d3.zoom()
+      .scaleExtent([0.1, 4])
+      .on('zoom', (event) => {
+        transform = event.transform;
+        draw();
+      });
+
+    d3.select(canvas).call(zoom);
+
+    // Draw function
+    function draw() {
+      ctx.save();
+      
+      // Clear canvas with dark background
+      const gradient = ctx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width / 2);
+      gradient.addColorStop(0, '#0f172a');
+      gradient.addColorStop(1, '#000000');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, width, height);
+
+      // Draw stars background
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+      for (let i = 0; i < 100; i++) {
+        const x = Math.random() * width;
+        const y = Math.random() * height;
+        ctx.fillRect(x, y, 1, 1);
+      }
+
+      // Apply transform
+      ctx.translate(transform.x, transform.y);
+      ctx.scale(transform.k, transform.k);
+
+      // Draw links with gradient
+      links.forEach(link => {
+        const gradient = ctx.createLinearGradient(
+          link.source.x, link.source.y,
+          link.target.x, link.target.y
+        );
+        gradient.addColorStop(0, 'rgba(34, 211, 238, 0.6)'); // Cyan
+        gradient.addColorStop(1, 'rgba(234, 179, 8, 0.4)'); // Yellow
+        
+        ctx.beginPath();
+        ctx.moveTo(link.source.x, link.source.y);
+        ctx.lineTo(link.target.x, link.target.y);
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = Math.max(0.5, Math.sqrt(link.value) / 50);
+        ctx.stroke();
+      });
+
+      // Draw nodes with glow
+      nodes.forEach(node => {
+        // Glow effect
+        const glowGradient = ctx.createRadialGradient(
+          node.x, node.y, 0,
+          node.x, node.y, node.size * 2
+        );
+        glowGradient.addColorStop(0, node.color);
+        glowGradient.addColorStop(0.5, node.color + '40');
+        glowGradient.addColorStop(1, node.color + '00');
+        
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.size * 2, 0, 2 * Math.PI);
+        ctx.fillStyle = glowGradient;
+        ctx.fill();
+
+        // Solid node
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.size, 0, 2 * Math.PI);
+        ctx.fillStyle = node.color;
+        ctx.fill();
+
+        // Node border
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Draw labels for important nodes
+        if (node.size > 12 || node.type === 'company') {
+          ctx.fillStyle = '#ffffff';
+          ctx.font = `${Math.max(10, node.size / 2)}px Inter, sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(node.label, node.x, node.y + node.size + 12);
+        }
+      });
+
+      ctx.restore();
+    }
+
+    // Simulation tick
+    simulation.on('tick', draw);
+
+    // Initial draw
+    draw();
+
+    // Mouse interaction
+    function getMousePos(event) {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: (event.clientX - rect.left - transform.x) / transform.k,
+        y: (event.clientY - rect.top - transform.y) / transform.k
+      };
+    }
+
+    function findNode(pos) {
+      return nodes.find(node => {
+        const dx = pos.x - node.x;
+        const dy = pos.y - node.y;
+        return Math.sqrt(dx * dx + dy * dy) < node.size;
+      });
+    }
+
+    canvas.addEventListener('mousemove', (event) => {
+      const pos = getMousePos(event);
+      const node = findNode(pos);
+      setHoveredNode(node || null);
+      canvas.style.cursor = node ? 'pointer' : 'grab';
+    });
+
+    canvas.addEventListener('click', (event) => {
+      const pos = getMousePos(event);
+      const node = findNode(pos);
+      if (node && node.type !== 'company') {
+        setSelectedNode(node);
+      }
+    });
+
+    // Cleanup
+    return () => {
+      simulation.stop();
     };
-  };
+  }, [suppliers, payments, testMode, mockData]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-      {/* 左侧: 可视化画布 */}
-      <div className="lg:col-span-3">
-        <div className="bg-white dark:bg-black border border-gray-100 dark:border-gray-700 rounded-lg overflow-hidden">
-          {/* 顶部控制栏 */}
-          <div className="p-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-light text-gray-900 dark:text-white">
-                Payment Network Graph
-              </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-300 mt-1">
-                {filteredData.suppliers.length} suppliers · {filteredData.payments.length} transactions
-              </p>
-            </div>
+    <div className="relative w-full h-full">
+      <canvas
+        ref={canvasRef}
+        className="w-full h-full"
+        style={{ cursor: 'grab' }}
+      />
 
-            {/* 时间轴控制 */}
-            <div className="flex items-center gap-4">
-              <Calendar className="w-4 h-4 text-gray-400" />
-              <div className="flex items-center gap-2">
-                <input
-                  type="range"
-                  min="2020"
-                  max="2025"
-                  value={timeRange.start}
-                  onChange={(e) => setTimeRange({ ...timeRange, start: parseInt(e.target.value) })}
-                  className="w-32"
-                />
-                <span className="text-sm text-gray-600 dark:text-gray-300 font-mono">
-                  {timeRange.start} - {timeRange.end}
-                </span>
-              </div>
+      {/* Hover tooltip */}
+      {hoveredNode && hoveredNode.type !== 'company' && (
+        <div className="absolute top-4 left-4 bg-gray-900/95 backdrop-blur-sm border border-cyan-500/30 rounded-lg p-4 text-white max-w-xs shadow-xl">
+          <h3 className="font-semibold text-lg mb-2 text-cyan-400">{hoveredNode.label}</h3>
+          <div className="space-y-1 text-sm">
+            <div className="flex justify-between">
+              <span className="text-gray-400">Category:</span>
+              <span className="text-white">{hoveredNode.category}</span>
             </div>
-          </div>
-
-          {/* Canvas 画布 */}
-          <div className="relative">
-            <canvas
-              ref={canvasRef}
-              className="w-full h-[600px] cursor-crosshair"
-              onMouseMove={(e) => {
-                // 简化的悬停检测
-                const rect = e.currentTarget.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                // TODO: 实现精确的节点悬停检测
-              }}
-              onClick={() => {
-                // TODO: 实现节点点击选择
-              }}
-            />
-          </div>
-
-          {/* 底部图例 */}
-          <div className="p-4 border-t border-gray-100 dark:border-gray-700 flex items-center gap-6">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-cyan-500"></div>
-              <span className="text-xs text-gray-600 dark:text-gray-300">Main Wallet</span>
+            <div className="flex justify-between">
+              <span className="text-gray-400">Amount:</span>
+              <span className="text-green-400 font-semibold">
+                ${hoveredNode.amount?.toLocaleString() || 0}
+              </span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-              <span className="text-xs text-gray-600 dark:text-gray-300">Technology</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-purple-500"></div>
-              <span className="text-xs text-gray-600 dark:text-gray-300">Cloud Services</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-orange-500"></div>
-              <span className="text-xs text-gray-600 dark:text-gray-300">Logistics</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-pink-500"></div>
-              <span className="text-xs text-gray-900 dark:text-white">Marketing</span>
+            <div className="flex justify-between">
+              <span className="text-gray-400">Transactions:</span>
+              <span className="text-blue-400">{hoveredNode.transactions || 0}</span>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* 右侧: 信息面板 */}
-      <div className="space-y-4">
-        {/* 分类统计 */}
-        <div className="bg-white dark:bg-black border border-gray-100 dark:border-gray-700 rounded-lg p-4">
-          <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-3">
-            Categories
-          </h4>
-          <div className="space-y-2">
-            {Object.entries(categoryStats).map(([category, stats]) => (
-              <div key={category} className="flex items-center justify-between text-xs">
-                <span className="text-gray-600 dark:text-gray-300">{category}</span>
-                <span className="text-gray-900 dark:text-white font-mono">
-                  {stats.count} · {stats.amount.toFixed(2)} ETH
-                </span>
-              </div>
-            ))}
+      {/* Selected node detail panel */}
+      {selectedNode && (
+        <div className="absolute bottom-4 right-4 bg-gray-900/95 backdrop-blur-sm border border-cyan-500/30 rounded-lg p-4 max-w-sm shadow-xl">
+          <div className="flex items-start justify-between mb-3">
+            <h4 className="font-semibold text-cyan-400">{selectedNode.label}</h4>
+            <button
+              onClick={() => setSelectedNode(null)}
+              className="text-gray-400 hover:text-white transition-colors"
+            >
+              <X size={18} />
+            </button>
           </div>
-        </div>
-
-        {/* 选中节点详情 */}
-        {selectedNode && (
-          <div className="bg-white dark:bg-black border border-gray-100 dark:border-gray-700 rounded-lg p-4">
-            <div className="flex items-start justify-between mb-3">
-              <div>
-                <h4 className="text-sm font-medium text-gray-900 dark:text-white">
-                  {selectedNode.name || selectedNode.brand}
-                </h4>
-                <p className="text-xs text-gray-500 dark:text-gray-300 mt-1">
-                  {selectedNode.category}
+          <div className="space-y-2 text-sm">
+            <div className="flex items-center gap-2 text-gray-300">
+              <Users size={16} className="text-cyan-400" />
+              <span className="text-gray-400">Category:</span>
+              <span>{selectedNode.category}</span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-300">
+              <DollarSign size={16} className="text-green-400" />
+              <span className="text-gray-400">Total Amount:</span>
+              <span className="text-green-400 font-semibold">
+                ${selectedNode.amount?.toLocaleString() || 0}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-300">
+              <Activity size={16} className="text-blue-400" />
+              <span className="text-gray-400">Transactions:</span>
+              <span className="text-blue-400">{selectedNode.transactions || 0}</span>
+            </div>
+            {selectedNode.address && (
+              <div className="mt-3 pt-3 border-t border-gray-700">
+                <span className="text-gray-400 text-xs">Address:</span>
+                <p className="text-gray-300 text-xs font-mono mt-1 break-all">
+                  {selectedNode.address}
                 </p>
               </div>
-              <button
-                onClick={() => setSelectedNode(null)}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            {(() => {
-              const stats = getSupplierStats(selectedNode);
-              return (
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500 dark:text-gray-300">Total Payments</span>
-                    <span className="text-sm font-mono text-gray-900 dark:text-white">
-                      {stats.totalPayments}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500 dark:text-gray-300">Total Amount</span>
-                    <span className="text-sm font-mono text-gray-900 dark:text-white">
-                      {stats.totalAmount} ETH
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500 dark:text-gray-300">Avg Payment</span>
-                    <span className="text-sm font-mono text-gray-900 dark:text-white">
-                      {stats.avgAmount} ETH
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500 dark:text-gray-300">Last Payment</span>
-                    <span className="text-sm font-mono text-gray-900 dark:text-white">
-                      {stats.lastPayment}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500 dark:text-gray-300">Trend</span>
-                    <span className="flex items-center gap-1">
-                      {stats.trend === 'up' ? (
-                        <TrendingUp className="w-3 h-3 text-green-500" />
-                      ) : (
-                        <Activity className="w-3 h-3 text-gray-400" />
-                      )}
-                    </span>
-                  </div>
-                </div>
-              );
-            })()}
-          </div>
-        )}
-
-        {/* 关键指标 */}
-        <div className="bg-white dark:bg-black border border-gray-100 dark:border-gray-700 rounded-lg p-4">
-          <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-3">
-            Key Metrics
-          </h4>
-          <div className="space-y-3">
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-xs text-gray-500 dark:text-gray-300">Network Health</span>
-                <span className="text-xs text-green-600 dark:text-green-400">Healthy</span>
-              </div>
-              <div className="w-full h-1.5 bg-gray-100 dark:bg-gray-900 rounded-full overflow-hidden">
-                <div className="h-full bg-green-500" style={{ width: '85%' }}></div>
-              </div>
-            </div>
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-xs text-gray-500 dark:text-gray-300">Payment Velocity</span>
-                <span className="text-xs text-blue-600 dark:text-blue-400">High</span>
-              </div>
-              <div className="w-full h-1.5 bg-gray-100 dark:bg-gray-900 rounded-full overflow-hidden">
-                <div className="h-full bg-blue-500" style={{ width: '72%' }}></div>
-              </div>
-            </div>
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-xs text-gray-500 dark:text-gray-300">Concentration Risk</span>
-                <span className="text-xs text-yellow-600 dark:text-yellow-400">Medium</span>
-              </div>
-              <div className="w-full h-1.5 bg-gray-100 dark:bg-gray-900 rounded-full overflow-hidden">
-                <div className="h-full bg-yellow-500" style={{ width: '45%' }}></div>
-              </div>
-            </div>
+            )}
           </div>
         </div>
+      )}
 
-        {/* 快速操作 */}
-        <div className="bg-white dark:bg-black border border-gray-100 dark:border-gray-700 rounded-lg p-4">
-          <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-3">
-            Quick Actions
-          </h4>
-          <div className="space-y-2">
-            <button className="w-full px-3 py-2 text-xs text-left text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded transition-colors">
-              Export Network Data
-            </button>
-            <button className="w-full px-3 py-2 text-xs text-left text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded transition-colors">
-              Generate Report
-            </button>
-            <button className="w-full px-3 py-2 text-xs text-left text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded transition-colors">
-              Schedule Analysis
-            </button>
-          </div>
-        </div>
+      {/* Controls hint */}
+      <div className="absolute bottom-4 left-4 bg-gray-900/80 backdrop-blur-sm border border-gray-700 rounded-lg px-3 py-2 text-xs text-gray-400">
+        <p>🖱️ Drag to pan • 🔍 Scroll to zoom • 💡 Hover for details</p>
       </div>
     </div>
   );
