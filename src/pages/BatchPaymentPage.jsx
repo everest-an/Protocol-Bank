@@ -245,13 +245,13 @@ export default function BatchPaymentPage() {
                         className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-gray-100 text-sm"
                       >
                         <option value="">选择类别</option>
-                        <option value="技术服务">技术服务</option>
-                        <option value="云计算">云计算</option>
-                        <option value="原材料">原材料</option>
-                        <option value="物流运输">物流运输</option>
-                        <option value="咨询服务">咨询服务</option>
-                        <option value="设计服务">设计服务</option>
-                        <option value="营销推广">营销推广</option>
+                        <option value="Technical Services">Technical Services</option>
+                        <option value="Cloud Computing">Cloud Computing</option>
+                        <option value="Raw Materials">Raw Materials</option>
+                        <option value="Logistics">Logistics</option>
+                        <option value="Consulting Services">Consulting Services</option>
+                        <option value="Design Services">Design Services</option>
+                        <option value="Marketing">Marketing</option>
                         <option value="其他">其他</option>
                       </select>
                     </div>

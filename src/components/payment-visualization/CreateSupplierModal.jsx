@@ -14,13 +14,13 @@ export default function CreateSupplierModal({ onClose, onSubmit, isLoading }) {
   const [errors, setErrors] = useState({})
 
   const categories = [
-    '技术服务',
-    '云计算',
-    '原材料',
-    '物流运输',
-    '咨询服务',
-    '设计服务',
-    '营销推广',
+    'Technical Services',
+    'Cloud Computing',
+    'Raw Materials',
+    'Logistics',
+    'Consulting Services',
+    'Design Services',
+    'Marketing',
     '其他'
   ]
 

@@ -26,28 +26,28 @@
  */
 
 const SUPPLIER_NAMES = [
-  { name: 'TechCorp Solutions', brand: 'TechCorp', category: '技术服务' },
-  { name: 'Cloud Services Inc', brand: 'CloudServe', category: '云计算' },
-  { name: 'Global Logistics', brand: 'GloLog', category: '物流运输' },
-  { name: 'Design Studio Pro', brand: 'DesignPro', category: '设计服务' },
-  { name: 'Marketing Masters', brand: 'MarketMaster', category: '营销推广' },
-  { name: 'Consulting Group', brand: 'ConsultG', category: '咨询服务' },
-  { name: 'Raw Materials Co', brand: 'RawMat', category: '原材料' },
-  { name: 'AI Analytics Ltd', brand: 'AIAnalytics', category: '技术服务' },
-  { name: 'Data Center Pro', brand: 'DataCenter', category: '云计算' },
-  { name: 'Creative Agency', brand: 'Creative', category: '设计服务' },
-  { name: 'Supply Chain Hub', brand: 'SupplyHub', category: '物流运输' },
-  { name: 'Brand Strategy', brand: 'BrandStrat', category: '营销推广' },
+  { name: 'TechCorp Solutions', brand: 'TechCorp', category: 'Technical Services' },
+  { name: 'Cloud Services Inc', brand: 'CloudServe', category: 'Cloud Computing' },
+  { name: 'Global Logistics', brand: 'GloLog', category: 'Logistics' },
+  { name: 'Design Studio Pro', brand: 'DesignPro', category: 'Design Services' },
+  { name: 'Marketing Masters', brand: 'MarketMaster', category: 'Marketing' },
+  { name: 'Consulting Group', brand: 'ConsultG', category: 'Consulting Services' },
+  { name: 'Raw Materials Co', brand: 'RawMat', category: 'Raw Materials' },
+  { name: 'AI Analytics Ltd', brand: 'AIAnalytics', category: 'Technical Services' },
+  { name: 'Data Center Pro', brand: 'DataCenter', category: 'Cloud Computing' },
+  { name: 'Creative Agency', brand: 'Creative', category: 'Design Services' },
+  { name: 'Supply Chain Hub', brand: 'SupplyHub', category: 'Logistics' },
+  { name: 'Brand Strategy', brand: 'BrandStrat', category: 'Marketing' },
 ];
 
 const CATEGORIES = [
-  '技术服务',
-  '云计算',
-  '原材料',
-  '物流运输',
-  '咨询服务',
-  '设计服务',
-  '营销推广',
+  'Technical Services',
+  'Cloud Computing',
+  'Raw Materials',
+  'Logistics',
+  'Consulting Services',
+  'Design Services',
+  'Marketing',
   '其他',
 ];
 

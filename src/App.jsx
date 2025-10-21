@@ -32,6 +32,7 @@ import ScheduledPayment from './pages/ScheduledPaymentV2.jsx'
 import DataAnalytics from './pages/DataAnalyticsV3.jsx'
 import LoginModal from './components/LoginModal.jsx'
 import ThemeToggle from './components/ThemeToggle.jsx'
+import LanguageSelector from './components/LanguageSelector.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
 import DropdownMenu from './components/DropdownMenu.jsx'
 import { generateFullMockData } from './utils/mockData.js'
@@ -177,6 +178,9 @@ function App() {
                   </button>
                 </div>
               </div>
+              
+              {/* 语言选择 */}
+              <LanguageSelector />
               
               {/* 主题切换 */}
               <ThemeToggle />
