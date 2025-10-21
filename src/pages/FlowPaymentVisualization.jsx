@@ -4,7 +4,7 @@ import { useWeb3 } from '../hooks/useWeb3';
 import { useStreamContract } from '../hooks/useStreamContract';
 import { useContractEvents, useRealtimeNotifications } from '../hooks/useContractEvents';
 import { generateFullMockData } from '../utils/mockData';
-import EnterprisePaymentNetwork from '../components/EnterprisePaymentNetwork';
+import EnterprisePaymentNetwork from '../components/EnterprisePaymentNetworkV2';
 import EnterprisePaymentTable from '../components/EnterprisePaymentTable';
 import RegisterSupplierModal from '../components/modals/RegisterSupplierModal';
 import CreatePaymentModal from '../components/modals/CreatePaymentModal';
@@ -53,6 +53,7 @@ export default function FlowPaymentVisualization() {
   const [testMode, setTestMode] = useState(false);
   const [mockData, setMockData] = useState(null);
   const [supplierCount, setSupplierCount] = useState(100);
+  const [demoCase, setDemoCase] = useState('simple'); // simple, two-tier, three-tier, complex
   const [selectedCurrency, setSelectedCurrency] = useState('ETH');
   const { rates, loading: ratesLoading, lastUpdated, refreshRates } = useExchangeRates();
 
@@ -308,6 +309,21 @@ export default function FlowPaymentVisualization() {
                     className="flex-1 max-w-xs h-2 bg-purple-200 dark:bg-purple-800 rounded-lg appearance-none cursor-pointer"
                   />
                 </div>
+                <div className="mt-3 flex items-center gap-3">
+                  <label className="text-sm font-medium text-purple-900 dark:text-purple-100">
+                    Demo Case:
+                  </label>
+                  <select
+                    value={demoCase}
+                    onChange={(e) => setDemoCase(e.target.value)}
+                    className="px-3 py-1.5 bg-white dark:bg-gray-800 border border-purple-200 dark:border-purple-700 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  >
+                    <option value="simple">Simple (HQ → Suppliers)</option>
+                    <option value="two-tier">Two-Tier (HQ → Subsidiaries → Suppliers)</option>
+                    <option value="three-tier">Three-Tier (HQ → Regional → Branches → Suppliers)</option>
+                    <option value="complex">Complex (Multiple Companies)</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
@@ -368,6 +384,9 @@ export default function FlowPaymentVisualization() {
         <EnterprisePaymentNetwork
           suppliers={displaySuppliers}
           payments={displayPayments}
+          testMode={testMode}
+          mockData={mockData}
+          demoCase={demoCase}
         />
 
         {/* 企业级支付详情表格 */}
