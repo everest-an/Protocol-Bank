@@ -212,8 +212,8 @@ function App() {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-2xl font-normal text-gray-900 mb-1">Welcome to the Future of Global Payments</h1>
-              <p className="text-sm text-gray-500">Protocol Bank: Your SWIFT alternative for seamless cross-border transactions.</p>
+              <h1 className="text-2xl font-normal text-gray-900 dark:text-white mb-1">Welcome to the Future of Global Payments</h1>
+              <p className="text-sm text-gray-500 dark:text-gray-300">Protocol Bank: Your SWIFT alternative for seamless cross-border transactions.</p>
             </div>
             <Button 
               variant="ghost" 
@@ -231,13 +231,13 @@ function App() {
             <Card className="border border-gray-100 shadow-sm">
               <CardContent className="p-6">
                 <div className="flex justify-between items-start mb-4">
-                  <div className="text-xs font-medium text-gray-500 uppercase tracking-wide">Total Balance</div>
+                  <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Total Balance</div>
                   <MoreHorizontal className="h-4 w-4 text-gray-400" />
                 </div>
-                <div className="text-3xl font-light text-gray-900 mb-2">
+                <div className="text-3xl font-light text-gray-900 dark:text-white mb-2">
                   {balanceVisible ? '$125,847.32' : '••••••••'}
                 </div>
-                <div className="flex items-center text-xs text-gray-500">
+                <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
                   <TrendingUp className="h-3 w-3 mr-1" />
                   +12.5% this month
                 </div>
@@ -248,10 +248,10 @@ function App() {
             <Card className="border border-gray-100 shadow-sm">
               <CardContent className="p-6">
                 <div className="flex justify-between items-start mb-4">
-                  <div className="text-xs font-medium text-gray-500 uppercase tracking-wide">Crypto Assets</div>
+                  <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Crypto Assets</div>
                   <MoreHorizontal className="h-4 w-4 text-gray-400" />
                 </div>
-                <div className="text-2xl font-light text-gray-900 mb-2">
+                <div className="text-2xl font-light text-gray-900 dark:text-white mb-2">
                   {balanceVisible ? '$89,234.56' : '••••••••'}
                 </div>
                 <div className="flex items-center text-xs text-green-600">
@@ -265,13 +265,13 @@ function App() {
             <Card className="border border-gray-100 shadow-sm">
               <CardContent className="p-6">
                 <div className="flex justify-between items-start mb-4">
-                  <div className="text-xs font-medium text-gray-500 uppercase tracking-wide">Fiat Accounts</div>
+                  <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Fiat Accounts</div>
                   <MoreHorizontal className="h-4 w-4 text-gray-400" />
                 </div>
-                <div className="text-2xl font-light text-gray-900 mb-2">
+                <div className="text-2xl font-light text-gray-900 dark:text-white mb-2">
                   {balanceVisible ? '$36,612.76' : '••••••••'}
                 </div>
-                <div className="flex items-center text-xs text-gray-500">
+                <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
                   <span className="w-2 h-2 bg-gray-400 rounded-full mr-1"></span>
                   3 accounts
                 </div>
@@ -316,8 +316,8 @@ function App() {
             {/* Recent Activity */}
             <Card className="border border-gray-100 shadow-sm">
               <CardContent className="p-6">
-                <h3 className="text-base font-medium text-gray-900 mb-1">Recent Activity</h3>
-                <p className="text-sm text-gray-500 mb-6">Your latest transactions</p>
+                <h3 className="text-base font-medium text-gray-900 dark:text-white mb-1">Recent Activity</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Your latest transactions</p>
                 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
@@ -326,8 +326,8 @@ function App() {
                         <ArrowDownLeft className="h-5 w-5 text-green-600" />
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-900">Payment received</p>
-                        <p className="text-xs text-gray-500">From ABC Company</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">Payment received</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">From ABC Company</p>
                       </div>
                     </div>
                     <div className="text-right">
@@ -342,12 +342,12 @@ function App() {
                         <ArrowUpRight className="h-5 w-5 text-gray-600" />
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-900">DeFi Investment</p>
-                        <p className="text-xs text-gray-500">Solana Liquidity Pool</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">DeFi Investment</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Solana Liquidity Pool</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-medium text-gray-900">-$1,000.00</p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">-$1,000.00</p>
                       <p className="text-xs text-gray-500">Yesterday</p>
                     </div>
                   </div>
@@ -358,12 +358,12 @@ function App() {
                         <Send className="h-5 w-5 text-gray-600" />
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-900">Vendor Payment</p>
-                        <p className="text-xs text-gray-500">Auto Insurance</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">Vendor Payment</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Auto Insurance</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-medium text-gray-900">-$3,200.00</p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">-$3,200.00</p>
                       <p className="text-xs text-gray-500">2 days ago</p>
                     </div>
                   </div>
@@ -374,8 +374,8 @@ function App() {
             {/* Portfolio */}
             <Card className="border border-gray-100 shadow-sm">
               <CardContent className="p-6">
-                <h3 className="text-base font-medium text-gray-900 mb-1">Portfolio</h3>
-                <p className="text-sm text-gray-500 mb-6">Investment performance overview</p>
+                <h3 className="text-base font-medium text-gray-900 dark:text-white mb-1">Portfolio</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Investment performance overview</p>
                 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between py-3">
@@ -384,11 +384,11 @@ function App() {
                         <div className="w-4 h-4 bg-purple-500 rounded-full"></div>
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-900">Solana (SOL)</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">Solana (SOL)</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-medium text-gray-900">$4,234.56</p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">$4,234.56</p>
                       <p className="text-xs text-green-600">+15.2%</p>
                     </div>
                   </div>
@@ -399,11 +399,11 @@ function App() {
                         <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-900">Ethereum (ETH)</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">Ethereum (ETH)</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-medium text-gray-900">$12,567.89</p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">$12,567.89</p>
                       <p className="text-xs text-green-600">+8.7%</p>
                     </div>
                   </div>
@@ -414,11 +414,11 @@ function App() {
                         <div className="w-4 h-4 bg-gray-500 rounded-full"></div>
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-900">USDC Stablecoin</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">USDC Stablecoin</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-medium text-gray-900">$25,000.00</p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">$25,000.00</p>
                       <p className="text-xs text-gray-500">+0.1%</p>
                     </div>
                   </div>
