@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart3, TrendingUp, PieChart, Download, Calendar, DollarSign } from 'lucide-react';
+import { BarChart3, TrendingUp, PieChart, Download, Calendar, DollarSign, TestTube2 } from 'lucide-react';
+import PaymentNetworkGraph from '../components/PaymentNetworkGraph';
 
 const DataAnalytics = () => {
   const [timeRange, setTimeRange] = useState('month'); // day, week, month, year
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [analyticsData, setAnalyticsData] = useState(null);
+  const [testMode, setTestMode] = useState(true); // Enable test mode by default
 
   // 模拟数据生成
   useEffect(() => {
@@ -38,10 +40,14 @@ const DataAnalytics = () => {
       category: categories[Math.floor(Math.random() * categories.length)]
     })).sort((a, b) => b.amount - a.amount);
 
+    // Generate network graph data
+    const networkData = generateNetworkData(topSuppliers);
+
     setAnalyticsData({
       timeSeriesData,
       categoryDistribution,
       topSuppliers,
+      networkData,
       summary: {
         totalAmount: totalAmount,
         totalTransactions: categoryDistribution.reduce((sum, item) => sum + item.count, 0),
@@ -61,6 +67,52 @@ const DataAnalytics = () => {
       amount: Math.random() * 5000 + 1000,
       transactions: Math.floor(Math.random() * 20) + 5
     }));
+  };
+
+  const generateNetworkData = (suppliers) => {
+    const categoryColors = {
+      'Technology': '#3b82f6',
+      'Marketing': '#ef4444',
+      'Cloud Services': '#8b5cf6',
+      'Logistics': '#f59e0b',
+      'Design': '#ec4899',
+      'Consulting': '#10b981'
+    };
+
+    // Create central node (company)
+    const nodes = [
+      {
+        id: 'company',
+        label: 'Your Company',
+        type: 'company',
+        size: 30,
+        color: '#6366f1',
+        amount: 0,
+        transactions: 0
+      }
+    ];
+
+    // Create supplier nodes
+    suppliers.slice(0, 8).forEach((supplier, i) => {
+      nodes.push({
+        id: `supplier-${i}`,
+        label: supplier.name,
+        type: 'supplier',
+        size: Math.max(15, Math.min(25, supplier.amount / 1000)),
+        color: categoryColors[supplier.category] || '#6b7280',
+        amount: supplier.amount,
+        transactions: supplier.transactions
+      });
+    });
+
+    // Create links between company and suppliers
+    const links = suppliers.slice(0, 8).map((supplier, i) => ({
+      source: 'company',
+      target: `supplier-${i}`,
+      value: supplier.amount
+    }));
+
+    return { nodes, links };
   };
 
   const handleExportData = (format) => {
@@ -194,6 +246,17 @@ const DataAnalytics = () => {
 
         <div className="flex gap-2">
           <button
+            onClick={() => setTestMode(!testMode)}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${
+              testMode
+                ? 'bg-purple-500 text-white hover:bg-purple-600'
+                : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700'
+            }`}
+          >
+            <TestTube2 size={18} />
+            {testMode ? 'Exit Test Mode' : 'Test Mode'}
+          </button>
+          <button
             onClick={() => handleExportData('CSV')}
             className="px-4 py-2 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition-colors flex items-center gap-2"
           >
@@ -259,25 +322,20 @@ const DataAnalytics = () => {
 
       {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {/* Payment Trend Chart */}
+        {/* Payment Network Graph */}
         <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Payment Trend</h2>
-          <div className="h-64 flex items-end justify-between gap-2">
-            {analyticsData.timeSeriesData.map((data, index) => {
-              const maxAmount = Math.max(...analyticsData.timeSeriesData.map(d => d.amount));
-              const height = (data.amount / maxAmount) * 100;
-              return (
-                <div key={index} className="flex-1 flex flex-col items-center">
-                  <div className="w-full bg-blue-500 rounded-t-lg hover:bg-blue-600 transition-colors cursor-pointer relative group"
-                       style={{ height: `${height}%` }}>
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
-                      ${data.amount.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-                    </div>
-                  </div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">{data.label}</p>
-                </div>
-              );
-            })}
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Payment Network</h2>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            Interactive network visualization of payment relationships
+          </p>
+          <div className="h-96">
+            {analyticsData.networkData && (
+              <PaymentNetworkGraph 
+                data={analyticsData.networkData} 
+                width={600} 
+                height={384} 
+              />
+            )}
           </div>
         </div>
 
