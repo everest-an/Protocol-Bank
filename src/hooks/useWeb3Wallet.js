@@ -40,10 +40,10 @@ export function useWeb3Wallet() {
       setSigner(web3Signer)
       setChainId(Number(network.chainId))
 
-      console.log('Wallet connected:', accounts[0])
-      console.log('Chain ID:', Number(network.chainId))
+      // console.log('Wallet connected:', accounts[0])
+      // console.log('Chain ID:', Number(network.chainId))
     } catch (err) {
-      console.error('Error connecting wallet:', err)
+      // console.error('Error connecting wallet:', err)
       setError(err.message)
     } finally {
       setIsConnecting(false)
@@ -92,11 +92,11 @@ export function useWeb3Wallet() {
             ]
           })
         } catch (addError) {
-          console.error('Error adding Sepolia network:', addError)
+          // console.error('Error adding Sepolia network:', addError)
           setError(addError.message)
         }
       } else {
-        console.error('Error switching to Sepolia:', err)
+        // console.error('Error switching to Sepolia:', err)
         setError(err.message)
       }
     }
@@ -148,7 +148,7 @@ export function useWeb3Wallet() {
           await connect()
         }
       } catch (err) {
-        console.error('Error checking connection:', err)
+        // console.error('Error checking connection:', err)
       }
     }
 

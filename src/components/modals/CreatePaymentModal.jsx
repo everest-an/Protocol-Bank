@@ -41,7 +41,7 @@ export default function CreatePaymentModal({ onClose, onCreate, suppliers = [] }
       await onCreate(formData);
       onClose();
     } catch (err) {
-      console.error('Error creating payment:', err);
+      // console.error('Error creating payment:', err);
       setError(err.message || 'Failed to create payment');
     } finally {
       setLoading(false);

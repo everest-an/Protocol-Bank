@@ -54,7 +54,7 @@ export default function ENSInput({
             }
           }
         } catch (err) {
-          console.error('Error resolving ENS:', err);
+          // console.error('Error resolving ENS:', err);
           setResolvedAddress(null);
           setError('Failed to resolve ENS name');
           if (onResolvedAddress) {

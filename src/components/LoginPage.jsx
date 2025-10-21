@@ -38,7 +38,7 @@ export default function LoginPage({ onLogin }) {
         })
       }
     } catch (err) {
-      console.error('MetaMask connection error:', err)
+      // console.error('MetaMask connection error:', err)
       if (err.code === 4001) {
         setError('Connection request rejected. Please try again.')
       } else {

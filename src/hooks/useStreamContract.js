@@ -42,7 +42,7 @@ export function useStreamContract(signer, provider) {
         await tx.wait();
         return tx.hash;
       } catch (error) {
-        console.error('注册供应商失败:', error);
+        // console.error('注册供应商失败:', error);
         throw error;
       } finally {
         setLoading(false);
@@ -64,7 +64,7 @@ export function useStreamContract(signer, provider) {
         await tx.wait();
         return tx.hash;
       } catch (error) {
-        console.error('创建支付失败:', error);
+        // console.error('创建支付失败:', error);
         throw error;
       } finally {
         setLoading(false);
@@ -81,7 +81,7 @@ export function useStreamContract(signer, provider) {
       const addresses = await contract.getSuppliers();
       return addresses;
     } catch (error) {
-      console.error('获取供应商列表失败:', error);
+      // console.error('获取供应商列表失败:', error);
       return [];
     }
   }, [contract]);
@@ -103,7 +103,7 @@ export function useStreamContract(signer, provider) {
           isActive: supplier.isActive,
         };
       } catch (error) {
-        console.error('获取供应商信息失败:', error);
+        // console.error('获取供应商信息失败:', error);
         return null;
       }
     },
@@ -126,7 +126,7 @@ export function useStreamContract(signer, provider) {
         status: ['Pending', 'Completed', 'Failed'][Number(p.status)],
       }));
     } catch (error) {
-      console.error('获取支付记录失败:', error);
+      // console.error('获取支付记录失败:', error);
       return [];
     }
   }, [contract]);
@@ -151,7 +151,7 @@ export function useStreamContract(signer, provider) {
         averagePayment: ethers.formatEther(stats.averagePayment),
       };
     } catch (error) {
-      console.error('获取统计数据失败:', error);
+      // console.error('获取统计数据失败:', error);
       return {
         totalPayments: 0,
         totalAmount: '0',

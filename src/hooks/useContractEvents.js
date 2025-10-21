@@ -16,7 +16,7 @@ export function useContractEvents(contract, onEvent) {
 
     // Listen for SupplierRegistered events
     const handleSupplierRegistered = (wallet, name, brand, category, event) => {
-      console.log('🎉 New supplier registered:', { wallet, name, brand, category });
+      // console.log('🎉 New supplier registered:', { wallet, name, brand, category });
       onEvent?.({
         type: 'SupplierRegistered',
         data: { wallet, name, brand, category },
@@ -26,14 +26,14 @@ export function useContractEvents(contract, onEvent) {
 
     // Listen for PaymentCreated events
     const handlePaymentCreated = (id, from, to, amount, category, timestamp, event) => {
-      console.log('💸 New payment created:', {
-        id: Number(id),
-        from,
-        to,
-        amount: ethers.formatEther(amount),
-        category,
-        timestamp: Number(timestamp),
-      });
+      // console.log('💸 New payment created:', {
+      //   id: Number(id),
+      //   from,
+      //   to,
+      //   amount: ethers.formatEther(amount),
+      //   category,
+      //   timestamp: Number(timestamp),
+      // });
       onEvent?.({
         type: 'PaymentCreated',
         data: {
@@ -50,10 +50,10 @@ export function useContractEvents(contract, onEvent) {
 
     // Listen for PaymentStatusUpdated events
     const handlePaymentStatusUpdated = (id, status, event) => {
-      console.log('🔄 Payment status updated:', {
-        id: Number(id),
-        status: ['Pending', 'Completed', 'Failed'][Number(status)],
-      });
+      // console.log('🔄 Payment status updated:', {
+      //   id: Number(id),
+      //   status: ['Pending', 'Completed', 'Failed'][Number(status)],
+      // });
       onEvent?.({
         type: 'PaymentStatusUpdated',
         data: {

@@ -74,7 +74,7 @@ export default function FlowPaymentStakePage({ walletAddress }) {
           setUserRole('staker') // Default to staker for new users
         }
       } catch (err) {
-        console.error('Error detecting role:', err)
+        // console.error('Error detecting role:', err)
       }
     }
 
@@ -100,7 +100,7 @@ export default function FlowPaymentStakePage({ walletAddress }) {
         const pmts = await getPoolPayments(selectedPoolId)
         setPayments(pmts)
       } catch (err) {
-        console.error('Error loading pool data:', err)
+        // console.error('Error loading pool data:', err)
       } finally {
         setRefreshing(false)
       }
@@ -121,7 +121,7 @@ export default function FlowPaymentStakePage({ walletAddress }) {
         setSelectedPoolId(parseInt(result.poolId))
       }
     } catch (err) {
-      console.error('Error creating pool:', err)
+      // console.error('Error creating pool:', err)
       alert('Failed to create pool: ' + err.message)
     }
   }
@@ -137,7 +137,7 @@ export default function FlowPaymentStakePage({ walletAddress }) {
       const balance = await getAvailableBalance(selectedPoolId)
       setAvailableBalance(balance)
     } catch (err) {
-      console.error('Error staking funds:', err)
+      // console.error('Error staking funds:', err)
       alert('Failed to stake funds: ' + err.message)
     }
   }
@@ -151,7 +151,7 @@ export default function FlowPaymentStakePage({ walletAddress }) {
       const wl = await getWhitelist(selectedPoolId)
       setWhitelist(wl)
     } catch (err) {
-      console.error('Error adding to whitelist:', err)
+      // console.error('Error adding to whitelist:', err)
       alert('Failed to add to whitelist: ' + err.message)
     }
   }
@@ -164,7 +164,7 @@ export default function FlowPaymentStakePage({ walletAddress }) {
       const wl = await getWhitelist(selectedPoolId)
       setWhitelist(wl)
     } catch (err) {
-      console.error('Error approving whitelist:', err)
+      // console.error('Error approving whitelist:', err)
       alert('Failed to approve whitelist: ' + err.message)
     }
   }
@@ -182,7 +182,7 @@ export default function FlowPaymentStakePage({ walletAddress }) {
       const pmts = await getPoolPayments(selectedPoolId)
       setPayments(pmts)
     } catch (err) {
-      console.error('Error executing payment:', err)
+      // console.error('Error executing payment:', err)
       alert('Failed to execute payment: ' + err.message)
     }
   }
@@ -202,7 +202,7 @@ export default function FlowPaymentStakePage({ walletAddress }) {
       const pmts = await getPoolPayments(selectedPoolId)
       setPayments(pmts)
     } catch (err) {
-      console.error('Error refreshing data:', err)
+      // console.error('Error refreshing data:', err)
     } finally {
       setRefreshing(false)
     }

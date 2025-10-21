@@ -60,7 +60,7 @@ function App() {
     
     // Show welcome message for new wallets
     if (loginData.isNewWallet) {
-      console.log('New wallet created:', loginData.address)
+      // console.log('New wallet created:', loginData.address)
     }
   }
 
@@ -75,7 +75,7 @@ function App() {
           setWalletAddress(userData.address)
           setUserInfo(userData)
         } catch (error) {
-          console.error('Error loading saved user:', error)
+          // console.error('Error loading saved user:', error)
           localStorage.removeItem('protocolbank_user')
         }
       }
@@ -89,7 +89,7 @@ function App() {
             setUserInfo({ address: accounts[0], method: 'metamask' })
           }
         } catch (error) {
-          console.error('Error checking wallet connection:', error)
+          // console.error('Error checking wallet connection:', error)
         }
       }
     }

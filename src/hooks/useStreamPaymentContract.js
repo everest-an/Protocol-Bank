@@ -29,7 +29,7 @@ export function useStreamPaymentContract(signer, contractAddress) {
         )
         setContract(contractInstance)
       } catch (err) {
-        console.error('Error initializing contract:', err)
+        // console.error('Error initializing contract:', err)
         setError(err.message)
       }
     }
@@ -47,14 +47,14 @@ export function useStreamPaymentContract(signer, contractAddress) {
       setError(null)
 
       const tx = await contract.registerSupplier(name, brand, category, profitMargin)
-      console.log('Transaction sent:', tx.hash)
+      // console.log('Transaction sent:', tx.hash)
 
       const receipt = await tx.wait()
-      console.log('Transaction confirmed:', receipt)
+      // console.log('Transaction confirmed:', receipt)
 
       return receipt
     } catch (err) {
-      console.error('Error registering supplier:', err)
+      // console.error('Error registering supplier:', err)
       setError(err.message)
       return null
     } finally {
@@ -75,14 +75,14 @@ export function useStreamPaymentContract(signer, contractAddress) {
 
       const amount = ethers.parseEther(amountInEth.toString())
       const tx = await contract.createPayment(toAddress, category, { value: amount })
-      console.log('Payment transaction sent:', tx.hash)
+      // console.log('Payment transaction sent:', tx.hash)
 
       const receipt = await tx.wait()
-      console.log('Payment confirmed:', receipt)
+      // console.log('Payment confirmed:', receipt)
 
       return receipt
     } catch (err) {
-      console.error('Error creating payment:', err)
+      // console.error('Error creating payment:', err)
       setError(err.message)
       return null
     } finally {
@@ -106,7 +106,7 @@ export function useStreamPaymentContract(signer, contractAddress) {
         isActive: supplier.isActive
       }
     } catch (err) {
-      console.error('Error getting supplier:', err)
+      // console.error('Error getting supplier:', err)
       return null
     }
   }, [contract])
@@ -129,7 +129,7 @@ export function useStreamPaymentContract(signer, contractAddress) {
 
       return suppliers.filter(s => s !== null)
     } catch (err) {
-      console.error('Error getting suppliers:', err)
+      // console.error('Error getting suppliers:', err)
       setError(err.message)
       return []
     } finally {
@@ -155,7 +155,7 @@ export function useStreamPaymentContract(signer, contractAddress) {
         timestamp: new Date(Number(p.timestamp) * 1000).toISOString()
       }))
     } catch (err) {
-      console.error('Error getting payments:', err)
+      // console.error('Error getting payments:', err)
       setError(err.message)
       return []
     } finally {
@@ -177,7 +177,7 @@ export function useStreamPaymentContract(signer, contractAddress) {
         averagePayment: ethers.formatEther(stats.averagePayment)
       }
     } catch (err) {
-      console.error('Error getting statistics:', err)
+      // console.error('Error getting statistics:', err)
       setError(err.message)
       return null
     }
@@ -191,12 +191,12 @@ export function useStreamPaymentContract(signer, contractAddress) {
     const paymentFilter = contract.filters.PaymentCreated()
 
     contract.on(supplierFilter, (supplier, name, brand, event) => {
-      console.log('Supplier registered:', { supplier, name, brand })
+      // console.log('Supplier registered:', { supplier, name, brand })
       if (onSupplierRegistered) onSupplierRegistered({ supplier, name, brand, event })
     })
 
     contract.on(paymentFilter, (paymentId, from, to, amount, category, event) => {
-      console.log('Payment created:', { paymentId, from, to, amount, category })
+      // console.log('Payment created:', { paymentId, from, to, amount, category })
       if (onPaymentCreated) onPaymentCreated({ paymentId, from, to, amount, category, event })
     })
 

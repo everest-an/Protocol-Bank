@@ -27,7 +27,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
         })
         onClose()
       } catch (error) {
-        console.error('MetaMask login error:', error)
+        // console.error('MetaMask login error:', error)
         setError('Failed to connect MetaMask. Please try again.')
       } finally {
         setIsLoading(false)
@@ -57,7 +57,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
       setLoginMethod('mnemonic')
       
     } catch (error) {
-      console.error('Alipay login error:', error)
+      // console.error('Alipay login error:', error)
       setError('Failed to generate wallet. Please try again.')
     } finally {
       setIsLoading(false)
@@ -92,7 +92,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
       setLoginMethod('mnemonic')
       
     } catch (error) {
-      console.error('Email login error:', error)
+      // console.error('Email login error:', error)
       setError('Failed to generate wallet. Please try again.')
     } finally {
       setIsLoading(false)

@@ -68,7 +68,7 @@ export function useExchangeRates() {
       setLastUpdated(new Date());
       setLoading(false);
     } catch (err) {
-      console.error('Error fetching exchange rates:', err);
+      // console.error('Error fetching exchange rates:', err);
       setError(err.message);
       setLoading(false);
       

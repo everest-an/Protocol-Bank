@@ -84,7 +84,7 @@ export default function PaymentVisualizationPage() {
       const paymentsData = await getPayments();
       setPayments(paymentsData);
     } catch (error) {
-      console.error('加载数据失败:', error);
+      // console.error('加载数据失败:', error);
     } finally {
       setLoading(false);
     }
@@ -93,7 +93,7 @@ export default function PaymentVisualizationPage() {
   // 实时事件监听
   const handleContractEvent = useCallback(
     (event) => {
-      console.log('Contract event received:', event);
+      // console.log('Contract event received:', event);
       addNotification({
         type: 'success',
         eventType: event.type,
@@ -127,7 +127,7 @@ export default function PaymentVisualizationPage() {
       await loadData();
       return true;
     } catch (error) {
-      console.error('注册供应商失败:', error);
+      // console.error('注册供应商失败:', error);
       throw error;
     }
   };
@@ -140,7 +140,7 @@ export default function PaymentVisualizationPage() {
       await loadData();
       return true;
     } catch (error) {
-      console.error('创建支付失败:', error);
+      // console.error('创建支付失败:', error);
       throw error;
     }
   };

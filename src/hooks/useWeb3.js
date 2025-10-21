@@ -35,7 +35,7 @@ export function useWeb3() {
       setAccount(accounts[0]);
       setChainId(Number(network.chainId));
     } catch (err) {
-      console.error('连接钱包失败:', err);
+      // console.error('连接钱包失败:', err);
       setError(err.message);
     } finally {
       setIsConnecting(false);
@@ -80,11 +80,11 @@ export function useWeb3() {
             ],
           });
         } catch (addError) {
-          console.error('添加网络失败:', addError);
+          // console.error('添加网络失败:', addError);
           setError(addError.message);
         }
       } else {
-        console.error('切换网络失败:', err);
+        // console.error('切换网络失败:', err);
         setError(err.message);
       }
     }
@@ -138,7 +138,7 @@ export function useWeb3() {
           setChainId(Number(network.chainId));
         }
       } catch (err) {
-        console.error('检查连接状态失败:', err);
+        // console.error('检查连接状态失败:', err);
       }
     };
 

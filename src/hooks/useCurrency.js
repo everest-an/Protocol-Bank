@@ -39,7 +39,7 @@ export function useCurrency() {
       await new Promise(resolve => setTimeout(resolve, 500));
       setRates(MOCK_RATES);
     } catch (error) {
-      console.error('Failed to fetch rates:', error);
+      // console.error('Failed to fetch rates:', error);
     } finally {
       setLoading(false);
     }

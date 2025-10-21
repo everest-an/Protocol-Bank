@@ -21,7 +21,7 @@ export async function resolveENSName(ensName, provider) {
     const address = await provider.resolveName(ensName);
     return address;
   } catch (error) {
-    console.error('Error resolving ENS name:', error);
+    // console.error('Error resolving ENS name:', error);
     return null;
   }
 }
@@ -42,7 +42,7 @@ export async function reverseResolveENS(address, provider) {
     const ensName = await provider.lookupAddress(address);
     return ensName;
   } catch (error) {
-    console.error('Error reverse resolving ENS:', error);
+    // console.error('Error reverse resolving ENS:', error);
     return null;
   }
 }
@@ -108,7 +108,7 @@ export async function formatAddressWithENS(address, provider) {
       return ensName;
     }
   } catch (error) {
-    console.error('Error formatting address with ENS:', error);
+    // console.error('Error formatting address with ENS:', error);
   }
 
   // Fallback to shortened address
@@ -177,7 +177,7 @@ export async function getENSAvatar(ensName, provider) {
     const avatar = await resolver.getText('avatar');
     return avatar;
   } catch (error) {
-    console.error('Error getting ENS avatar:', error);
+    // console.error('Error getting ENS avatar:', error);
     return null;
   }
 }
@@ -203,7 +203,7 @@ export async function getENSTextRecord(ensName, key, provider) {
     const value = await resolver.getText(key);
     return value;
   } catch (error) {
-    console.error(`Error getting ENS text record '${key}':`, error);
+    // console.error(`Error getting ENS text record '${key}':`, error);
     return null;
   }
 }

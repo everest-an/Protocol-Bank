@@ -88,7 +88,7 @@ export default function FlowPaymentVisualization() {
         averagePayment: '0',
       });
     } catch (error) {
-      console.error('Failed to load data:', error);
+      // console.error('Failed to load data:', error);
       addNotification({
         type: 'error',
         title: 'Load Failed',
@@ -144,7 +144,7 @@ export default function FlowPaymentVisualization() {
       setShowRegisterModal(false);
       loadData();
     } catch (error) {
-      console.error('Failed to register supplier:', error);
+      // console.error('Failed to register supplier:', error);
       addNotification({
         type: 'error',
         title: 'Registration Failed',
@@ -164,7 +164,7 @@ export default function FlowPaymentVisualization() {
       setShowPaymentModal(false);
       loadData();
     } catch (error) {
-      console.error('Failed to create payment:', error);
+      // console.error('Failed to create payment:', error);
       addNotification({
         type: 'error',
         title: 'Payment Failed',

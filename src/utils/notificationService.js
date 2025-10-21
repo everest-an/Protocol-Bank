@@ -208,7 +208,7 @@ class NotificationService {
     try {
       localStorage.setItem('protocol_bank_notifications', JSON.stringify(this.notifications));
     } catch (error) {
-      console.error('Error saving notifications:', error);
+      // console.error('Error saving notifications:', error);
     }
   }
 
@@ -223,7 +223,7 @@ class NotificationService {
         this.notifyListeners();
       }
     } catch (error) {
-      console.error('Error loading notifications:', error);
+      // console.error('Error loading notifications:', error);
     }
   }
 

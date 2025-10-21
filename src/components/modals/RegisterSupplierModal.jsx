@@ -42,7 +42,7 @@ export default function RegisterSupplierModal({ onClose, onRegister }) {
       await onRegister(formData);
       onClose();
     } catch (err) {
-      console.error('Error registering supplier:', err);
+      // console.error('Error registering supplier:', err);
       setError(err.message || 'Failed to register supplier');
     } finally {
       setLoading(false);

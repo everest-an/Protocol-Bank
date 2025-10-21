@@ -31,7 +31,7 @@ export function useStakeContract(walletAddress) {
         setSigner(ethSigner)
         setContract(contractInstance)
       } catch (err) {
-        console.error('Error initializing contract:', err)
+        // console.error('Error initializing contract:', err)
         setError(err.message)
       }
     }
@@ -74,7 +74,7 @@ export function useStakeContract(walletAddress) {
       setLoading(false)
       return { success: true, receipt, poolId }
     } catch (err) {
-      console.error('Error creating pool:', err)
+      // console.error('Error creating pool:', err)
       setError(err.message)
       setLoading(false)
       throw err
@@ -97,7 +97,7 @@ export function useStakeContract(walletAddress) {
       setLoading(false)
       return { success: true, receipt }
     } catch (err) {
-      console.error('Error staking funds:', err)
+      // console.error('Error staking funds:', err)
       setError(err.message)
       setLoading(false)
       throw err
@@ -117,7 +117,7 @@ export function useStakeContract(walletAddress) {
       setLoading(false)
       return { success: true, receipt }
     } catch (err) {
-      console.error('Error adding to whitelist:', err)
+      // console.error('Error adding to whitelist:', err)
       setError(err.message)
       setLoading(false)
       throw err
@@ -137,7 +137,7 @@ export function useStakeContract(walletAddress) {
       setLoading(false)
       return { success: true, receipt }
     } catch (err) {
-      console.error('Error approving whitelist:', err)
+      // console.error('Error approving whitelist:', err)
       setError(err.message)
       setLoading(false)
       throw err
@@ -163,7 +163,7 @@ export function useStakeContract(walletAddress) {
       setLoading(false)
       return { success: true, receipt }
     } catch (err) {
-      console.error('Error executing payment:', err)
+      // console.error('Error executing payment:', err)
       setError(err.message)
       setLoading(false)
       throw err
@@ -187,7 +187,7 @@ export function useStakeContract(walletAddress) {
       setLoading(false)
       return { success: true, receipt }
     } catch (err) {
-      console.error('Error releasing funds:', err)
+      // console.error('Error releasing funds:', err)
       setError(err.message)
       setLoading(false)
       throw err
@@ -207,7 +207,7 @@ export function useStakeContract(walletAddress) {
       setLoading(false)
       return { success: true, receipt }
     } catch (err) {
-      console.error('Error closing pool:', err)
+      // console.error('Error closing pool:', err)
       setError(err.message)
       setLoading(false)
       throw err
@@ -230,7 +230,7 @@ export function useStakeContract(walletAddress) {
         createdAt: Number(pool.createdAt)
       }
     } catch (err) {
-      console.error('Error getting pool:', err)
+      // console.error('Error getting pool:', err)
       throw err
     }
   }, [contract])
@@ -243,7 +243,7 @@ export function useStakeContract(walletAddress) {
       const balance = await contract.getAvailableBalance(poolId)
       return ethers.formatEther(balance)
     } catch (err) {
-      console.error('Error getting available balance:', err)
+      // console.error('Error getting available balance:', err)
       throw err
     }
   }, [contract])
@@ -262,7 +262,7 @@ export function useStakeContract(walletAddress) {
         approvedAt: Number(entry.approvedAt)
       }))
     } catch (err) {
-      console.error('Error getting whitelist:', err)
+      // console.error('Error getting whitelist:', err)
       throw err
     }
   }, [contract])
@@ -283,7 +283,7 @@ export function useStakeContract(walletAddress) {
         txHash: payment.txHash
       }))
     } catch (err) {
-      console.error('Error getting pool payments:', err)
+      // console.error('Error getting pool payments:', err)
       throw err
     }
   }, [contract])
@@ -296,7 +296,7 @@ export function useStakeContract(walletAddress) {
       const poolIds = await contract.getCompanyPools(companyAddress)
       return poolIds.map(id => Number(id))
     } catch (err) {
-      console.error('Error getting company pools:', err)
+      // console.error('Error getting company pools:', err)
       throw err
     }
   }, [contract])
@@ -309,7 +309,7 @@ export function useStakeContract(walletAddress) {
       const poolIds = await contract.getStakerPools(stakerAddress)
       return poolIds.map(id => Number(id))
     } catch (err) {
-      console.error('Error getting staker pools:', err)
+      // console.error('Error getting staker pools:', err)
       throw err
     }
   }, [contract])
