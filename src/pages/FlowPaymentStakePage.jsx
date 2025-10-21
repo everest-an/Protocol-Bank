@@ -15,15 +15,19 @@ import ExecutePaymentModal from '../components/stake/ExecutePaymentModal'
 import StakeFundsModal from '../components/stake/StakeFundsModal'
 
 export default function FlowPaymentStakePage({ walletAddress }) {
-  const [testMode, setTestMode] = useState(!walletAddress) // Auto-enable if no wallet
-  const [mockData, setMockData] = useState(null)
-  const [userRole, setUserRole] = useState(null) // 'staker' or 'company'
+  // Always enable test mode when no wallet
+  const testMode = !walletAddress
+  
+  // Initialize mock data immediately if in test mode
+  const mockData = testMode ? generateStakeMockData() : null
+  
+  const [userRole, setUserRole] = useState(testMode ? 'staker' : null)
   const [userPools, setUserPools] = useState([])
-  const [selectedPoolId, setSelectedPoolId] = useState(null)
-  const [poolData, setPoolData] = useState(null)
-  const [whitelist, setWhitelist] = useState([])
-  const [payments, setPayments] = useState([])
-  const [availableBalance, setAvailableBalance] = useState('0')
+  const [selectedPoolId, setSelectedPoolId] = useState(testMode ? 1 : null)
+  const [poolData, setPoolData] = useState(testMode ? mockData?.poolData : null)
+  const [whitelist, setWhitelist] = useState(testMode ? mockData?.whitelist : [])
+  const [payments, setPayments] = useState(testMode ? mockData?.payments : [])
+  const [availableBalance, setAvailableBalance] = useState(testMode ? mockData?.poolData?.availableBalance : '0')
   const [refreshing, setRefreshing] = useState(false)
 
   // Modals
@@ -48,20 +52,6 @@ export default function FlowPaymentStakePage({ walletAddress }) {
     getCompanyPools,
     getStakerPools
   } = useStakeContract(walletAddress)
-
-  // Generate mock data in test mode
-  useEffect(() => {
-    if (testMode) {
-      const data = generateStakeMockData()
-      setMockData(data)
-      setUserRole('staker') // Default to staker view
-      setSelectedPoolId(1)
-      setPoolData(data.poolData)
-      setWhitelist(data.whitelist)
-      setPayments(data.payments)
-      setAvailableBalance(data.poolData.availableBalance)
-    }
-  }, [testMode])
 
   // Detect user role and load pools
   useEffect(() => {
@@ -224,15 +214,6 @@ export default function FlowPaymentStakePage({ walletAddress }) {
       setRefreshing(false)
     }
   }
-
-  // Update testMode when wallet connection changes
-  useEffect(() => {
-    if (!walletAddress) {
-      setTestMode(true)
-    } else {
-      setTestMode(false)
-    }
-  }, [walletAddress])
 
   return (
     <div className="space-y-6">
