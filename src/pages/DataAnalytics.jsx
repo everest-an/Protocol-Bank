@@ -64,9 +64,64 @@ const DataAnalytics = () => {
   };
 
   const handleExportData = (format) => {
-    console.log(`Exporting data as ${format}`);
-    // TODO: Implement actual export functionality
-    alert(`Export as ${format} - Coming soon!`);
+    if (format === 'csv') {
+      exportToCSV();
+    } else if (format === 'pdf') {
+      alert('PDF export - Coming soon!');
+    }
+  };
+
+  const exportToCSV = () => {
+    if (!analyticsData) return;
+
+    // 准备 CSV 数据
+    let csvContent = '';
+
+    // 添加摘要信息
+    csvContent += 'Summary\n';
+    csvContent += `Total Amount,$${analyticsData.summary.totalAmount.toFixed(2)}\n`;
+    csvContent += `Total Transactions,${analyticsData.summary.totalTransactions}\n`;
+    csvContent += `Average Transaction,$${analyticsData.summary.averageTransaction.toFixed(2)}\n`;
+    csvContent += `Top Category,${analyticsData.summary.topCategory}\n`;
+    csvContent += `Time Range,${timeRange}\n`;
+    csvContent += `Export Date,${new Date().toLocaleString()}\n\n`;
+
+    // 添加分类分布
+    csvContent += 'Category Distribution\n';
+    csvContent += 'Category,Amount,Transactions,Percentage\n';
+    analyticsData.categoryDistribution.forEach(cat => {
+      csvContent += `${cat.category},$${cat.amount.toFixed(2)},${cat.count},${cat.percentage}%\n`;
+    });
+    csvContent += '\n';
+
+    // 添加供应商排行
+    csvContent += 'Top Suppliers\n';
+    csvContent += 'Rank,Supplier,Category,Amount,Transactions,Average Payment\n';
+    analyticsData.topSuppliers.forEach((supplier, index) => {
+      const avgPayment = supplier.amount / supplier.transactions;
+      csvContent += `${index + 1},${supplier.name},${supplier.category},$${supplier.amount.toFixed(2)},${supplier.transactions},$${avgPayment.toFixed(2)}\n`;
+    });
+    csvContent += '\n';
+
+    // 添加时间序列数据
+    csvContent += 'Payment Trend\n';
+    csvContent += 'Period,Amount,Transactions\n';
+    analyticsData.timeSeriesData.forEach(data => {
+      csvContent += `${data.label},$${data.amount.toFixed(2)},${data.transactions}\n`;
+    });
+
+    // 创建并下载 CSV 文件
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `analytics_${timeRange}_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    alert('CSV file downloaded successfully!');
   };
 
   if (!analyticsData) {
