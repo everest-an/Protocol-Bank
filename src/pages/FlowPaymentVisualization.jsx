@@ -50,12 +50,27 @@ export default function FlowPaymentVisualization() {
   });
   const [loading, setLoading] = useState(false);
   const { notifications, addNotification, removeNotification } = useRealtimeNotifications();
-  const [testMode, setTestMode] = useState(false);
+  const [testMode, setTestMode] = useState(true); // Auto-enable test mode
   const [mockData, setMockData] = useState(null);
   const [supplierCount, setSupplierCount] = useState(100);
-  const [demoCase, setDemoCase] = useState('simple'); // simple, two-tier, three-tier, complex
+  const [demoCase, setDemoCase] = useState('two-tier'); // simple, two-tier, three-tier, complex
   const [selectedCurrency, setSelectedCurrency] = useState('ETH');
   const { rates, loading: ratesLoading, lastUpdated, refreshRates } = useExchangeRates();
+
+  // 自动切换Demo Case (每5秒)
+  useEffect(() => {
+    if (!testMode) return;
+
+    const demoCases = ['simple', 'two-tier', 'three-tier', 'complex'];
+    let currentIndex = demoCases.indexOf(demoCase);
+
+    const interval = setInterval(() => {
+      currentIndex = (currentIndex + 1) % demoCases.length;
+      setDemoCase(demoCases[currentIndex]);
+    }, 5000); // 5秒切换一次
+
+    return () => clearInterval(interval);
+  }, [testMode]); // 只依赖testMode，避免重复创建interval
 
   // 生成测试数据
   useEffect(() => {
