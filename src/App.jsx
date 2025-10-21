@@ -32,6 +32,7 @@ import LoginModal from './components/LoginModal.jsx'
 import ThemeToggle from './components/ThemeToggle.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
 import DropdownMenu from './components/DropdownMenu.jsx'
+import { generateFullMockData } from './utils/mockData.js'
 
 function App() {
   const [balanceVisible, setBalanceVisible] = useState(true)
@@ -309,7 +310,11 @@ function App() {
         {activeTab === 'batch' && <BatchPayment />}
         {activeTab === 'schedule' && <ScheduledPayment />}
         {activeTab === 'suppliers' && <SuppliersPage />}
-        {activeTab === 'analytics' && <DataAnalytics />}
+        {activeTab === 'analytics' && (
+          <div className="p-6">
+            <DataAnalytics testMode={true} mockData={generateFullMockData(100)} />
+          </div>
+        )}
         
         {activeTab === 'dashboard' && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
