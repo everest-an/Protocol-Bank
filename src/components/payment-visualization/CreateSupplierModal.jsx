@@ -28,19 +28,19 @@ export default function CreateSupplierModal({ onClose, onSubmit, isLoading }) {
     const newErrors = {}
 
     if (!formData.name.trim()) {
-      newErrors.name = '请输入供应商名称'
+      newErrors.name = 'Please enter supplier name'
     }
 
     if (!formData.brand.trim()) {
-      newErrors.brand = '请输入品牌名称'
+      newErrors.brand = 'Please enter brand name'
     }
 
     if (!formData.category) {
-      newErrors.category = '请选择类别'
+      newErrors.category = 'Select Category'
     }
 
     if (!formData.profitMargin) {
-      newErrors.profitMargin = '请输入利润率'
+      newErrors.profitMargin = 'Please enter profit margin'
     } else {
       const margin = parseFloat(formData.profitMargin)
       if (isNaN(margin) || margin < 0 || margin > 100) {
@@ -134,7 +134,7 @@ export default function CreateSupplierModal({ onClose, onSubmit, isLoading }) {
             {/* Category */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                业务类别 *
+                Business Category *
               </label>
               <select
                 value={formData.category}
@@ -144,7 +144,7 @@ export default function CreateSupplierModal({ onClose, onSubmit, isLoading }) {
                 }`}
                 disabled={isLoading}
               >
-                <option value="">请选择类别</option>
+                <option value="">Select Category</option>
                 {categories.map(cat => (
                   <option key={cat} value={cat}>{cat}</option>
                 ))}
@@ -176,7 +176,7 @@ export default function CreateSupplierModal({ onClose, onSubmit, isLoading }) {
                 <p className="text-sm text-red-600 mt-1">{errors.profitMargin}</p>
               )}
               <p className="text-xs text-gray-500 mt-1">
-                输入 0-100 之间的数值,例如 15 表示 15%
+                Enter a value between 0-100, e.g. 15 for 15%
               </p>
             </div>
 

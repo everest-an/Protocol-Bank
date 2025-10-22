@@ -120,11 +120,11 @@ const resources = {
       
       payment: {
         totalPayments: '总支付数',
-        totalAmount: '总金额',
+        totalAmount: '总Amount',
         suppliers: '供应商',
         averagePayment: '平均支付',
         category: '分类',
-        amount: '金额',
+        amount: 'Amount',
         status: '状态',
         txHash: '交易哈希',
         date: '日期',

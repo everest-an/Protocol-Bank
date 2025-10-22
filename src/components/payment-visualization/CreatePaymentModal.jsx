@@ -27,19 +27,19 @@ export default function CreatePaymentModal({ onClose, onSubmit, suppliers, isLoa
     const newErrors = {}
 
     if (!formData.toAddress) {
-      newErrors.toAddress = '请选择供应商'
+      newErrors.toAddress = 'Please select supplier'
     }
 
     if (!formData.category) {
-      newErrors.category = '请选择类别'
+      newErrors.category = 'Select Category'
     }
 
     if (!formData.amount) {
-      newErrors.amount = '请输入支付金额'
+      newErrors.amount = 'Please enter payment amount'
     } else {
       const amount = parseFloat(formData.amount)
       if (isNaN(amount) || amount <= 0) {
-        newErrors.amount = '支付金额必须大于 0'
+        newErrors.amount = 'Payment amount must be greater than 0'
       }
     }
 
@@ -90,7 +90,7 @@ export default function CreatePaymentModal({ onClose, onSubmit, suppliers, isLoa
             <div className="text-center py-8">
               <AlertCircle className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
               <p className="text-gray-600 mb-4">还没有注册的供应商</p>
-              <p className="text-sm text-gray-500">请先注册供应商后再创建支付</p>
+              <p className="text-sm text-gray-500">Please register suppliers before creating payments</p>
               <Button
                 onClick={onClose}
                 className="mt-4 bg-gray-900 hover:bg-gray-800"
@@ -103,7 +103,7 @@ export default function CreatePaymentModal({ onClose, onSubmit, suppliers, isLoa
               {/* Supplier */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  选择供应商 *
+                  Select Supplier *
                 </label>
                 <select
                   value={formData.toAddress}
@@ -113,7 +113,7 @@ export default function CreatePaymentModal({ onClose, onSubmit, suppliers, isLoa
                   }`}
                   disabled={isLoading}
                 >
-                  <option value="">请选择供应商</option>
+                  <option value="">Please select supplier</option>
                   {suppliers.map(supplier => (
                     <option key={supplier.id} value={supplier.fullAddress}>
                       {supplier.name} ({supplier.brand})
@@ -127,7 +127,7 @@ export default function CreatePaymentModal({ onClose, onSubmit, suppliers, isLoa
                   <div className="mt-2 p-3 bg-gray-50 rounded-lg">
                     <div className="text-xs text-gray-600 space-y-1">
                       <div>品牌: <span className="text-gray-900">{selectedSupplier.brand}</span></div>
-                      <div>类别: <span className="text-gray-900">{selectedSupplier.category}</span></div>
+                      <div>Category: <span className="text-gray-900">{selectedSupplier.category}</span></div>
                       <div>地址: <span className="text-gray-900 font-mono">{selectedSupplier.address}</span></div>
                     </div>
                   </div>
@@ -137,7 +137,7 @@ export default function CreatePaymentModal({ onClose, onSubmit, suppliers, isLoa
               {/* Category */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  支付类别 *
+                  Payment Category *
                 </label>
                 <select
                   value={formData.category}
@@ -147,7 +147,7 @@ export default function CreatePaymentModal({ onClose, onSubmit, suppliers, isLoa
                   }`}
                   disabled={isLoading}
                 >
-                  <option value="">请选择类别</option>
+                  <option value="">Select Category</option>
                   {categories.map(cat => (
                     <option key={cat} value={cat}>{cat}</option>
                   ))}
@@ -160,7 +160,7 @@ export default function CreatePaymentModal({ onClose, onSubmit, suppliers, isLoa
               {/* Amount */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  支付金额 (ETH) *
+                  Payment Amount (ETH) *
                 </label>
                 <input
                   type="number"
@@ -178,7 +178,7 @@ export default function CreatePaymentModal({ onClose, onSubmit, suppliers, isLoa
                   <p className="text-sm text-red-600 mt-1">{errors.amount}</p>
                 )}
                 <p className="text-xs text-gray-500 mt-1">
-                  请确保钱包中有足够的 ETH 和 Gas 费用
+                  Please ensure you have enough ETH and gas fees in your wallet
                 </p>
               </div>
 

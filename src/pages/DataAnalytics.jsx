@@ -19,7 +19,7 @@ const DataAnalytics = () => {
     // 生成时间序列数据
     const timeSeriesData = generateTimeSeriesData(timeRange);
     
-    // 生成分类分布数据
+    // 生成Category分布数据
     const categoryDistribution = categories.map(cat => ({
       category: cat,
       amount: Math.random() * 50000 + 10000,
@@ -138,7 +138,7 @@ const DataAnalytics = () => {
     csvContent += `Time Range,${timeRange}\n`;
     csvContent += `Export Date,${new Date().toLocaleString()}\n\n`;
 
-    // 添加分类分布
+    // 添加Category分布
     csvContent += 'Category Distribution\n';
     csvContent += 'Category,Amount,Transactions,Percentage\n';
     analyticsData.categoryDistribution.forEach(cat => {

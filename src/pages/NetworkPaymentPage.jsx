@@ -64,7 +64,7 @@ export default function NetworkPaymentPage() {
           <div className="text-3xl font-semibold text-gray-900 dark:text-gray-100">{stats.active}</div>
         </div>
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
-          <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">总支付金额</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">总Payment Amount</div>
           <div className="text-3xl font-semibold text-gray-900 dark:text-gray-100">${(stats.totalAmount / 1000).toFixed(1)}k</div>
         </div>
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
@@ -108,7 +108,7 @@ export default function NetworkPaymentPage() {
           <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">{selectedNode.name}</h3>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <div className="text-sm text-gray-500 dark:text-gray-400">支付金额</div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">Payment Amount</div>
               <div className="text-xl font-semibold text-gray-900 dark:text-gray-100">${selectedNode.amount}</div>
             </div>
             <div>

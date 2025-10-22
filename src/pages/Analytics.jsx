@@ -11,7 +11,7 @@ export default function Analytics() {
   const mockData = useMemo(() => generateFullMockData(), []);
   const { suppliers, payments, stats } = mockData;
 
-  // 按类别统计
+  // 按Category统计
   const categoryStats = useMemo(() => {
     const stats = new Map<string, { amount: number; count: number }>();
     
@@ -80,7 +80,7 @@ export default function Analytics() {
           <p className="text-gray-400 mt-2">多维度资金流分析和可视化</p>
         </div>
 
-        {/* 时间范围选择 */}
+        {/* Time Range Selection */}
         <div className="flex gap-2 mb-6">
           {(['7d', '30d', '90d', 'all'] as const).map((range) => (
             <button
@@ -107,7 +107,7 @@ export default function Analytics() {
             <div className="text-3xl font-bold text-white mb-1">
               {stats.totalAmount.toFixed(2)} ETH
             </div>
-            <div className="text-sm text-gray-300">总支付金额</div>
+            <div className="text-sm text-gray-300">总Payment Amount</div>
             <div className="text-xs text-cyan-400 mt-2">
               {formatEthWithFiat(stats.totalAmount.toString()).fiat}
             </div>
@@ -135,7 +135,7 @@ export default function Analytics() {
             </div>
             <div className="text-sm text-gray-300">活跃供应商</div>
             <div className="text-xs text-purple-400 mt-2">
-              {categoryStats.length} 个类别
+              {categoryStats.length} 个Category
             </div>
           </div>
 
@@ -154,11 +154,11 @@ export default function Analytics() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          {/* 按类别分布 */}
+          {/* 按Category分布 */}
           <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
             <div className="flex items-center gap-2 mb-6">
               <PieChart className="w-5 h-5 text-cyan-400" />
-              <h2 className="text-lg font-bold">按类别分布</h2>
+              <h2 className="text-lg font-bold">按Category分布</h2>
             </div>
 
             <div className="space-y-4">

@@ -17,7 +17,7 @@ export function useWeb3() {
   // 连接钱包
   const connect = useCallback(async () => {
     if (!isMetaMaskInstalled) {
-      setError('请先安装 MetaMask');
+      setError('Please install MetaMask first');
       return;
     }
 

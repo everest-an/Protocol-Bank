@@ -33,6 +33,7 @@ import DataAnalytics from './pages/DataAnalyticsV3.jsx'
 import LoginModal from './components/LoginModal.jsx'
 import ThemeToggle from './components/ThemeToggle.jsx'
 import LanguageSelector from './components/LanguageSelector.jsx'
+import MobileMenu from './components/MobileMenu.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
 import DropdownMenu from './components/DropdownMenu.jsx'
 import { generateFullMockData } from './utils/mockData.js'
@@ -106,10 +107,13 @@ function App() {
       <header className="border-b border-gray-100 dark:border-gray-700 sticky top-0 z-50 bg-white dark:bg-black transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-8">
+            <div className="flex items-center space-x-4">
+              {/* Mobile Menu */}
+              <MobileMenu activeTab={activeTab} onTabChange={setActiveTab} />
+              
               <div className="flex items-center space-x-2">
                 <img src={protocolBankLogo} alt="Protocol Bank" className="h-8 w-8" />
-                <span className="text-lg font-normal text-gray-900 dark:text-white">Protocol Bank</span>
+                <span className="text-lg font-normal text-gray-900 dark:text-white hidden sm:inline">Protocol Bank</span>
               </div>
               <nav className="hidden md:flex space-x-6">
                 <DropdownMenu

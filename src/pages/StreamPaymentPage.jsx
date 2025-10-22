@@ -169,7 +169,7 @@ export default function StreamPaymentPage() {
           </div>
         </div>
         <div className="p-4 border border-gray-200 rounded-lg">
-          <div className="text-sm text-gray-500 mb-1">总支付金额</div>
+          <div className="text-sm text-gray-500 mb-1">总Payment Amount</div>
           <div className="text-2xl font-light text-gray-900">
             ${streams.reduce((sum, s) => sum + (s.totalPaid || 0), 0).toLocaleString()}
           </div>

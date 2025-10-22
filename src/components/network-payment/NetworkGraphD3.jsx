@@ -73,7 +73,7 @@ export default function NetworkGraphD3({ data, onNodeClick, selectedNode }) {
       .attr('fill', '#666')
       .attr('font-weight', d => d.type === 'payer' ? 'bold' : 'normal');
 
-    // 添加金额标签（仅收款人节点）
+    // 添加Amount标签（仅收款人节点）
     node.filter(d => d.type !== 'payer')
       .append('text')
       .text(d => `$${(d.amount / 1000).toFixed(1)}k`)

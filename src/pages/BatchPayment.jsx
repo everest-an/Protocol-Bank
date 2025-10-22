@@ -47,7 +47,7 @@ export default function BatchPayment() {
     setRecipients(prev => prev.filter(r => r.id !== id));
   };
 
-  // 计算总金额
+  // 计算总Amount
   const calculateTotal = () => {
     return recipients.reduce((sum, r) => {
       const amount = parseFloat(r.amount);
@@ -94,7 +94,7 @@ export default function BatchPayment() {
             return;
           }
 
-          // 验证金额
+          // 验证Amount
           const parsedAmount = parseFloat(amount);
           if (isNaN(parsedAmount) || parsedAmount <= 0) {
             errors.push(`Line ${index + 2}: Invalid amount ${amount}`);
@@ -125,7 +125,7 @@ export default function BatchPayment() {
         alert('Error parsing CSV file: ' + error.message);
       } finally {
         setUploading(false);
-        event.target.value = ''; // 重置文件输入
+        event.target.value = ''; // Reset file input
       }
     };
 

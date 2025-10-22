@@ -66,7 +66,7 @@ export function useCurrency() {
     return parseFloat(fiatAmount) / rate;
   };
 
-  // 格式化金额
+  // 格式化Amount
   const formatAmount = (amount, currency = selectedCurrency) => {
     const config = CURRENCIES[currency];
     if (!config) return amount;
@@ -75,7 +75,7 @@ export function useCurrency() {
     return `${config.symbol}${formatted}`;
   };
 
-  // 格式化 ETH 金额并显示法币等值
+  // 格式化 ETH Amount并显示法币等值
   const formatEthWithFiat = (ethAmount, currency = selectedCurrency) => {
     const fiatAmount = ethToFiat(ethAmount, currency);
     return {

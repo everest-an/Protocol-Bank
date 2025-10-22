@@ -217,7 +217,7 @@ export default function FlowPaymentVisualization() {
               {/* Live 指示器 */}
               {isConnected && isSepolia && !testMode && <LiveIndicator />}
 
-              {/* 货币选择器 */}
+              {/* Currency Selector */}
               <CurrencySelector
                 selectedCurrency={selectedCurrency}
                 onCurrencyChange={setSelectedCurrency}

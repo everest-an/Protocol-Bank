@@ -52,7 +52,7 @@ export default function ConfigPanel({ node, onClose, onSave }) {
         return (
           <>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">支付金额</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Payment Amount</label>
               <input
                 type="number"
                 value={formData.amount || ''}
@@ -101,7 +101,7 @@ export default function ConfigPanel({ node, onClose, onSave }) {
                 type="text"
                 value={formData.name || ''}
                 onChange={(e) => handleChange('name', e.target.value)}
-                placeholder="输入收款人名称"
+                placeholder="Enter recipient name"
                 className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
             </div>
@@ -128,7 +128,7 @@ export default function ConfigPanel({ node, onClose, onSave }) {
                 onChange={(e) => handleChange('conditionType', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
               >
-                <option value="total_amount">总金额达到</option>
+                <option value="total_amount">Total Amount Reached</option>
                 <option value="time_expire">时间到期</option>
                 <option value="manual_stop">手动停止</option>
                 <option value="balance_low">余额不足</option>
@@ -140,7 +140,7 @@ export default function ConfigPanel({ node, onClose, onSave }) {
                 type="text"
                 value={formData.value || ''}
                 onChange={(e) => handleChange('value', e.target.value)}
-                placeholder="输入条件值"
+                placeholder="Enter condition value"
                 className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
               />
             </div>

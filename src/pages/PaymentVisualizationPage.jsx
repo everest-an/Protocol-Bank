@@ -248,7 +248,7 @@ export default function PaymentVisualizationPage() {
               <AlertCircle className="w-16 h-16 text-orange-500 mx-auto mb-4" />
               <h2 className="text-2xl font-semibold text-gray-900 mb-2">需要安装 MetaMask</h2>
               <p className="text-gray-600 mb-6">
-                请安装 MetaMask 浏览器扩展以使用支付可视化功能
+                Please install MetaMask browser extension to use payment visualization
               </p>
               <a
                 href="https://metamask.io/download/"

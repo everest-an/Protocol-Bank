@@ -189,7 +189,7 @@ export function generateFullMockData(supplierCount = 12) {
 export function generateNetworkGraphData(suppliers, payments) {
   const mainWallet = payments[0]?.from || '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb0';
   
-  // 计算每个供应商的总支付金额
+  // 计算每个供应商的总Payment Amount
   const supplierAmounts = new Map();
   payments
     .filter(p => p.status === 'Completed')

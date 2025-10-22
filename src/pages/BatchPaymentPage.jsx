@@ -36,13 +36,13 @@ export default function BatchPaymentPage() {
 
   const handleBatchSubmit = async () => {
     if (payments.length === 0) {
-      alert('请至少添加一笔支付');
+      alert('Please add at least one payment');
       return;
     }
 
     const invalid = payments.find(p => !p.to || !p.amount || !p.category);
     if (invalid) {
-      alert('请填写所有支付信息');
+      alert('Please fill in all payment information');
       return;
     }
 
@@ -210,7 +210,7 @@ export default function BatchPaymentPage() {
                     </div>
 
                     <div>
-                      <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1 font-medium">金额</label>
+                      <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1 font-medium">Amount</label>
                       <div className="flex gap-2">
                         <input
                           type="number"
@@ -238,13 +238,13 @@ export default function BatchPaymentPage() {
                     </div>
 
                     <div>
-                      <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1 font-medium">类别</label>
+                      <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1 font-medium">Category</label>
                       <select
                         value={payment.category}
                         onChange={(e) => updatePayment(payment.id, 'category', e.target.value)}
                         className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-gray-100 text-sm"
                       >
-                        <option value="">选择类别</option>
+                        <option value="">Select Category</option>
                         <option value="Technical Services">Technical Services</option>
                         <option value="Cloud Computing">Cloud Computing</option>
                         <option value="Raw Materials">Raw Materials</option>

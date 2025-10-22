@@ -19,7 +19,7 @@ export default memo(({ data, selected }) => {
         <div className="font-medium text-sm text-gray-900">支付配置</div>
       </div>
       <div className="text-xs text-gray-600 space-y-1">
-        <div>金额: {data.amount || '0'} {data.currency || 'USD'}</div>
+        <div>Amount: {data.amount || '0'} {data.currency || 'USD'}</div>
         <div>频率: {data.frequency || '每分钟'}</div>
       </div>
       <Handle

@@ -67,7 +67,7 @@ export default function EnterprisePaymentTable({ payments = [], selectedCurrency
           </p>
         </div>
 
-        {/* 分类筛选 */}
+        {/* Category Filter */}
         <div className="flex items-center gap-2">
           {categories.map(cat => (
             <button
