@@ -75,7 +75,7 @@ export default function BatchPaymentPage() {
             id: `imported-${index}`,
             to: to.trim(),
             amount: amount.trim(),
-            category: category?.trim() || '其他',
+            category: category?.trim() || 'Other',
             currency: currency?.trim() || 'USD',
           });
         }
@@ -252,7 +252,7 @@ export default function BatchPaymentPage() {
                         <option value="Consulting Services">Consulting Services</option>
                         <option value="Design Services">Design Services</option>
                         <option value="Marketing">Marketing</option>
-                        <option value="其他">其他</option>
+                        <option value="Other">Other</option>
                       </select>
                     </div>
 

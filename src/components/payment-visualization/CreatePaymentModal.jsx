@@ -20,7 +20,7 @@ export default function CreatePaymentModal({ onClose, onSubmit, suppliers, isLoa
     'Consulting Services',
     'Design Services',
     'Marketing',
-    '其他'
+    'Other'
   ]
 
   const validate = () => {
@@ -74,7 +74,7 @@ export default function CreatePaymentModal({ onClose, onSubmit, suppliers, isLoa
       <Card className="w-full max-w-md">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg font-medium text-gray-900">
-            创建支付
+            Create Payment
           </CardTitle>
           <Button
             variant="ghost"
@@ -89,13 +89,13 @@ export default function CreatePaymentModal({ onClose, onSubmit, suppliers, isLoa
           {suppliers.length === 0 ? (
             <div className="text-center py-8">
               <AlertCircle className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
-              <p className="text-gray-600 mb-4">还没有注册的供应商</p>
+              <p className="text-gray-600 mb-4">No registered suppliers yet</p>
               <p className="text-sm text-gray-500">Please register suppliers before creating payments</p>
               <Button
                 onClick={onClose}
                 className="mt-4 bg-gray-900 hover:bg-gray-800"
               >
-                关闭
+                Close
               </Button>
             </div>
           ) : (
@@ -126,7 +126,7 @@ export default function CreatePaymentModal({ onClose, onSubmit, suppliers, isLoa
                 {selectedSupplier && (
                   <div className="mt-2 p-3 bg-gray-50 rounded-lg">
                     <div className="text-xs text-gray-600 space-y-1">
-                      <div>品牌: <span className="text-gray-900">{selectedSupplier.brand}</span></div>
+                      <div>Brand: <span className="text-gray-900">{selectedSupplier.brand}</span></div>
                       <div>Category: <span className="text-gray-900">{selectedSupplier.category}</span></div>
                       <div>地址: <span className="text-gray-900 font-mono">{selectedSupplier.address}</span></div>
                     </div>

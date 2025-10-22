@@ -16,14 +16,14 @@ export default memo(({ data, selected }) => {
         <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
           <Play className="h-4 w-4 text-gray-600" />
         </div>
-        <div className="font-medium text-sm text-gray-900">执行器</div>
+        <div className="font-medium text-sm text-gray-900">Executor</div>
       </div>
       <div className="text-xs text-gray-600">
-        {data.status === 'active' ? '运行中' : '待执行'}
+        {data.status === 'active' ? 'Running' : 'Pending'}
       </div>
       {data.totalPaid && (
         <div className="text-xs text-gray-500 mt-1">
-          已支付: ${data.totalPaid}
+          Paid: ${data.totalPaid}
         </div>
       )}
     </div>

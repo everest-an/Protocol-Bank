@@ -60,7 +60,7 @@ export default function ScheduledPayment() {
     }
   };
 
-  // 获取频率显示文本
+  // 获取Frequency显示文本
   const getFrequencyText = (frequency) => {
     const map = {
       'once': 'One-time',
@@ -276,7 +276,7 @@ export default function ScheduledPayment() {
             </div>
 
             <div className="p-6 space-y-4">
-              {/* 收款人地址 */}
+              {/* Recipient地址 */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Recipient Address *
@@ -353,7 +353,7 @@ export default function ScheduledPayment() {
                 </div>
               </div>
 
-              {/* 频率 */}
+              {/* Frequency */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Frequency *
@@ -371,7 +371,7 @@ export default function ScheduledPayment() {
                 </select>
               </div>
 
-              {/* 结束条件（仅循环支付） */}
+              {/* 结束Condition（仅循环支付） */}
               {newSchedule.frequency !== 'once' && (
                 <div className="grid grid-cols-2 gap-4">
                   <div>

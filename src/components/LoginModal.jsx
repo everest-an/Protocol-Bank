@@ -12,7 +12,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
 
   if (!isOpen) return null
 
-  // MetaMask登录
+  // MetaMaskLogin
   const handleMetaMaskLogin = async () => {
     if (typeof window.ethereum !== 'undefined') {
       try {
@@ -37,18 +37,18 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
     }
   }
 
-  // 支付宝登录（模拟）
+  // 支付宝Login（Simulate）
   const handleAlipayLogin = async () => {
     try {
       setIsLoading(true)
       setError('')
       
-      // 生成新钱包
+      // Generate New Wallet
       const wallet = ethers.Wallet.createRandom()
       const address = wallet.address
       const mnemonic = wallet.mnemonic.phrase
       
-      // 显示助记词让用户保存
+      // Show mnemonic for user to save
       setGeneratedWallet({
         address,
         mnemonic,
@@ -64,7 +64,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
     }
   }
 
-  // 邮箱登录并生成钱包
+  // 邮箱Login并生成钱包
   const handleEmailLogin = async (e) => {
     e.preventDefault()
     
@@ -77,12 +77,12 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
       setIsLoading(true)
       setError('')
       
-      // 生成新钱包
+      // Generate New Wallet
       const wallet = ethers.Wallet.createRandom()
       const address = wallet.address
       const mnemonic = wallet.mnemonic.phrase
       
-      // 显示助记词让用户保存
+      // Show mnemonic for user to save
       setGeneratedWallet({
         address,
         mnemonic,
@@ -128,7 +128,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
-        {/* 主登录页面 */}
+        {/* 主Login页面 */}
         {loginMethod === 'main' && (
           <>
             {/* Header */}
@@ -166,7 +166,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                 <svg className="h-5 w-5" viewBox="0 0 24 24" fill="#1677FF">
                   <circle cx="12" cy="12" r="10" />
                 </svg>
-                <span className="text-gray-900 font-medium">使用支付宝登录 (Alipay)</span>
+                <span className="text-gray-900 font-medium">使用支付宝Login (Alipay)</span>
               </button>
 
               {/* 分隔线 */}
@@ -179,7 +179,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                 </div>
               </div>
 
-              {/* 邮箱登录链接 */}
+              {/* 邮箱Login链接 */}
               <button
                 onClick={() => setLoginMethod('email')}
                 className="w-full text-center text-sm text-gray-500 hover:text-gray-700 py-2"
@@ -212,7 +212,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
           </>
         )}
 
-        {/* 邮箱登录页面 */}
+        {/* 邮箱Login页面 */}
         {loginMethod === 'email' && (
           <>
             {/* Header */}

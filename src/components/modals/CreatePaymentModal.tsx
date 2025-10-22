@@ -22,14 +22,14 @@ export default function CreatePaymentModal({ onClose, onSuccess }: CreatePayment
   const selectedSupplier = useSupplier(formData.to as `0x${string}` | undefined);
 
   const categories = [
-    '技术服务',
-    '云计算',
-    '原材料',
-    '物流运输',
-    '咨询服务',
-    '设计服务',
-    '营销推广',
-    '其他',
+    'Technology',
+    'Cloud Computing',
+    'Raw Materials',
+    'Logistics',
+    'Consulting',
+    'Design',
+    'Marketing',
+    'Other',
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -74,7 +74,7 @@ export default function CreatePaymentModal({ onClose, onSuccess }: CreatePayment
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
       <div className="bg-gray-900 border border-gray-800 rounded-lg max-w-md w-full">
         <div className="flex items-center justify-between p-4 border-b border-gray-800">
-          <h2 className="text-lg font-bold text-white">创建支付</h2>
+          <h2 className="text-lg font-bold text-white">Create Payment</h2>
           <button
             onClick={onClose}
             disabled={loading}

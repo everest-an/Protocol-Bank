@@ -9,24 +9,24 @@ export default function StreamPaymentPage() {
   const [streams, setStreams] = useState([
     {
       id: '1',
-      name: '员工工资流支付',
+      name: 'Employee Salary Stream',
       status: 'active',
       createdAt: Date.now() - 86400000 * 7,
       totalPaid: 25000,
       currency: 'USD',
-      frequency: '每月',
+      frequency: 'Monthly',
       recipientName: 'John Doe',
       nodes: [],
       edges: [],
     },
     {
       id: '2',
-      name: '供应商定期付款',
+      name: 'Supplier Regular Payment',
       status: 'paused',
       createdAt: Date.now() - 86400000 * 3,
       totalPaid: 8500,
       currency: 'EUR',
-      frequency: '每周',
+      frequency: 'Weekly',
       recipientName: 'ABC Supplier',
       nodes: [],
       edges: [],
@@ -37,12 +37,12 @@ export default function StreamPaymentPage() {
   const handleCreateNew = () => {
     setEditingStream({
       id: `stream_${Date.now()}`,
-      name: '新流支付',
+      name: 'New Stream Payment',
       status: 'paused',
       createdAt: Date.now(),
       totalPaid: 0,
       currency: 'USD',
-      frequency: '每分钟',
+      frequency: 'Per Minute',
       recipientName: '',
       nodes: [],
       edges: [],
@@ -64,7 +64,7 @@ export default function StreamPaymentPage() {
   }
 
   const handleDelete = (stream) => {
-    if (confirm(`确定要删除流支付"${stream.name}"吗？`)) {
+    if (confirm(`Are you sure you want to delete stream payment "${stream.name}"?`)) {
       setStreams(streams.filter(s => s.id !== stream.id))
     }
   }
@@ -84,16 +84,16 @@ export default function StreamPaymentPage() {
       if (paymentNode) {
         updatedStream.currency = paymentNode.data.currency || 'USD'
         const freqMap = {
-          per_second: '每秒',
-          per_minute: '每分钟',
-          per_hour: '每小时',
-          per_day: '每天',
+          per_second: 'Per Second',
+          per_minute: 'Per Minute',
+          per_hour: 'Per Hour',
+          per_day: 'Per Day',
         }
-        updatedStream.frequency = freqMap[paymentNode.data.frequency] || '每分钟'
+        updatedStream.frequency = freqMap[paymentNode.data.frequency] || 'Per Minute'
       }
 
       if (recipientNode) {
-        updatedStream.recipientName = recipientNode.data.name || '未设置'
+        updatedStream.recipientName = recipientNode.data.name || 'Not Set'
       }
 
       // Check if it's a new stream or update
@@ -104,14 +104,14 @@ export default function StreamPaymentPage() {
         setStreams([...streams, updatedStream])
       }
 
-      alert('流支付已保存！')
+      alert('Stream payment saved successfully!')
       setView('list')
       setEditingStream(null)
     }
   }
 
   const handleBackToList = () => {
-    if (confirm('确定要返回列表吗？未保存的更改将丢失。')) {
+    if (confirm('Are you sure you want to return to the list? Unsaved changes will be lost.')) {
       setView('list')
       setEditingStream(null)
     }
@@ -120,20 +120,20 @@ export default function StreamPaymentPage() {
   if (view === 'editor') {
     return (
       <div className="h-screen flex flex-col">
-        <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+        <div className="bg-white dark:bg-black border-b border-gray-200 dark:border-gray-700 px-4 md:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Button variant="ghost" size="icon" onClick={handleBackToList}>
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div>
-              <h2 className="text-xl font-medium text-gray-900">
+              <h2 className="text-lg md:text-xl font-medium text-gray-900 dark:text-white">
                 {editingStream?.name || '新流支付'}
               </h2>
-              <p className="text-sm text-gray-500">配置流支付规则和参数</p>
+              <p className="text-xs md:text-sm text-gray-500 dark:text-gray-300">Configure stream payment rules and parameters</p>
             </div>
           </div>
         </div>
-        <div className="flex-1 relative">
+        <div className="flex-1 relative overflow-hidden">
           <FlowEditor
             initialNodes={editingStream?.nodes || []}
             initialEdges={editingStream?.edges || []}
@@ -146,49 +146,49 @@ export default function StreamPaymentPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-normal text-gray-900 mb-2">流支付管理</h2>
-          <p className="text-sm text-gray-500">创建和管理自动化的连续支付流</p>
+          <h2 className="text-2xl font-normal text-gray-900 dark:text-white mb-2">Stream Payment Management</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-300">Create and manage automated continuous payment streams</p>
         </div>
         <Button
           onClick={handleCreateNew}
-          className="bg-gray-900 hover:bg-gray-800 text-white"
+          className="bg-gray-900 hover:bg-gray-800 text-white w-full md:w-auto"
         >
           <Plus className="h-4 w-4 mr-2" />
-          创建流支付
+          Create Stream Payment
         </Button>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="p-4 border border-gray-200 rounded-lg">
-          <div className="text-sm text-gray-500 mb-1">活跃流支付</div>
+          <div className="text-sm text-gray-500 dark:text-gray-300 mb-1">Active Streams</div>
           <div className="text-2xl font-light text-gray-900">
             {streams.filter(s => s.status === 'active').length}
           </div>
         </div>
         <div className="p-4 border border-gray-200 rounded-lg">
-          <div className="text-sm text-gray-500 mb-1">总Payment Amount</div>
+          <div className="text-sm text-gray-500 dark:text-gray-300 mb-1">Total Paid</div>
           <div className="text-2xl font-light text-gray-900">
             ${streams.reduce((sum, s) => sum + (s.totalPaid || 0), 0).toLocaleString()}
           </div>
         </div>
         <div className="p-4 border border-gray-200 rounded-lg">
-          <div className="text-sm text-gray-500 mb-1">总流支付数</div>
+          <div className="text-sm text-gray-500 dark:text-gray-300 mb-1">Total Streams</div>
           <div className="text-2xl font-light text-gray-900">{streams.length}</div>
         </div>
       </div>
 
       {/* Stream List */}
       <div className="space-y-4">
-        <h3 className="text-lg font-medium text-gray-900">我的流支付</h3>
+        <h3 className="text-lg font-medium text-gray-900 dark:text-white">My Stream Payments</h3>
         {streams.length === 0 ? (
           <div className="text-center py-12 border border-gray-200 rounded-lg">
-            <p className="text-gray-500 mb-4">还没有创建任何流支付</p>
+            <p className="text-gray-500 dark:text-gray-300 mb-4">No stream payments created yet</p>
             <Button onClick={handleCreateNew} variant="outline">
               <Plus className="h-4 w-4 mr-2" />
-              创建第一个流支付
+              Create First Stream Payment
             </Button>
           </div>
         ) : (

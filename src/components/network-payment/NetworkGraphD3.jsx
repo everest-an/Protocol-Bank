@@ -20,7 +20,7 @@ export default function NetworkGraphD3({ data, onNodeClick, selectedNode }) {
       .attr('height', height)
       .attr('viewBox', [0, 0, width, height]);
 
-    // 创建力导向模拟
+    // 创建力导向Simulate
     const simulation = d3.forceSimulation(data.nodes)
       .force('link', d3.forceLink(data.links).id(d => d.id).distance(150))
       .force('charge', d3.forceManyBody().strength(-300))
@@ -73,7 +73,7 @@ export default function NetworkGraphD3({ data, onNodeClick, selectedNode }) {
       .attr('fill', '#666')
       .attr('font-weight', d => d.type === 'payer' ? 'bold' : 'normal');
 
-    // 添加Amount标签（仅收款人节点）
+    // 添加Amount标签（仅Recipient节点）
     node.filter(d => d.type !== 'payer')
       .append('text')
       .text(d => `$${(d.amount / 1000).toFixed(1)}k`)

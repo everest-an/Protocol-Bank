@@ -100,8 +100,8 @@ export default function FlowEditor({ initialNodes = [], initialEdges = [], onSav
   return (
     <div className="relative w-full h-full">
       {/* Toolbar */}
-      <div className="absolute top-4 left-4 z-10 bg-white rounded-lg shadow-md p-2 space-y-2">
-        <div className="text-xs font-medium text-gray-500 px-2 mb-2">添加节点</div>
+      <div className="flow-editor-toolbar absolute top-4 left-4 z-10 bg-white dark:bg-gray-900 rounded-lg shadow-md p-2 space-y-2 border border-gray-200 dark:border-gray-700">
+        <div className="text-xs font-medium text-gray-500 dark:text-gray-300 px-2 mb-2">Add Node</div>
         <Button
           variant="outline"
           size="sm"
@@ -109,7 +109,7 @@ export default function FlowEditor({ initialNodes = [], initialEdges = [], onSav
           className="w-full justify-start space-x-2"
         >
           <Clock className="h-4 w-4 text-blue-600" />
-          <span>触发器</span>
+          <span>Trigger</span>
         </Button>
         <Button
           variant="outline"
@@ -118,7 +118,7 @@ export default function FlowEditor({ initialNodes = [], initialEdges = [], onSav
           className="w-full justify-start space-x-2"
         >
           <DollarSign className="h-4 w-4 text-green-600" />
-          <span>支付配置</span>
+          <span>Payment Config</span>
         </Button>
         <Button
           variant="outline"
@@ -127,7 +127,7 @@ export default function FlowEditor({ initialNodes = [], initialEdges = [], onSav
           className="w-full justify-start space-x-2"
         >
           <User className="h-4 w-4 text-purple-600" />
-          <span>收款人</span>
+          <span>Recipient</span>
         </Button>
         <Button
           variant="outline"
@@ -136,7 +136,7 @@ export default function FlowEditor({ initialNodes = [], initialEdges = [], onSav
           className="w-full justify-start space-x-2"
         >
           <AlertCircle className="h-4 w-4 text-yellow-600" />
-          <span>条件</span>
+          <span>Condition</span>
         </Button>
         <Button
           variant="outline"
@@ -145,18 +145,18 @@ export default function FlowEditor({ initialNodes = [], initialEdges = [], onSav
           className="w-full justify-start space-x-2"
         >
           <Play className="h-4 w-4 text-gray-600" />
-          <span>执行器</span>
+          <span>Executor</span>
         </Button>
       </div>
 
       {/* Save Button */}
-      <div className="absolute top-4 right-4 z-10">
+      <div className="flow-editor-save absolute top-4 right-4 z-10">
         <Button
           onClick={handleSaveFlow}
           className="bg-gray-900 hover:bg-gray-800 text-white"
         >
           <Save className="h-4 w-4 mr-2" />
-          保存流程
+          Save Flow
         </Button>
       </div>
 

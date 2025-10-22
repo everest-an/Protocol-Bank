@@ -249,7 +249,7 @@ export default function FlowPaymentVisualization() {
                 Refresh
               </button>
 
-              {/* 注册供应商 */}
+              {/* Register Supplier */}
               {isConnected && isSepolia && !testMode && (
                 <button
                   onClick={() => setShowRegisterModal(true)}
@@ -260,7 +260,7 @@ export default function FlowPaymentVisualization() {
                 </button>
               )}
 
-              {/* 创建支付 */}
+              {/* Create Payment */}
               {isConnected && isSepolia && !testMode && (
                 <button
                   onClick={() => setShowPaymentModal(true)}

@@ -30,7 +30,7 @@ export default function LoginPage({ onLogin }) {
         const address = await signer.getAddress()
         const network = await provider.getNetwork()
         
-        // 调用父组件的登录回调
+        // 调用父组件的Login回调
         onLogin({
           address,
           network: network.name,

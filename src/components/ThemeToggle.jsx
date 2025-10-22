@@ -11,7 +11,7 @@ export default function ThemeToggle() {
       size="icon"
       onClick={toggleTheme}
       className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
-      title={isDark ? '切换到浅色模式' : '切换到深色模式'}
+      title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
     >
       {isDark ? (
         <Sun className="h-5 w-5" />

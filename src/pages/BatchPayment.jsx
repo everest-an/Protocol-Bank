@@ -23,7 +23,7 @@ export default function BatchPayment() {
     URL.revokeObjectURL(url);
   };
 
-  // 手动添加收款人
+  // 手动添加Recipient
   const addRecipient = () => {
     setRecipients(prev => [...prev, {
       id: Date.now(),
@@ -35,14 +35,14 @@ export default function BatchPayment() {
     }]);
   };
 
-  // 更新收款人信息
+  // 更新Recipient信息
   const updateRecipient = (id, field, value) => {
     setRecipients(prev => prev.map(r => 
       r.id === id ? { ...r, [field]: value } : r
     ));
   };
 
-  // 删除收款人
+  // 删除Recipient
   const removeRecipient = (id) => {
     setRecipients(prev => prev.filter(r => r.id !== id));
   };
@@ -55,7 +55,7 @@ export default function BatchPayment() {
     }, 0);
   };
 
-  // 清空所有收款人
+  // 清空所有Recipient
   const clearAll = () => {
     if (window.confirm('Are you sure you want to clear all recipients?')) {
       setRecipients([]);
@@ -268,7 +268,7 @@ export default function BatchPayment() {
           </button>
         </div>
 
-        {/* 收款人列表 */}
+        {/* Recipient列表 */}
         {recipients.length === 0 ? (
           <div className="bg-white dark:bg-black border border-gray-100 dark:border-gray-700 rounded-lg p-12 text-center">
             <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />

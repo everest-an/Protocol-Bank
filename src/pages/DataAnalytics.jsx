@@ -8,7 +8,7 @@ const DataAnalytics = () => {
   const [analyticsData, setAnalyticsData] = useState(null);
   const [testMode, setTestMode] = useState(true); // Enable test mode by default
 
-  // 模拟数据生成
+  // Simulate数据生成
   useEffect(() => {
     generateMockAnalytics();
   }, [timeRange, selectedCategory]);

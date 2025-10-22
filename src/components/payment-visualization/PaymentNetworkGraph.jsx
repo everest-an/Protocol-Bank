@@ -141,7 +141,7 @@ export default function PaymentNetworkGraph({ suppliers }) {
         className="w-full h-full"
       />
       <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded px-3 py-2 text-xs text-gray-600 border border-gray-200">
-        🖱️ 拖拽缩放 | 👆 悬停查看详情
+        🖱️ Drag to zoom | 👆 Hover for details
       </div>
     </div>
   )

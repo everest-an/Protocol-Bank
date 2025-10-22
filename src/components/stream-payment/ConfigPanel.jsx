@@ -26,18 +26,18 @@ export default function ConfigPanel({ node, onClose, onSave }) {
         return (
           <>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">触发类型</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Trigger Type</label>
               <select
                 value={formData.triggerType || 'time'}
                 onChange={(e) => handleChange('triggerType', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="time">时间触发</option>
-                <option value="event">事件触发</option>
+                <option value="time">Time Trigger</option>
+                <option value="event">Event Trigger</option>
               </select>
             </div>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">开始时间</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Start Time</label>
               <input
                 type="datetime-local"
                 value={formData.startTime || ''}
@@ -62,7 +62,7 @@ export default function ConfigPanel({ node, onClose, onSave }) {
               />
             </div>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">币种</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Currency</label>
               <select
                 value={formData.currency || 'USD'}
                 onChange={(e) => handleChange('currency', e.target.value)}
@@ -77,16 +77,16 @@ export default function ConfigPanel({ node, onClose, onSave }) {
               </select>
             </div>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">支付频率</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Payment Frequency</label>
               <select
                 value={formData.frequency || 'per_minute'}
                 onChange={(e) => handleChange('frequency', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
               >
-                <option value="per_second">每秒</option>
-                <option value="per_minute">每分钟</option>
-                <option value="per_hour">每小时</option>
-                <option value="per_day">每天</option>
+                <option value="per_second">Per Second</option>
+                <option value="per_minute">Per Minute</option>
+                <option value="per_hour">Per Hour</option>
+                <option value="per_day">Per Day</option>
               </select>
             </div>
           </>
@@ -96,7 +96,7 @@ export default function ConfigPanel({ node, onClose, onSave }) {
         return (
           <>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">收款人名称</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Recipient Name</label>
               <input
                 type="text"
                 value={formData.name || ''}
@@ -106,7 +106,7 @@ export default function ConfigPanel({ node, onClose, onSave }) {
               />
             </div>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">收款地址</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Recipient Address</label>
               <input
                 type="text"
                 value={formData.address || ''}
@@ -122,20 +122,20 @@ export default function ConfigPanel({ node, onClose, onSave }) {
         return (
           <>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">条件类型</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Condition Type</label>
               <select
                 value={formData.conditionType || 'total_amount'}
                 onChange={(e) => handleChange('conditionType', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
               >
                 <option value="total_amount">Total Amount Reached</option>
-                <option value="time_expire">时间到期</option>
-                <option value="manual_stop">手动停止</option>
-                <option value="balance_low">余额不足</option>
+                <option value="time_expire">Time Expired</option>
+                <option value="manual_stop">Manual Stop</option>
+                <option value="balance_low">Low Balance</option>
               </select>
             </div>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">条件值</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Condition Value</label>
               <input
                 type="text"
                 value={formData.value || ''}
@@ -150,16 +150,16 @@ export default function ConfigPanel({ node, onClose, onSave }) {
       case 'executor':
         return (
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">状态</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
             <select
               value={formData.status || 'pending'}
               onChange={(e) => handleChange('status', e.target.value)}
               className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
             >
-              <option value="pending">待执行</option>
-              <option value="active">运行中</option>
-              <option value="paused">已暂停</option>
-              <option value="completed">已完成</option>
+              <option value="pending">Pending</option>
+              <option value="active">Running</option>
+              <option value="paused">Paused</option>
+              <option value="completed">Completed</option>
             </select>
           </div>
         )
@@ -170,23 +170,23 @@ export default function ConfigPanel({ node, onClose, onSave }) {
   }
 
   return (
-    <div className="absolute top-0 right-0 w-80 h-full bg-white border-l border-gray-200 shadow-lg z-10">
-      <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-        <h3 className="text-lg font-medium text-gray-900">节点配置</h3>
+    <div className="config-panel absolute top-0 right-0 w-full md:w-80 h-full bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 shadow-lg z-10 overflow-y-auto">
+      <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between sticky top-0 bg-white dark:bg-gray-900 z-10">
+        <h3 className="text-lg font-medium text-gray-900 dark:text-white">Node Configuration</h3>
         <Button variant="ghost" size="icon" onClick={onClose}>
           <X className="h-4 w-4" />
         </Button>
       </div>
-      <div className="p-4 overflow-y-auto" style={{ height: 'calc(100% - 140px)' }}>
+      <div className="p-4 overflow-y-auto pb-24">
         {renderFields()}
       </div>
-      <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 bg-white">
+      <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
         <div className="flex space-x-2">
           <Button onClick={handleSave} className="flex-1 bg-gray-900 hover:bg-gray-800 text-white">
-            保存
+            Save
           </Button>
           <Button onClick={onClose} variant="outline" className="flex-1">
-            取消
+            Cancel
           </Button>
         </div>
       </div>

@@ -16,10 +16,10 @@ export default memo(({ data, selected }) => {
         <div className="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
           <AlertCircle className="h-4 w-4 text-yellow-600" />
         </div>
-        <div className="font-medium text-sm text-gray-900">条件</div>
+        <div className="font-medium text-sm text-gray-900">Condition</div>
       </div>
       <div className="text-xs text-gray-600 space-y-1">
-        <div>{data.conditionType || '停止条件'}</div>
+        <div>{data.conditionType || '停止Condition'}</div>
         {data.value && <div className="text-gray-500">{data.value}</div>}
       </div>
       <Handle

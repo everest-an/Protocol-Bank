@@ -114,7 +114,7 @@ export default function PaymentVisualizationPage() {
     }
   }, [isConnected, isSepolia]);
 
-  // 处理注册供应商
+  // 处理Register Supplier
   const handleRegisterSupplier = async (formData) => {
     try {
       await registerSupplier(
@@ -127,12 +127,12 @@ export default function PaymentVisualizationPage() {
       await loadData();
       return true;
     } catch (error) {
-      // console.error('注册供应商失败:', error);
+      // console.error('Register Supplier失败:', error);
       throw error;
     }
   };
 
-  // 处理创建支付
+  // 处理Create Payment
   const handleCreatePayment = async (formData) => {
     try {
       await createPayment(formData.to, formData.category, formData.amount);
@@ -140,7 +140,7 @@ export default function PaymentVisualizationPage() {
       await loadData();
       return true;
     } catch (error) {
-      // console.error('创建支付失败:', error);
+      // console.error('Create Payment失败:', error);
       throw error;
     }
   };

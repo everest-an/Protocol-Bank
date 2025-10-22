@@ -20,14 +20,14 @@ export default function RegisterSupplierModal({ onClose, onSuccess }: RegisterSu
   });
 
   const categories = [
-    '技术服务',
-    '云计算',
-    '原材料',
-    '物流运输',
-    '咨询服务',
-    '设计服务',
-    '营销推广',
-    '其他',
+    'Technology',
+    'Cloud Computing',
+    'Raw Materials',
+    'Logistics',
+    'Consulting',
+    'Design',
+    'Marketing',
+    'Other',
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -40,7 +40,7 @@ export default function RegisterSupplierModal({ onClose, onSuccess }: RegisterSu
 
     const margin = parseFloat(formData.profitMargin);
     if (isNaN(margin) || margin < 0 || margin > 100) {
-      toast.error('利润率必须在 0-100 之间');
+      toast.error('Profit margin must be between 0-100 ');
       return;
     }
 
@@ -73,7 +73,7 @@ export default function RegisterSupplierModal({ onClose, onSuccess }: RegisterSu
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
       <div className="bg-gray-900 border border-gray-800 rounded-lg max-w-md w-full">
         <div className="flex items-center justify-between p-4 border-b border-gray-800">
-          <h2 className="text-lg font-bold text-white">注册供应商</h2>
+          <h2 className="text-lg font-bold text-white">Register Supplier</h2>
           <button
             onClick={onClose}
             disabled={loading}
@@ -86,7 +86,7 @@ export default function RegisterSupplierModal({ onClose, onSuccess }: RegisterSu
         <form onSubmit={handleSubmit} className="p-4 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">
-              供应商名称 *
+              Supplier Name *
             </label>
             <input
               type="text"
@@ -100,7 +100,7 @@ export default function RegisterSupplierModal({ onClose, onSuccess }: RegisterSu
 
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">
-              品牌名称 *
+              Brand名称 *
             </label>
             <input
               type="text"
@@ -147,7 +147,7 @@ export default function RegisterSupplierModal({ onClose, onSuccess }: RegisterSu
               disabled={loading}
             />
             <p className="text-xs text-gray-500 mt-1">
-              输入 0-100 之间的数值
+              输入 0-100 的数值
             </p>
           </div>
 
@@ -172,7 +172,7 @@ export default function RegisterSupplierModal({ onClose, onSuccess }: RegisterSu
                   注册中...
                 </>
               ) : (
-                '注册供应商'
+                'Register Supplier'
               )}
             </Button>
           </div>

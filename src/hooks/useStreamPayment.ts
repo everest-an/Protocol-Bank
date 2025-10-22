@@ -6,7 +6,7 @@ export function useStreamPayment() {
   const { address } = useAccount();
   const { writeContractAsync } = useWriteContract();
 
-  // 注册供应商
+  // Register Supplier
   const registerSupplier = async (
     name: string,
     brand: string,
@@ -25,7 +25,7 @@ export function useStreamPayment() {
     return hash;
   };
 
-  // 创建支付
+  // Create Payment
   const createPayment = async (
     to: `0x${string}`,
     category: string,

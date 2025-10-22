@@ -48,7 +48,7 @@ const CATEGORIES = [
   'Consulting Services',
   'Design Services',
   'Marketing',
-  '其他',
+  'Other',
 ];
 
 // 生成随机地址

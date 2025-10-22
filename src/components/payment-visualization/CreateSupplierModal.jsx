@@ -21,7 +21,7 @@ export default function CreateSupplierModal({ onClose, onSubmit, isLoading }) {
     'Consulting Services',
     'Design Services',
     'Marketing',
-    '其他'
+    'Other'
   ]
 
   const validate = () => {
@@ -44,7 +44,7 @@ export default function CreateSupplierModal({ onClose, onSubmit, isLoading }) {
     } else {
       const margin = parseFloat(formData.profitMargin)
       if (isNaN(margin) || margin < 0 || margin > 100) {
-        newErrors.profitMargin = '利润率必须在 0-100 之间'
+        newErrors.profitMargin = 'Profit margin must be between 0-100 '
       }
     }
 
@@ -78,7 +78,7 @@ export default function CreateSupplierModal({ onClose, onSubmit, isLoading }) {
       <Card className="w-full max-w-md">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg font-medium text-gray-900">
-            注册供应商
+            Register Supplier
           </CardTitle>
           <Button
             variant="ghost"
@@ -94,7 +94,7 @@ export default function CreateSupplierModal({ onClose, onSubmit, isLoading }) {
             {/* Name */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                供应商名称 *
+                Supplier Name *
               </label>
               <input
                 type="text"
@@ -114,7 +114,7 @@ export default function CreateSupplierModal({ onClose, onSubmit, isLoading }) {
             {/* Brand */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                品牌名称 *
+                Brand名称 *
               </label>
               <input
                 type="text"
@@ -196,7 +196,7 @@ export default function CreateSupplierModal({ onClose, onSubmit, isLoading }) {
                 disabled={isLoading}
                 className="flex-1 bg-gray-900 hover:bg-gray-800"
               >
-                {isLoading ? '注册中...' : '注册供应商'}
+                {isLoading ? '注册中...' : 'Register Supplier'}
               </Button>
             </div>
           </form>

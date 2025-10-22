@@ -7,7 +7,7 @@ export default function NetworkPaymentPage() {
   const [selectedNode, setSelectedNode] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // 示例数据 - 1个中心节点 + 20个收款人
+  // 示例数据 - 1个中心节点 + 20个Recipient
   const [recipients, setRecipients] = useState([
     { id: 'payer', name: 'My Company', type: 'payer', amount: 0, status: 'active' },
     { id: '1', name: 'Supplier A', type: 'recipient', amount: 5000, status: 'active', frequency: 'daily', token: 'USDT' },
@@ -68,7 +68,7 @@ export default function NetworkPaymentPage() {
           <div className="text-3xl font-semibold text-gray-900 dark:text-gray-100">${(stats.totalAmount / 1000).toFixed(1)}k</div>
         </div>
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
-          <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">收款人数量</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Recipient数量</div>
           <div className="text-3xl font-semibold text-gray-900 dark:text-gray-100">{stats.totalRecipients}</div>
         </div>
       </div>
@@ -80,7 +80,7 @@ export default function NetworkPaymentPage() {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <input
               type="text"
-              placeholder="搜索收款人..."
+              placeholder="搜索Recipient..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm w-64 dark:text-gray-100"
@@ -89,7 +89,7 @@ export default function NetworkPaymentPage() {
         </div>
         <Button className="bg-blue-600 hover:bg-blue-700 text-white">
           <Plus className="h-4 w-4 mr-2" />
-          添加收款人
+          添加Recipient
         </Button>
       </div>
 
@@ -112,7 +112,7 @@ export default function NetworkPaymentPage() {
               <div className="text-xl font-semibold text-gray-900 dark:text-gray-100">${selectedNode.amount}</div>
             </div>
             <div>
-              <div className="text-sm text-gray-500 dark:text-gray-400">支付频率</div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">支付Frequency</div>
               <div className="text-xl font-semibold text-gray-900 dark:text-gray-100">{selectedNode.frequency}</div>
             </div>
             <div>
@@ -126,7 +126,7 @@ export default function NetworkPaymentPage() {
                 selectedNode.status === 'paused' ? 'text-yellow-600' : 'text-blue-600'
               }`}>
                 {selectedNode.status === 'active' ? '活跃中' :
-                 selectedNode.status === 'paused' ? '已暂停' : '待启动'}
+                 selectedNode.status === 'paused' ? 'Paused' : '待启动'}
               </div>
             </div>
           </div>

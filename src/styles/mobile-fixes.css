@@ -1,0 +1,275 @@
+/* Mobile UI Fixes for Protocol Bank */
+
+/* Fix StreamPayment page layout issues */
+@media (max-width: 768px) {
+  /* StreamPayment Editor - Full screen layout */
+  .stream-payment-editor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+  }
+  
+  /* FlowEditor toolbar - make it collapsible on mobile */
+  .flow-editor-toolbar {
+    position: fixed !important;
+    top: 60px !important;
+    left: 0.5rem !important;
+    max-width: 200px;
+    max-height: calc(100vh - 140px);
+    overflow-y: auto;
+    z-index: 20 !important;
+  }
+  
+  /* FlowEditor save button - move to bottom */
+  .flow-editor-save {
+    position: fixed !important;
+    bottom: 1rem !important;
+    right: 1rem !important;
+    left: auto !important;
+    top: auto !important;
+    z-index: 30 !important;
+  }
+  
+  /* React Flow controls - adjust position */
+  .react-flow__controls {
+    bottom: 80px !important;
+    right: 10px !important;
+  }
+  
+  /* React Flow minimap - hide on small screens */
+  .react-flow__minimap {
+    display: none !important;
+  }
+  
+  /* Config panel - full screen on mobile */
+  .config-panel {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    z-index: 40 !important;
+  }
+  
+  /* StreamPayment list view fixes */
+  .stream-payment-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 1rem;
+  }
+  
+  .stream-payment-header button {
+    width: 100%;
+  }
+  
+  /* Stream cards - full width on mobile */
+  .stream-card-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  /* Payment visualization - prevent overflow */
+  .payment-network-container {
+    overflow: hidden;
+    position: relative;
+  }
+  
+  /* Test mode controls - stack vertically */
+  .test-mode-controls {
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+  }
+  
+  .test-mode-controls > * {
+    width: 100% !important;
+  }
+  
+  /* Demo case selector - full width */
+  .demo-case-selector {
+    width: 100% !important;
+  }
+  
+  /* Category filter buttons - better scroll */
+  .category-filters {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+    margin: 0 -1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .category-filters::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .category-filters button {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  
+  /* Table wrapper - better horizontal scroll */
+  .table-wrapper {
+    margin: 0 -1rem;
+    padding: 0 1rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Prevent body scroll when modal is open */
+  body.modal-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+  }
+  
+  /* Fix z-index stacking issues */
+  .modal-overlay {
+    z-index: 100 !important;
+  }
+  
+  .dropdown-menu {
+    z-index: 110 !important;
+  }
+  
+  /* Supplier cards - better mobile layout */
+  .supplier-card {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 1rem;
+  }
+  
+  .supplier-card-actions {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  /* Analytics charts - responsive height */
+  .analytics-chart {
+    height: 250px !important;
+    min-height: 250px;
+  }
+  
+  /* Spending by category - better mobile view */
+  .spending-category-item {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .spending-category-bar {
+    width: 100% !important;
+  }
+}
+
+/* Extra small screens - additional fixes */
+@media (max-width: 480px) {
+  /* Reduce padding */
+  .container,
+  main {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+  
+  /* Smaller font sizes */
+  .page-title {
+    font-size: 1.25rem !important;
+  }
+  
+  .page-subtitle {
+    font-size: 0.875rem !important;
+  }
+  
+  /* Compact stat cards */
+  .stat-card {
+    padding: 0.75rem !important;
+  }
+  
+  .stat-card-value {
+    font-size: 1.5rem !important;
+  }
+  
+  /* FlowEditor toolbar - even more compact */
+  .flow-editor-toolbar {
+    max-width: 160px;
+  }
+  
+  .flow-editor-toolbar button {
+    font-size: 0.75rem;
+    padding: 0.5rem;
+  }
+  
+  /* Network visualization - smaller */
+  .network-visualization {
+    height: 280px !important;
+    min-height: 280px;
+  }
+}
+
+/* Landscape mode fixes */
+@media (max-width: 768px) and (orientation: landscape) {
+  /* FlowEditor - adjust for landscape */
+  .flow-editor-toolbar {
+    flex-direction: row;
+    max-width: none;
+    width: calc(100% - 1rem);
+    max-height: 60px;
+    overflow-x: auto;
+  }
+  
+  .flow-editor-toolbar button {
+    flex-shrink: 0;
+  }
+  
+  /* Network visualization - use more height */
+  .network-visualization {
+    height: 70vh !important;
+  }
+  
+  /* Config panel - use modal style */
+  .config-panel {
+    max-height: 80vh !important;
+    top: 10vh !important;
+    bottom: 10vh !important;
+  }
+}
+
+/* Fix for iOS Safari bottom bar */
+@supports (-webkit-touch-callout: none) {
+  .flow-editor-save {
+    bottom: calc(1rem + env(safe-area-inset-bottom)) !important;
+  }
+  
+  .react-flow__controls {
+    bottom: calc(80px + env(safe-area-inset-bottom)) !important;
+  }
+}
+
+/* Prevent text selection during drag operations */
+.react-flow__node {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Better touch feedback */
+@media (hover: none) and (pointer: coarse) {
+  button:active {
+    opacity: 0.7;
+  }
+  
+  .category-filters button:active,
+  .flow-editor-toolbar button:active {
+    transform: scale(0.95);
+  }
+}
+

@@ -19,13 +19,13 @@ export default function StreamPaymentCard({ stream, onEdit, onToggle, onDelete }
   const getStatusText = (status) => {
     switch (status) {
       case 'active':
-        return '运行中'
+        return 'Running'
       case 'paused':
-        return '已暂停'
+        return 'Paused'
       case 'completed':
-        return '已完成'
+        return 'Completed'
       default:
-        return '未知'
+        return 'Unknown'
     }
   }
 
@@ -40,7 +40,7 @@ export default function StreamPaymentCard({ stream, onEdit, onToggle, onDelete }
                 {getStatusText(stream.status)}
               </span>
               <span className="text-xs text-gray-500">
-                创建于 {new Date(stream.createdAt).toLocaleDateString('zh-CN')}
+                Created at {new Date(stream.createdAt).toLocaleDateString('zh-CN')}
               </span>
             </div>
           </div>
@@ -69,13 +69,13 @@ export default function StreamPaymentCard({ stream, onEdit, onToggle, onDelete }
             </div>
           </div>
           <div>
-            <div className="text-xs text-gray-500 mb-1">支付频率</div>
+            <div className="text-xs text-gray-500 mb-1">支付Frequency</div>
             <div className="text-sm font-medium text-gray-900">
-              {stream.frequency || '每分钟'}
+              {stream.frequency || 'Per Minute'}
             </div>
           </div>
           <div>
-            <div className="text-xs text-gray-500 mb-1">收款人</div>
+            <div className="text-xs text-gray-500 mb-1">Recipient</div>
             <div className="text-sm font-medium text-gray-900 truncate">
               {stream.recipientName || '未设置'}
             </div>

@@ -26,7 +26,7 @@ export function useStreamContract(signer, provider) {
     }
   }, [signer, provider]);
 
-  // 注册供应商
+  // Register Supplier
   const registerSupplier = useCallback(
     async (name, brand, category, profitMargin) => {
       if (!contract || !signer) throw new Error('合约未初始化');
@@ -42,7 +42,7 @@ export function useStreamContract(signer, provider) {
         await tx.wait();
         return tx.hash;
       } catch (error) {
-        // console.error('注册供应商失败:', error);
+        // console.error('Register Supplier失败:', error);
         throw error;
       } finally {
         setLoading(false);
@@ -51,7 +51,7 @@ export function useStreamContract(signer, provider) {
     [contract, signer]
   );
 
-  // 创建支付
+  // Create Payment
   const createPayment = useCallback(
     async (to, category, amountInEth) => {
       if (!contract || !signer) throw new Error('合约未初始化');
@@ -64,7 +64,7 @@ export function useStreamContract(signer, provider) {
         await tx.wait();
         return tx.hash;
       } catch (error) {
-        // console.error('创建支付失败:', error);
+        // console.error('Create Payment失败:', error);
         throw error;
       } finally {
         setLoading(false);

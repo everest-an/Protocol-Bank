@@ -10,7 +10,7 @@ export const CURRENCIES = {
   ETH: { symbol: 'Ξ', name: 'Ethereum', decimals: 4 },
 };
 
-// 模拟汇率数据 (实际应该从 API 获取)
+// Simulate汇率数据 (实际应该从 API 获取)
 const MOCK_RATES = {
   ETH_USD: 2000,
   ETH_EUR: 1850,
@@ -35,7 +35,7 @@ export function useCurrency() {
       // const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd,eur,cny,gbp,jpy');
       // const data = await response.json();
       
-      // 暂时使用模拟数据
+      // 暂时使用Simulate数据
       await new Promise(resolve => setTimeout(resolve, 500));
       setRates(MOCK_RATES);
     } catch (error) {
@@ -47,7 +47,7 @@ export function useCurrency() {
 
   useEffect(() => {
     fetchRates();
-    // 每分钟更新一次汇率
+    // Per Minute更新一次汇率
     const interval = setInterval(fetchRates, 60000);
     return () => clearInterval(interval);
   }, []);
