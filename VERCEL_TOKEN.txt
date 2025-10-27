@@ -1,0 +1,30 @@
+Vercel Token (永不过期)
+========================
+
+Token: BRUmbAunejd1OWTN32Kbf5os
+
+创建时间: 2025-10-27
+名称: Protocol Bank Deployment
+权限: Full Account
+过期时间: Never expires
+
+使用方法:
+---------
+
+1. 环境变量方式:
+   export VERCEL_TOKEN=BRUmbAunejd1OWTN32Kbf5os
+
+2. Vercel CLI 部署:
+   cd /home/ubuntu/Protocol-Bank
+   VERCEL_TOKEN=BRUmbAunejd1OWTN32Kbf5os vercel --prod
+
+3. GitHub Actions:
+   在 GitHub Secrets 中添加:
+   Name: VERCEL_TOKEN
+   Value: BRUmbAunejd1OWTN32Kbf5os
+
+⚠️ 安全提示:
+- 此 Token 拥有完整账户权限，请妥善保管
+- 不要将此文件提交到 Git 仓库
+- 不要在公开场合分享此 Token
+
