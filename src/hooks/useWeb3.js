@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { ethers } from 'ethers';
+import { SEPOLIA_CONFIG } from '../config/contracts';
 
 export function useWeb3() {
   const [account, setAccount] = useState(null);
@@ -9,7 +10,7 @@ export function useWeb3() {
   const [isConnecting, setIsConnecting] = useState(false);
   const [error, setError] = useState(null);
 
-  const SEPOLIA_CHAIN_ID = 11155111;
+  const SEPOLIA_CHAIN_ID = SEPOLIA_CONFIG.chainId;
 
   // 检查是否安装了 MetaMask
   const isMetaMaskInstalled = typeof window !== 'undefined' && window.ethereum;
@@ -57,7 +58,7 @@ export function useWeb3() {
     try {
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
-        params: [{ chainId: '0xaa36a7' }], // Sepolia chainId in hex
+        params: [{ chainId: SEPOLIA_CONFIG.chainIdHex }],
       });
     } catch (err) {
       // 如果网络不存在,添加网络
@@ -67,15 +68,11 @@ export function useWeb3() {
             method: 'wallet_addEthereumChain',
             params: [
               {
-                chainId: '0xaa36a7',
-                chainName: 'Sepolia Test Network',
-                nativeCurrency: {
-                  name: 'Sepolia ETH',
-                  symbol: 'ETH',
-                  decimals: 18,
-                },
-                rpcUrls: ['https://sepolia.infura.io/v3/'],
-                blockExplorerUrls: ['https://sepolia.etherscan.io'],
+                chainId: SEPOLIA_CONFIG.chainIdHex,
+                chainName: SEPOLIA_CONFIG.name,
+                nativeCurrency: SEPOLIA_CONFIG.nativeCurrency,
+                rpcUrls: [SEPOLIA_CONFIG.rpcUrl],
+                blockExplorerUrls: [SEPOLIA_CONFIG.explorerUrl],
               },
             ],
           });

@@ -1,10 +1,12 @@
+import { STAKED_ESCROW_CONTRACT, SEPOLIA_CONFIG } from '../config/contracts'
+
 // StakedPaymentEscrow Contract Configuration
 export const STAKED_ESCROW_CONFIG = {
-  address: '0x44a55360BaBc86d6443471Aa473E9Fa693037f04',
-  network: 'sepolia',
-  chainId: 11155111,
-  rpcUrl: 'https://eth-sepolia.g.alchemy.com/v2/N-UzzxYZbLPikS4Fc6pqC',
-  explorerUrl: 'https://sepolia.etherscan.io'
+  address: STAKED_ESCROW_CONTRACT.address,
+  network: STAKED_ESCROW_CONTRACT.network,
+  chainId: SEPOLIA_CONFIG.chainId,
+  rpcUrl: SEPOLIA_CONFIG.rpcUrl,
+  explorerUrl: SEPOLIA_CONFIG.explorerUrl
 }
 
 export const STAKED_ESCROW_ABI = [

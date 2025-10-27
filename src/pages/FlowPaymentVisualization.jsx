@@ -13,8 +13,10 @@ import LiveIndicator from '../components/LiveIndicator';
 import CurrencySelector from '../components/CurrencySelector';
 import { useExchangeRates } from '../hooks/useExchangeRates';
 import { formatWithConversion } from '../utils/currencyFormatter';
+import { useTranslation } from 'react-i18next';
 
 export default function FlowPaymentVisualization() {
+  const { t } = useTranslation();
   const {
     account,
     provider,
@@ -206,10 +208,10 @@ export default function FlowPaymentVisualization() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-light text-gray-900 dark:text-white">
-                Flow Payment Network
+                {t('flowPayment.title')}
               </h1>
               <p className="text-sm text-gray-500 dark:text-gray-300 mt-1">
-                Real-time payment network visualization on Sepolia
+                {t('flowPayment.subtitle')}
               </p>
             </div>
 
@@ -236,7 +238,7 @@ export default function FlowPaymentVisualization() {
                 }`}
               >
                 <TestTube2 className="w-4 h-4" />
-                {testMode ? 'Exit Test Mode' : 'Test Mode'}
+                {testMode ? t('testMode.exit') : t('testMode.enter')}
               </button>
 
               {/* 刷新 */}
@@ -246,7 +248,7 @@ export default function FlowPaymentVisualization() {
                 className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-                Refresh
+                {t('common.refresh')}
               </button>
 
               {/* Register Supplier */}
@@ -256,7 +258,7 @@ export default function FlowPaymentVisualization() {
                   className="flex items-center gap-2 px-4 py-2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors"
                 >
                   <Users className="w-4 h-4" />
-                  Register Supplier
+                  {t('flowPayment.registerSupplier')}
                 </button>
               )}
 
@@ -268,7 +270,7 @@ export default function FlowPaymentVisualization() {
                   className="flex items-center gap-2 px-4 py-2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Send className="w-4 h-4" />
-                  Create Payment
+                  {t('payment.createPayment')}
                 </button>
               )}
 
@@ -280,7 +282,7 @@ export default function FlowPaymentVisualization() {
                   className="flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Wallet className="w-4 h-4" />
-                  {isConnecting ? 'Connecting...' : 'Connect Wallet'}
+                  {isConnecting ? t('common.connecting') : t('common.connect')}
                 </button>
               ) : (
                 <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-900 rounded-lg">
@@ -302,7 +304,7 @@ export default function FlowPaymentVisualization() {
           <div className="bg-white dark:bg-black border border-gray-100 dark:border-gray-700 rounded-lg p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-300">Total Payments</p>
+                <p className="text-sm text-gray-500 dark:text-gray-300">{t('flowPayment.totalPayments')}</p>
                 <p className="text-2xl font-light text-gray-900 dark:text-white mt-1">
                   {displayStats.totalPayments || 0}
                 </p>
@@ -314,7 +316,7 @@ export default function FlowPaymentVisualization() {
           <div className="bg-white dark:bg-black border border-gray-100 dark:border-gray-700 rounded-lg p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-300">Total Amount</p>
+                <p className="text-sm text-gray-500 dark:text-gray-300">{t('flowPayment.totalAmount')}</p>
                 <p className="text-2xl font-light text-gray-900 dark:text-white mt-1 font-mono">
                   {formatWithConversion(parseFloat(displayStats.totalAmount || 0), selectedCurrency, rates)}
                 </p>
@@ -326,7 +328,7 @@ export default function FlowPaymentVisualization() {
           <div className="bg-white dark:bg-black border border-gray-100 dark:border-gray-700 rounded-lg p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-300">Suppliers</p>
+                <p className="text-sm text-gray-500 dark:text-gray-300">{t('flowPayment.suppliers')}</p>
                 <p className="text-2xl font-light text-gray-900 dark:text-white mt-1">
                   {displayStats.supplierCount || displaySuppliers.length}
                 </p>
@@ -338,7 +340,7 @@ export default function FlowPaymentVisualization() {
           <div className="bg-white dark:bg-black border border-gray-100 dark:border-gray-700 rounded-lg p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-300">Average Payment</p>
+                <p className="text-sm text-gray-500 dark:text-gray-300">{t('flowPayment.averagePayment')}</p>
                 <p className="text-2xl font-light text-gray-900 dark:text-white mt-1 font-mono">
                   {formatWithConversion(parseFloat(displayStats.averagePayment || 0), selectedCurrency, rates)}
                 </p>
@@ -364,15 +366,17 @@ export default function FlowPaymentVisualization() {
               <TestTube2 className="w-5 h-5 text-purple-600 dark:text-purple-400 mt-0.5" />
               <div className="flex-1">
                 <h3 className="text-sm font-medium text-purple-900 dark:text-purple-100">
-                  Test Mode Enabled
+                  {t('testMode.enabled')}
                 </h3>
                 <p className="text-sm text-purple-700 dark:text-purple-300 mt-1">
-                  Currently displaying mock data with {mockData?.suppliers?.length || 0} suppliers and{' '}
-                  {mockData?.payments?.length || 0} payment records for demonstration purposes.
+                  {t('testMode.description', {
+                    suppliers: mockData?.suppliers?.length || 0,
+                    payments: mockData?.payments?.length || 0
+                  })}
                 </p>
                 <div className="mt-3 flex items-center gap-4">
                   <label className="text-sm font-medium text-purple-900 dark:text-purple-100">
-                    Suppliers: {supplierCount}
+                    {t('flowPayment.suppliers')}: {supplierCount}
                   </label>
                   <input
                     type="range"
@@ -386,17 +390,17 @@ export default function FlowPaymentVisualization() {
                 </div>
                 <div className="mt-3 flex items-center gap-3">
                   <label className="text-sm font-medium text-purple-900 dark:text-purple-100">
-                    Demo Case:
+                    {t('testMode.demoCase')}:
                   </label>
                   <select
                     value={demoCase}
                     onChange={(e) => setDemoCase(e.target.value)}
                     className="px-3 py-1.5 bg-white dark:bg-gray-800 border border-purple-200 dark:border-purple-700 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
                   >
-                    <option value="simple">Simple (HQ → Suppliers)</option>
-                    <option value="two-tier">Two-Tier (HQ → Subsidiaries → Suppliers)</option>
-                    <option value="three-tier">Three-Tier (HQ → Regional → Branches → Suppliers)</option>
-                    <option value="complex">Complex (Multiple Companies)</option>
+                    <option value="simple">{t('testMode.simple')}</option>
+                    <option value="two-tier">{t('testMode.twoTier')}</option>
+                    <option value="three-tier">{t('testMode.threeTier')}</option>
+                    <option value="complex">{t('testMode.complex')}</option>
                   </select>
                 </div>
               </div>

@@ -34,6 +34,7 @@ const resources = {
       common: {
         search: 'Search',
         connect: 'Connect Wallet',
+        connecting: 'Connecting...',
         disconnect: 'Disconnect',
         loading: 'Loading...',
         refresh: 'Refresh',
@@ -65,8 +66,26 @@ const resources = {
         transactions: 'transactions',
       },
       
+      // Flow Payment
+      flowPayment: {
+        title: 'Flow Payment Network',
+        subtitle: 'Real-time payment network visualization on Sepolia',
+        registerSupplier: 'Register Supplier',
+        totalPayments: 'Total Payments',
+        totalAmount: 'Total Amount',
+        suppliers: 'Suppliers',
+        averagePayment: 'Average Payment',
+        paymentTransactions: 'Payment Transactions',
+        transactions: 'transactions',
+        dragToPan: 'Drag to pan',
+        scrollToZoom: 'Scroll to zoom',
+        clickNodes: 'Click nodes for details',
+      },
+      
       // Test Mode
       testMode: {
+        enter: 'Test Mode',
+        exit: 'Exit Test Mode',
         enabled: 'Test Mode Enabled',
         description: 'Currently displaying mock data with {suppliers} suppliers and {payments} payment records for demonstration purposes.',
         demoCase: 'Demo Case',
@@ -105,6 +124,7 @@ const resources = {
       common: {
         search: '搜索',
         connect: '连接钱包',
+        connecting: '连接中...',
         disconnect: '断开连接',
         loading: '加载中...',
         refresh: '刷新',
@@ -120,11 +140,11 @@ const resources = {
       
       payment: {
         totalPayments: '总支付数',
-        totalAmount: '总Amount',
+        totalAmount: '总金额',
         suppliers: '供应商',
         averagePayment: '平均支付',
         category: '分类',
-        amount: 'Amount',
+        amount: '金额',
         status: '状态',
         txHash: '交易哈希',
         date: '日期',
@@ -135,7 +155,25 @@ const resources = {
         transactions: '笔交易',
       },
       
+      // Flow Payment
+      flowPayment: {
+        title: '流支付网络',
+        subtitle: '基于 Sepolia 的实时支付网络可视化',
+        registerSupplier: '注册供应商',
+        totalPayments: '总支付数',
+        totalAmount: '总金额',
+        suppliers: '供应商',
+        averagePayment: '平均支付',
+        paymentTransactions: '支付交易',
+        transactions: '笔交易',
+        dragToPan: '拖动平移',
+        scrollToZoom: '滚动缩放',
+        clickNodes: '点击节点查看详情',
+      },
+      
       testMode: {
+        enter: '测试模式',
+        exit: '退出测试模式',
         enabled: '测试模式已启用',
         description: '当前显示模拟数据，包含 {suppliers} 个供应商和 {payments} 条支付记录用于演示。',
         demoCase: '演示案例',
