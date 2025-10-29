@@ -230,7 +230,7 @@ function App() {
         {activeTab === 'suppliers' && <SuppliersPage />}
         {activeTab === 'analytics' && (
           <div className="p-6">
-            <DataAnalytics testMode={true} mockData={generateFullMockData(100)} />
+            <DataAnalytics />
           </div>
         )}
         

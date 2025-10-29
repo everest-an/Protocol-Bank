@@ -182,6 +182,15 @@ export default function DataAnalyticsV3({ suppliers = [], payments = [], testMod
           </p>
         </div>
         <div className="flex items-center gap-3">
+          <Button
+            onClick={() => window.location.reload()}
+            variant="outline"
+            className="flex items-center gap-2 text-purple-600 border-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/20"
+            title="Currently in test mode. Click to reload and connect wallet for real data"
+          >
+            <TestTube2 className="w-4 h-4" />
+            Exit Test Mode
+          </Button>
           <select
             value={timeRange}
             onChange={(e) => setTimeRange(e.target.value)}
@@ -218,7 +227,7 @@ export default function DataAnalyticsV3({ suppliers = [], payments = [], testMod
               <DollarSign className="w-5 h-5 text-green-500" />
             </div>
             <div className="text-2xl font-bold text-gray-900 dark:text-white">
-              ${analytics.totalSpent.toLocaleString()}
+              ${analytics.totalSpent.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
             <div className="flex items-center gap-1 mt-2 text-sm text-green-600 dark:text-green-400">
               <TrendingUp className="w-4 h-4" />
@@ -250,7 +259,7 @@ export default function DataAnalyticsV3({ suppliers = [], payments = [], testMod
               <Activity className="w-5 h-5 text-purple-500" />
             </div>
             <div className="text-2xl font-bold text-gray-900 dark:text-white">
-              ${analytics.avgPayment.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+              ${analytics.avgPayment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
             <div className="flex items-center gap-1 mt-2 text-sm text-gray-600 dark:text-gray-400">
               <span>{analytics.paymentCount} transactions</span>
@@ -333,8 +342,8 @@ export default function DataAnalyticsV3({ suppliers = [], payments = [], testMod
                       {isSelected && (
                         <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
                           <div className="text-xs text-blue-900 dark:text-blue-300 space-y-1">
-                            <p><strong>Average per supplier:</strong> ${(category.amount / category.suppliers).toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
-                            <p><strong>Average per payment:</strong> ${(category.amount / category.count).toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                            <p><strong>Average per supplier:</strong> ${(category.amount / category.suppliers).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                            <p><strong>Average per payment:</strong> ${(category.amount / category.count).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                             <p><strong>Share of total:</strong> {percentage.toFixed(2)}%</p>
                           </div>
                         </div>
@@ -370,7 +379,7 @@ export default function DataAnalyticsV3({ suppliers = [], payments = [], testMod
                       <p className="text-xs text-gray-500 dark:text-gray-400">{supplier.category}</p>
                       <div className="flex items-center justify-between mt-1">
                         <span className="text-sm font-semibold text-green-600 dark:text-green-400">
-                          ${supplier.totalAmount.toLocaleString()}
+                          ${supplier.totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </span>
                         <span className="text-xs text-gray-500 dark:text-gray-400">
                           {supplier.paymentCount} payments
