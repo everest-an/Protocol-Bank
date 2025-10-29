@@ -1,0 +1,10 @@
+{
+  "network": "sepolia",
+  "deployer": "0x66794fC75C351ad9677cB00B2043868C11dfcadA",
+  "timestamp": "2025-10-29T18:03:25.707Z",
+  "contracts": {
+    "mockUSDC": "0x51eDB4f010A695fb727C537F0B2463E632d4b026",
+    "mockDAI": "0xc4844510f5954a27db7452754604C074a07066Fb",
+    "streamPayment": "0x642B0c309358D083EE83748b4C22572aa28AebF7"
+  }
+}

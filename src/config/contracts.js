@@ -31,20 +31,36 @@ export const STAKED_ESCROW_CONTRACT = {
 
 // StreamPayment 合约配置
 // StreamPayment Contract Configuration
+// 部署时间: 2025-10-29 18:03:25 UTC
+// Deployed: 2025-10-29 18:03:25 UTC
 export const STREAM_PAYMENT_CONTRACT = {
-  address: import.meta.env.VITE_STREAM_PAYMENT_ADDRESS || '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+  address: '0x642B0c309358D083EE83748b4C22572aa28AebF7',
   network: 'sepolia',
   chainId: SEPOLIA_CONFIG.chainId
 }
 
 // Mock USDC 合约配置（用于测试）
 // Mock USDC Contract Configuration (for testing)
+// 部署时间: 2025-10-29 18:03:25 UTC
+// Deployed: 2025-10-29 18:03:25 UTC
 export const MOCK_USDC_CONTRACT = {
-  address: import.meta.env.VITE_MOCK_USDC_ADDRESS || '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
+  address: '0x51eDB4f010A695fb727C537F0B2463E632d4b026',
   network: 'sepolia',
   chainId: SEPOLIA_CONFIG.chainId,
   symbol: 'USDC',
   decimals: 6
+}
+
+// Mock DAI 合约配置（用于测试）
+// Mock DAI Contract Configuration (for testing)
+// 部署时间: 2025-10-29 18:03:25 UTC
+// Deployed: 2025-10-29 18:03:25 UTC
+export const MOCK_DAI_CONTRACT = {
+  address: '0xc4844510f5954a27db7452754604C074a07066Fb',
+  network: 'sepolia',
+  chainId: SEPOLIA_CONFIG.chainId,
+  symbol: 'DAI',
+  decimals: 18
 }
 
 /**
