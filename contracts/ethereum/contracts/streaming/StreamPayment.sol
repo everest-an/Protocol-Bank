@@ -1,19 +1,25 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity 0.8.20;  // QSP-13: Lock Solidity version
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";  // QSP-9: Add emergency pause
 import "../interfaces/IStreamPayment.sol";
 
 /**
  * @title StreamPayment
  * @dev Protocol Bank streaming payment implementation
- * Enables continuous token streaming from sender to recipient over time
+ * @notice Enables continuous token streaming from sender to recipient over time
+ * @notice Uses high-precision arithmetic to prevent rounding errors
+ * @author Protocol Bank Team
  */
-contract StreamPayment is IStreamPayment, ReentrancyGuard, Ownable {
+contract StreamPayment is IStreamPayment, ReentrancyGuard, Ownable, Pausable {
     using SafeERC20 for IERC20;
+
+    // QSP-1: Precision factor for rate calculations (prevents rounding errors)
+    uint256 private constant PRECISION = 1e18;
 
     // Stream counter for generating unique IDs
     uint256 private _streamIdCounter;
@@ -33,38 +39,55 @@ contract StreamPayment is IStreamPayment, ReentrancyGuard, Ownable {
     // Platform fee recipient
     address public feeRecipient;
 
-    // Minimum stream duration (to prevent spam)
-    uint256 public constant MIN_DURATION = 60; // 1 minute
+    // QSP-8: Minimum stream duration increased to 1 hour (prevents spam and precision loss)
+    uint256 public constant MIN_DURATION = 3600; // 1 hour
 
-    constructor() Ownable(msg.sender) {
+    // QSP-7: Maximum stream name length (prevents gas griefing)
+    uint256 public constant MAX_NAME_LENGTH = 100;
+
+    /**
+     * @dev Constructor sets the initial fee recipient to the contract deployer
+     */
+    constructor() Ownable(msg.sender) Pausable() {
         feeRecipient = msg.sender;
     }
 
     /**
      * @dev Create a new streaming payment
+     * @param recipient The address that will receive the stream
+     * @param token The ERC20 token address to be streamed
+     * @param totalAmount The total amount of tokens to be streamed
+     * @param duration The duration of the stream in seconds
+     * @param streamName A human-readable name for the stream
+     * @return streamId The unique identifier of the created stream
+     * @notice Requires approval for the contract to transfer tokens
+     * @notice Uses high-precision arithmetic to prevent rounding errors
      */
     function createStream(
         address recipient,
         address token,
         uint256 totalAmount,
         uint256 duration,
-        string memory streamName
-    ) external override nonReentrant returns (uint256 streamId) {
+        string calldata streamName  // QSP-12: Use calldata instead of memory
+    ) external override nonReentrant whenNotPaused returns (uint256 streamId) {
         require(recipient != address(0), "Invalid recipient");
         require(recipient != msg.sender, "Cannot stream to self");
         require(token != address(0), "Invalid token");
         require(totalAmount > 0, "Amount must be positive");
         require(duration >= MIN_DURATION, "Duration too short");
+        require(bytes(streamName).length <= MAX_NAME_LENGTH, "Stream name too long");  // QSP-7
 
-        // Calculate rate per second
-        uint256 ratePerSecond = totalAmount / duration;
+        // QSP-1: Use high-precision calculation to prevent rounding errors
+        uint256 ratePerSecond = (totalAmount * PRECISION) / duration;
         require(ratePerSecond > 0, "Rate too low");
 
         // Transfer tokens from sender to contract
         IERC20(token).safeTransferFrom(msg.sender, address(this), totalAmount);
 
-        // Generate new stream ID
-        streamId = _streamIdCounter++;
+        // QSP-12: Use unchecked for counter increment (safe from overflow)
+        unchecked {
+            streamId = _streamIdCounter++;
+        }
 
         // Create stream
         uint256 startTime = block.timestamp;
@@ -81,6 +104,7 @@ contract StreamPayment is IStreamPayment, ReentrancyGuard, Ownable {
             startTime: startTime,
             endTime: endTime,
             lastWithdrawTime: startTime,
+            pauseTime: 0,  // QSP-2: Add pauseTime field
             status: StreamStatus.ACTIVE,
             streamName: streamName
         });
@@ -106,8 +130,11 @@ contract StreamPayment is IStreamPayment, ReentrancyGuard, Ownable {
 
     /**
      * @dev Withdraw available funds from a stream
+     * @param streamId The unique identifier of the stream
+     * @notice Only the recipient can withdraw funds
+     * @notice Platform fees are deducted if configured
      */
-    function withdrawFromStream(uint256 streamId) external override nonReentrant {
+    function withdrawFromStream(uint256 streamId) external override nonReentrant whenNotPaused {
         Stream storage stream = _streams[streamId];
         require(stream.sender != address(0), "Stream does not exist");
         require(msg.sender == stream.recipient, "Only recipient can withdraw");
@@ -119,6 +146,10 @@ contract StreamPayment is IStreamPayment, ReentrancyGuard, Ownable {
         uint256 availableBalance = _calculateAvailableBalance(stream);
         require(availableBalance > 0, "No funds available");
 
+        // QSP-3: Implement platform fee logic
+        uint256 platformFee = (availableBalance * platformFeeBps) / 10000;
+        uint256 recipientAmount = availableBalance - platformFee;
+
         // Update stream state
         stream.amountWithdrawn += availableBalance;
         stream.lastWithdrawTime = block.timestamp;
@@ -129,14 +160,25 @@ contract StreamPayment is IStreamPayment, ReentrancyGuard, Ownable {
             emit StreamCompleted(streamId, block.timestamp);
         }
 
-        // Transfer tokens to recipient
-        IERC20(stream.token).safeTransfer(stream.recipient, availableBalance);
+        // QSP-12: Cache token address to save gas
+        address tokenAddress = stream.token;
 
-        emit StreamWithdrawn(streamId, stream.recipient, availableBalance, block.timestamp);
+        // Transfer platform fee if applicable
+        if (platformFee > 0) {
+            IERC20(tokenAddress).safeTransfer(feeRecipient, platformFee);
+        }
+
+        // Transfer tokens to recipient
+        IERC20(tokenAddress).safeTransfer(stream.recipient, recipientAmount);
+
+        emit StreamWithdrawn(streamId, stream.recipient, recipientAmount, block.timestamp);
     }
 
     /**
      * @dev Pause an active stream
+     * @param streamId The unique identifier of the stream
+     * @notice Only the sender can pause their stream
+     * @notice Records the pause timestamp for accurate resume calculation
      */
     function pauseStream(uint256 streamId) external override {
         Stream storage stream = _streams[streamId];
@@ -147,6 +189,7 @@ contract StreamPayment is IStreamPayment, ReentrancyGuard, Ownable {
         // Update streamed amount before pausing
         uint256 streamedSoFar = _calculateStreamedAmount(stream);
         stream.amountStreamed = streamedSoFar;
+        stream.pauseTime = block.timestamp;  // QSP-2: Record pause time
         stream.status = StreamStatus.PAUSED;
 
         emit StreamPaused(streamId, block.timestamp);
@@ -154,6 +197,9 @@ contract StreamPayment is IStreamPayment, ReentrancyGuard, Ownable {
 
     /**
      * @dev Resume a paused stream
+     * @param streamId The unique identifier of the stream
+     * @notice Only the sender can resume their stream
+     * @notice Extends the end time by the paused duration
      */
     function resumeStream(uint256 streamId) external override {
         Stream storage stream = _streams[streamId];
@@ -161,8 +207,8 @@ contract StreamPayment is IStreamPayment, ReentrancyGuard, Ownable {
         require(msg.sender == stream.sender, "Only sender can resume");
         require(stream.status == StreamStatus.PAUSED, "Stream not paused");
 
-        // Extend end time by the paused duration
-        uint256 pausedDuration = block.timestamp - stream.lastWithdrawTime;
+        // QSP-2: Use pauseTime to calculate paused duration accurately
+        uint256 pausedDuration = block.timestamp - stream.pauseTime;
         stream.endTime += pausedDuration;
         stream.status = StreamStatus.ACTIVE;
 
@@ -171,15 +217,17 @@ contract StreamPayment is IStreamPayment, ReentrancyGuard, Ownable {
 
     /**
      * @dev Cancel a stream and refund remaining balance
+     * @param streamId The unique identifier of the stream
+     * @notice Can be called by sender or recipient
+     * @notice QSP-5: Only allows cancellation when stream is ACTIVE
      */
     function cancelStream(uint256 streamId) external override nonReentrant {
         Stream storage stream = _streams[streamId];
         require(stream.sender != address(0), "Stream does not exist");
         require(msg.sender == stream.sender || msg.sender == stream.recipient, "Not authorized");
-        require(
-            stream.status == StreamStatus.ACTIVE || stream.status == StreamStatus.PAUSED,
-            "Stream not active or paused"
-        );
+        
+        // QSP-5: Only allow cancellation when stream is active (prevents ambiguity)
+        require(stream.status == StreamStatus.ACTIVE, "Stream must be active to cancel");
 
         // Calculate amounts
         uint256 streamedAmount = _calculateStreamedAmount(stream);
@@ -190,15 +238,20 @@ contract StreamPayment is IStreamPayment, ReentrancyGuard, Ownable {
         stream.status = StreamStatus.CANCELLED;
         stream.amountStreamed = streamedAmount;
 
+        // QSP-12: Cache addresses to save gas
+        address tokenAddress = stream.token;
+        address recipientAddress = stream.recipient;
+        address senderAddress = stream.sender;
+
         // Transfer remaining funds to recipient if any
         if (recipientAmount > 0) {
-            IERC20(stream.token).safeTransfer(stream.recipient, recipientAmount);
+            IERC20(tokenAddress).safeTransfer(recipientAddress, recipientAmount);
             stream.amountWithdrawn += recipientAmount;
         }
 
         // Refund unstreamed amount to sender
         if (refundAmount > 0) {
-            IERC20(stream.token).safeTransfer(stream.sender, refundAmount);
+            IERC20(tokenAddress).safeTransfer(senderAddress, refundAmount);
         }
 
         emit StreamCancelled(streamId, refundAmount, block.timestamp);
@@ -206,6 +259,8 @@ contract StreamPayment is IStreamPayment, ReentrancyGuard, Ownable {
 
     /**
      * @dev Get stream information
+     * @param streamId The unique identifier of the stream
+     * @return Stream struct with all stream details
      */
     function getStream(uint256 streamId) external view override returns (Stream memory) {
         require(_streams[streamId].sender != address(0), "Stream does not exist");
@@ -214,6 +269,8 @@ contract StreamPayment is IStreamPayment, ReentrancyGuard, Ownable {
 
     /**
      * @dev Calculate available balance for withdrawal
+     * @param streamId The unique identifier of the stream
+     * @return Available amount that can be withdrawn
      */
     function balanceOf(uint256 streamId) external view override returns (uint256) {
         Stream storage stream = _streams[streamId];
@@ -223,6 +280,8 @@ contract StreamPayment is IStreamPayment, ReentrancyGuard, Ownable {
 
     /**
      * @dev Get all stream IDs for a sender
+     * @param sender Address of the sender
+     * @return Array of stream IDs
      */
     function getStreamsBySender(address sender) external view override returns (uint256[] memory) {
         return _streamsBySender[sender];
@@ -230,6 +289,8 @@ contract StreamPayment is IStreamPayment, ReentrancyGuard, Ownable {
 
     /**
      * @dev Get all stream IDs for a recipient
+     * @param recipient Address of the recipient
+     * @return Array of stream IDs
      */
     function getStreamsByRecipient(address recipient) external view override returns (uint256[] memory) {
         return _streamsByRecipient[recipient];
@@ -237,6 +298,9 @@ contract StreamPayment is IStreamPayment, ReentrancyGuard, Ownable {
 
     /**
      * @dev Calculate total streamed amount up to current time
+     * @param stream The stream to calculate for
+     * @return The total streamed amount
+     * @notice Uses high-precision arithmetic to prevent rounding errors
      */
     function _calculateStreamedAmount(Stream storage stream) private view returns (uint256) {
         if (stream.status == StreamStatus.PAUSED) {
@@ -248,13 +312,17 @@ contract StreamPayment is IStreamPayment, ReentrancyGuard, Ownable {
         }
 
         uint256 elapsedTime = block.timestamp - stream.startTime;
-        uint256 streamedAmount = elapsedTime * stream.ratePerSecond;
+        
+        // QSP-1: Use high-precision calculation
+        uint256 streamedAmount = (elapsedTime * stream.ratePerSecond) / PRECISION;
 
         return streamedAmount > stream.totalAmount ? stream.totalAmount : streamedAmount;
     }
 
     /**
      * @dev Calculate available balance for withdrawal
+     * @param stream The stream to calculate for
+     * @return The available balance
      */
     function _calculateAvailableBalance(Stream storage stream) private view returns (uint256) {
         uint256 streamedAmount = _calculateStreamedAmount(stream);
@@ -263,6 +331,8 @@ contract StreamPayment is IStreamPayment, ReentrancyGuard, Ownable {
 
     /**
      * @dev Set platform fee (only owner)
+     * @param feeBps Fee in basis points (e.g., 50 = 0.5%)
+     * @notice Maximum fee is 10% (1000 basis points)
      */
     function setPlatformFee(uint256 feeBps) external onlyOwner {
         require(feeBps <= 1000, "Fee too high"); // Max 10%
@@ -271,6 +341,7 @@ contract StreamPayment is IStreamPayment, ReentrancyGuard, Ownable {
 
     /**
      * @dev Set fee recipient (only owner)
+     * @param newRecipient Address of the new fee recipient
      */
     function setFeeRecipient(address newRecipient) external onlyOwner {
         require(newRecipient != address(0), "Invalid recipient");
@@ -279,9 +350,27 @@ contract StreamPayment is IStreamPayment, ReentrancyGuard, Ownable {
 
     /**
      * @dev Get total number of streams created
+     * @return Total number of streams
      */
     function getTotalStreams() external view returns (uint256) {
         return _streamIdCounter;
+    }
+
+    // QSP-9: Emergency pause functionality
+    /**
+     * @dev Pause all contract operations (only owner)
+     * @notice Use in case of emergency or critical bug discovery
+     */
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    /**
+     * @dev Unpause all contract operations (only owner)
+     * @notice Resume normal operations after emergency is resolved
+     */
+    function unpause() external onlyOwner {
+        _unpause();
     }
 }
 

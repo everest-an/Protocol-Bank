@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity 0.8.20;
 
 /**
  * @title IStreamPayment
@@ -30,6 +30,7 @@ interface IStreamPayment {
         uint256 startTime;        // Stream start timestamp
         uint256 endTime;          // Stream end timestamp
         uint256 lastWithdrawTime; // Last withdrawal timestamp
+        uint256 pauseTime;        // Pause timestamp (QSP-2 fix)
         StreamStatus status;      // Current stream status
         string streamName;        // Human-readable stream name
     }
