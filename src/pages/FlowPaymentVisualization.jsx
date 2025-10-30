@@ -2,13 +2,12 @@ import { useState, useEffect, useMemo } from 'react';
 import { Wallet, RefreshCw, Users, Send, TestTube2, TrendingUp, DollarSign } from 'lucide-react';
 import { useWeb3 } from '../hooks/useWeb3';
 import { useStreamContract } from '../hooks/useStreamContract';
-import { useContractEvents, useRealtimeNotifications } from '../hooks/useContractEvents';
+import { useContractEvents } from '../hooks/useContractEvents';
 import { generateFullMockData } from '../utils/mockData';
 import EnterprisePaymentNetwork from '../components/EnterprisePaymentNetworkV2';
 import EnterprisePaymentTable from '../components/EnterprisePaymentTable';
 import RegisterSupplierModal from '../components/modals/RegisterSupplierModal';
 import CreatePaymentModal from '../components/modals/CreatePaymentModal';
-import RealtimeNotifications from '../components/RealtimeNotifications';
 import LiveIndicator from '../components/LiveIndicator';
 import CurrencySelector from '../components/CurrencySelector';
 import { useExchangeRates } from '../hooks/useExchangeRates';
@@ -51,7 +50,7 @@ export default function FlowPaymentVisualization() {
     averagePayment: '0',
   });
   const [loading, setLoading] = useState(false);
-  const { notifications, addNotification, removeNotification } = useRealtimeNotifications();
+  // Removed real-time notifications - payments now only show in the table below
   const [testMode, setTestMode] = useState(true); // Auto-enable test mode
   const [mockData, setMockData] = useState(null);
   const [supplierCount, setSupplierCount] = useState(100);
@@ -127,16 +126,7 @@ export default function FlowPaymentVisualization() {
             : 0,
         };
 
-        // 显示通知
-        if (status === 'Completed') {
-          addNotification({
-            id: Date.now().toString(),
-            type: 'payment',
-            title: 'New Payment',
-            message: `Payment of ${amount} ETH to ${supplier.brand}`,
-            timestamp: new Date(),
-          });
-        }
+        // Payment added to table - no notification needed
 
         return {
           ...prevData,
@@ -147,7 +137,7 @@ export default function FlowPaymentVisualization() {
     }, 3000); // 每3秒生成一个新支付
 
     return () => clearInterval(interval);
-  }, [testMode, mockData, addNotification]);
+  }, [testMode, mockData]);
 
   // 加载链上数据
   const loadData = async () => {
@@ -171,11 +161,7 @@ export default function FlowPaymentVisualization() {
       });
     } catch (error) {
       // console.error('Failed to load data:', error);
-      addNotification({
-        type: 'error',
-        title: 'Load Failed',
-        message: error.message || 'Failed to load data from contract',
-      });
+      console.error('Failed to load data:', error);
     } finally {
       setLoading(false);
     }
@@ -187,30 +173,15 @@ export default function FlowPaymentVisualization() {
     }
   }, [isConnected, isSepolia, testMode]);
 
-  // 监听合约事件
+  // Listen to contract events
   useContractEvents(provider, {
     onSupplierRegistered: (event) => {
-      addNotification({
-        type: 'success',
-        title: 'New Supplier Registered',
-        message: `${event.name} has been registered`,
-      });
       loadData();
     },
     onPaymentCreated: (event) => {
-      addNotification({
-        type: 'success',
-        title: 'New Payment Created',
-        message: `Payment of ${event.amount} ETH created`,
-      });
       loadData();
     },
     onPaymentStatusUpdated: (event) => {
-      addNotification({
-        type: 'info',
-        title: 'Payment Status Updated',
-        message: `Payment status changed to ${event.status}`,
-      });
       loadData();
     },
   });
@@ -218,40 +189,24 @@ export default function FlowPaymentVisualization() {
   const handleRegisterSupplier = async (supplierData) => {
     try {
       await registerSupplier(supplierData);
-      addNotification({
-        type: 'success',
-        title: 'Supplier Registered',
-        message: `${supplierData.name} has been registered successfully`,
-      });
+      // Supplier registered successfully
       setShowRegisterModal(false);
       loadData();
     } catch (error) {
       // console.error('Failed to register supplier:', error);
-      addNotification({
-        type: 'error',
-        title: 'Registration Failed',
-        message: error.message || 'Failed to register supplier',
-      });
+      console.error('Failed to register supplier:', error);
     }
   };
 
   const handleCreatePayment = async (paymentData) => {
     try {
       await createPayment(paymentData);
-      addNotification({
-        type: 'success',
-        title: 'Payment Created',
-        message: `Payment of ${paymentData.amount} ETH created successfully`,
-      });
+      // Payment created successfully
       setShowPaymentModal(false);
       loadData();
     } catch (error) {
       // console.error('Failed to create payment:', error);
-      addNotification({
-        type: 'error',
-        title: 'Payment Failed',
-        message: error.message || 'Failed to create payment',
-      });
+      console.error('Failed to create payment:', error);
     }
   };
 
@@ -270,11 +225,7 @@ export default function FlowPaymentVisualization() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-black">
-      {/* 实时通知 */}
-      <RealtimeNotifications
-        notifications={notifications}
-        onClose={removeNotification}
-      />
+      {/* Real-time notifications removed - payments show in table below */}
 
       {/* 顶部栏 */}
       <div className="border-b border-gray-100 dark:border-gray-700 bg-white dark:bg-black">

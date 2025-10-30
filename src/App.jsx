@@ -31,6 +31,10 @@ import BatchPayment from './pages/BatchPayment.jsx'
 import ScheduledPayment from './pages/ScheduledPaymentV2.jsx'
 import DataAnalytics from './pages/DataAnalyticsV3.jsx'
 import AnalyticsV2 from './pages/AnalyticsV2.jsx'
+import DashboardWithFlowPayment from './pages/DashboardWithFlowPayment.jsx'
+import AgentMarket from './pages/AgentMarket.jsx'
+import DeFiPage from './pages/DeFiPage.jsx'
+import BusinessPage from './pages/BusinessPage.jsx'
 import LoginModal from './components/LoginModal.jsx'
 import ThemeToggle from './components/ThemeToggle.jsx'
 import LanguageSelector from './components/LanguageSelector.jsx'
@@ -171,6 +175,12 @@ function AppContent() {
                 <span className="text-lg font-normal text-gray-900 dark:text-white hidden sm:inline">Protocol Bank</span>
               </div>
               <nav className="hidden md:flex space-x-6">
+                <button 
+                  onClick={() => setActiveTab('dashboard')}
+                  className={`text-sm font-medium ${activeTab === 'dashboard' ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'}`}
+                >
+                  Dashboard
+                </button>
                 <DropdownMenu
                   label="Payments"
                   items={[
@@ -194,6 +204,12 @@ function AppContent() {
                   className={`text-sm font-medium ${activeTab === 'analytics' ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'}`}
                 >
                   Analytics
+                </button>
+                <button
+                  onClick={() => setActiveTab('agent-market')}
+                  className={`text-sm font-medium ${activeTab === 'agent-market' ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'}`}
+                >
+                  Agent Market
                 </button>
               </nav>
             </div>
@@ -293,6 +309,11 @@ function AppContent() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-8">
         {/* Tab Content */}
+        {activeTab === 'dashboard' && (
+          <ErrorBoundary>
+            <DashboardWithFlowPayment />
+          </ErrorBoundary>
+        )}
         {activeTab === 'payments' && (
           <ErrorBoundary>
             <FlowPaymentVisualization />
@@ -307,9 +328,14 @@ function AppContent() {
         {activeTab === 'schedule' && <ScheduledPayment />}
         {activeTab === 'suppliers' && <SuppliersPage />}
         {activeTab === 'analytics' && (
-          <div className="p-6">
-            <AnalyticsV2 />
-          </div>
+          <ErrorBoundary>
+            <DataAnalytics />
+          </ErrorBoundary>
+        )}
+        {activeTab === 'agent-market' && (
+          <ErrorBoundary>
+            <AgentMarket />
+          </ErrorBoundary>
         )}
         
         

@@ -8,7 +8,7 @@
 import React, { useState } from 'react';
 import { useAgentRegistry } from '../hooks/useAgentRegistry';
 import { useWeb3 } from '../hooks/useWeb3';
-import { useTranslation } from 'react-i18n';
+import { useTranslation } from 'react-i18next';
 import './AgentRegistration.css';
 
 // ============================================================================
