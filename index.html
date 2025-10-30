@@ -19,6 +19,8 @@
     <!-- Polyfill for Web3 libraries -->
     <script>
       window.global = window;
+      window.process = window.process || { env: {} };
+      window.Buffer = window.Buffer || {};
     </script>
   </head>
   <body>
