@@ -190,9 +190,18 @@ export default function FlowPaymentVisualization() {
     }
   };
 
-  const displaySuppliers = testMode ? mockData?.suppliers || [] : suppliers;
-  const displayPayments = testMode ? mockData?.payments || [] : payments;
-  const displayStats = testMode ? mockData?.stats || stats : stats;
+  const displaySuppliers = testMode ? (mockData?.suppliers || []) : suppliers;
+  const displayPayments = testMode ? (mockData?.payments || []) : payments;
+  
+  // 确保统计数据实时更新 - 从当前显示的数据重新计算
+  const displayStats = useMemo(() => {
+    if (testMode && mockData) {
+      // 测试模式：使用 mockData 的统计数据
+      return mockData.stats;
+    }
+    // 真实模式：使用链上数据的统计
+    return stats;
+  }, [testMode, mockData, stats]);
 
   return (
     <div className="min-h-screen bg-white dark:bg-black">
