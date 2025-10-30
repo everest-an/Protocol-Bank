@@ -1,5 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ethers } from 'ethers';
+import { 
+  connectWalletConnect, 
+  disconnectWalletConnect, 
+  isWalletConnectConnected,
+  setupWalletConnectListeners,
+  removeWalletConnectListeners
+} from '../services/walletConnectService';
 
 const Web3Context = createContext();
 
@@ -19,6 +26,7 @@ export const Web3Provider = ({ children }) => {
   const [balance, setBalance] = useState('0');
   const [isConnecting, setIsConnecting] = useState(false);
   const [error, setError] = useState(null);
+  const [connectionType, setConnectionType] = useState(null); // 'metamask' or 'walletconnect'
 
   // Check if MetaMask is installed
   const isMetaMaskInstalled = () => {
@@ -26,7 +34,7 @@ export const Web3Provider = ({ children }) => {
   };
 
   // Connect to MetaMask
-  const connectWallet = async () => {
+  const connectMetaMask = async () => {
     if (!isMetaMaskInstalled()) {
       setError('Please install MetaMask to use this feature');
       return false;
@@ -50,6 +58,7 @@ export const Web3Provider = ({ children }) => {
       setProvider(web3Provider);
       setSigner(web3Signer);
       setChainId(Number(network.chainId));
+      setConnectionType('metamask');
 
       return true;
     } catch (err) {
@@ -61,12 +70,67 @@ export const Web3Provider = ({ children }) => {
     }
   };
 
+  // Connect via WalletConnect
+  const connectWC = async () => {
+    setIsConnecting(true);
+    setError(null);
+
+    try {
+      const { provider: wcProvider, signer: wcSigner, account: wcAccount, chainId: wcChainId } = await connectWalletConnect();
+
+      setAccount(wcAccount);
+      setProvider(wcProvider);
+      setSigner(wcSigner);
+      setChainId(wcChainId);
+      setConnectionType('walletconnect');
+
+      // Setup event listeners
+      setupWalletConnectListeners({
+        onAccountsChanged: (accounts) => {
+          if (accounts.length > 0) {
+            setAccount(accounts[0]);
+          } else {
+            disconnectWallet();
+          }
+        },
+        onChainChanged: (newChainId) => {
+          setChainId(newChainId);
+        },
+        onDisconnect: () => {
+          disconnectWallet();
+        },
+      });
+
+      return true;
+    } catch (err) {
+      console.error('Error connecting to WalletConnect:', err);
+      setError(err.message || 'Failed to connect via WalletConnect');
+      return false;
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
+  // Connect wallet (default to MetaMask)
+  const connectWallet = async (type = 'metamask') => {
+    if (type === 'walletconnect') {
+      return await connectWC();
+    }
+    return await connectMetaMask();
+  };
+
   // Disconnect wallet
-  const disconnectWallet = () => {
+  const disconnectWallet = async () => {
+    if (connectionType === 'walletconnect') {
+      await disconnectWalletConnect();
+      removeWalletConnectListeners();
+    }
+    
     setAccount(null);
     setProvider(null);
     setSigner(null);
     setChainId(null);
+    setConnectionType(null);
     setError(null);
   };
 
@@ -187,6 +251,7 @@ export const Web3Provider = ({ children }) => {
     balance,
     isConnecting,
     error,
+    connectionType,
     isConnected: !!account,
     isMetaMaskInstalled: isMetaMaskInstalled(),
     connectWallet,

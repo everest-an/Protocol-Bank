@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { X, Send, AlertCircle, CheckCircle, ExternalLink } from 'lucide-react';
 import { useWeb3 } from '../contexts/Web3Context';
 import { buildPaymentTransaction, sendAndWaitForTransaction, estimateGas, getGasPrice } from '../services/transactionService';
-import { LoadingSpinner } from './LoadingSpinner';
+import LoadingSpinner from './LoadingSpinner';
 import { ethers } from 'ethers';
 
 const SendTransactionModal = ({ isOpen, onClose }) => {

@@ -12,6 +12,7 @@ import {
 import { useWeb3 } from '../contexts/Web3Context';
 import { LoadingSpinner } from './LoadingSpinner';
 import { EmptyState } from './EmptyState';
+import { getTransactionHistory } from '../services/etherscanService';
 
 const TransactionHistory = ({ limit = 10 }) => {
   const { account, provider, chainId } = useWeb3();
@@ -20,36 +21,33 @@ const TransactionHistory = ({ limit = 10 }) => {
   const [filter, setFilter] = useState('all'); // all, sent, received
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Fetch transaction history
+  // Fetch transaction history from Etherscan API
   const fetchTransactions = async () => {
-    if (!account || !provider) return;
+    if (!account || !chainId) return;
 
     setLoading(true);
     try {
-      // Get the latest block number
-      const latestBlock = await provider.getBlockNumber();
-      const fromBlock = Math.max(0, latestBlock - 10000); // Last ~10000 blocks
-
-      // Fetch transactions (this is a simplified version)
-      // In production, you'd use an indexer like Etherscan API or The Graph
-      const txs = [];
-      
-      // Note: This is a placeholder. In reality, you need to use
-      // Etherscan API or similar service to get transaction history
-      // because eth_getLogs only works for contract events, not regular transfers
+      // Fetch transactions from Etherscan API
+      const txs = await getTransactionHistory(account, chainId, {
+        page: 1,
+        offset: 100, // Get last 100 transactions
+        sort: 'desc', // Most recent first
+      });
       
       setTransactions(txs);
     } catch (error) {
       console.error('Failed to fetch transactions:', error);
+      // Set empty array on error so UI shows "No transactions"
+      setTransactions([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // Fetch transactions on mount and when account changes
+  // Fetch transactions on mount and when account/chainId changes
   useEffect(() => {
     fetchTransactions();
-  }, [account, provider]);
+  }, [account, chainId]);
 
   // Get explorer URL based on chain ID
   const getExplorerUrl = (txHash) => {

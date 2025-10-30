@@ -39,6 +39,7 @@ import ErrorBoundary from './components/ErrorBoundary.jsx'
 import DropdownMenu from './components/DropdownMenu.jsx'
 import { generateFullMockData } from './utils/mockData.js'
 import { Web3Provider, useWeb3 } from './contexts/Web3Context.jsx'
+import SendTransactionModal from './components/SendTransactionModal.jsx'
 
 function AppContent() {
   const { account, balance, isConnecting, connectWallet, disconnectWallet, isConnected } = useWeb3()
@@ -46,6 +47,7 @@ function AppContent() {
   const [activeTab, setActiveTab] = useState('payments')
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [userInfo, setUserInfo] = useState(null)
+  const [showSendModal, setShowSendModal] = useState(false)
 
   // Open login modal
   const openLoginModal = () => {
@@ -220,6 +222,13 @@ function AppContent() {
               <div className="h-6 w-px bg-gray-200 dark:bg-gray-800"></div>
               {isConnected ? (
                 <div className="flex items-center space-x-2">
+                  <Button
+                    onClick={() => setShowSendModal(true)}
+                    className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 h-9"
+                  >
+                    <Send className="h-4 w-4 mr-2" />
+                    Send
+                  </Button>
                   <div className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center space-x-2 border border-blue-200 dark:border-blue-800">
                     <Wallet className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                     <span className="text-sm text-blue-700 dark:text-blue-300 font-semibold">
@@ -407,6 +416,12 @@ function AppContent() {
         isOpen={showLoginModal}
         onClose={() => setShowLoginModal(false)}
         onLoginSuccess={handleLoginSuccess}
+      />
+
+      {/* Send Transaction Modal */}
+      <SendTransactionModal 
+        isOpen={showSendModal}
+        onClose={() => setShowSendModal(false)}
       />
 
       {/* Footer with Global Network link */}
