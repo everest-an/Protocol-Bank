@@ -30,6 +30,7 @@ import SuppliersPage from './pages/SuppliersPage.jsx'
 import BatchPayment from './pages/BatchPayment.jsx'
 import ScheduledPayment from './pages/ScheduledPaymentV2.jsx'
 import DataAnalytics from './pages/DataAnalyticsV3.jsx'
+import AnalyticsV2 from './pages/AnalyticsV2.jsx'
 import LoginModal from './components/LoginModal.jsx'
 import ThemeToggle from './components/ThemeToggle.jsx'
 import LanguageSelector from './components/LanguageSelector.jsx'
@@ -230,7 +231,7 @@ function App() {
         {activeTab === 'suppliers' && <SuppliersPage />}
         {activeTab === 'analytics' && (
           <div className="p-6">
-            <DataAnalytics />
+            <AnalyticsV2 />
           </div>
         )}
         
