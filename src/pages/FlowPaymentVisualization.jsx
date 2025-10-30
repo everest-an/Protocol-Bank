@@ -84,6 +84,71 @@ export default function FlowPaymentVisualization() {
     }
   }, [testMode, supplierCount]);
 
+  // 测试模式下动态生成新的支付交易
+  useEffect(() => {
+    if (!testMode || !mockData) return;
+
+    const interval = setInterval(() => {
+      setMockData(prevData => {
+        if (!prevData) return prevData;
+
+        // 生成新的随机支付
+        const supplier = prevData.suppliers[Math.floor(Math.random() * prevData.suppliers.length)];
+        const amount = parseFloat((Math.random() * 5 + 0.1).toFixed(4)); // 0.1-5.1 ETH
+        const statuses = ['Completed', 'Completed', 'Completed', 'Pending'];
+        const status = statuses[Math.floor(Math.random() * statuses.length)];
+
+        const newPayment = {
+          id: (prevData.payments.length + 1).toString(),
+          from: prevData.mainWallet,
+          to: supplier.id,
+          amount: amount,
+          category: supplier.category,
+          status: status,
+          timestamp: new Date(),
+          txHash: '0x' + Array.from({ length: 64 }, () => 
+            Math.floor(Math.random() * 16).toString(16)
+          ).join(''),
+        };
+
+        // 添加新支付到列表顶部
+        const updatedPayments = [newPayment, ...prevData.payments];
+
+        // 更新统计数据
+        const completedPayments = updatedPayments.filter(p => p.status === 'Completed');
+        const totalAmount = completedPayments.reduce((sum, p) => sum + p.amount, 0);
+
+        const updatedStats = {
+          totalPayments: completedPayments.length,
+          totalAmount: parseFloat(totalAmount.toFixed(4)),
+          supplierCount: prevData.suppliers.length,
+          averagePayment: completedPayments.length > 0 
+            ? parseFloat((totalAmount / completedPayments.length).toFixed(4))
+            : 0,
+        };
+
+        // 显示通知
+        if (status === 'Completed') {
+          addNotification({
+            id: Date.now().toString(),
+            type: 'payment',
+            title: 'New Payment',
+            message: `Payment of ${amount} ETH to ${supplier.brand}`,
+            timestamp: new Date(),
+          });
+        }
+
+        return {
+          ...prevData,
+          payments: updatedPayments,
+          stats: updatedStats,
+        };
+      });
+    }, 3000); // 每3秒生成一个新支付
+
+    return () => clearInterval(interval);
+  }, [testMode, mockData, addNotification]);
+
   // 加载链上数据
   const loadData = async () => {
     if (!isConnected || !isSepolia) return;

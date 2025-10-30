@@ -36,7 +36,9 @@ export default function EnterprisePaymentNetworkV2({
           level: 0
         });
 
-        for (let i = 0; i < 50; i++) {
+        // Use actual supplier count from mockData if available
+        const supplierCount = mockData?.suppliers?.length || 50;
+        for (let i = 0; i < supplierCount; i++) {
           const supplierId = `supplier-${i}`;
           nodes.push({
             id: supplierId,

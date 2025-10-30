@@ -92,7 +92,7 @@ export const translations = {
       // Flow Payment
       flowPayment: {
         title: 'Flow Payment Network',
-        subtitle: 'Real-time payment network visualization on Sepolia',
+        subtitle: 'Enterprise Automated Payment Management Tool',
         registerSupplier: 'Register Supplier',
         totalPayments: 'Total Payments',
         totalAmount: 'Total Amount',
