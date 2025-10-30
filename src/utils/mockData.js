@@ -149,8 +149,9 @@ export function generateMockPayments(
 // 生成统计数据
 /**
  * @param {MockPayment[]} payments
+ * @param {number} [supplierCount] - 可选的供应商总数，如果提供则使用此值而不是计算唯一供应商
  */
-export function generateMockStats(payments) {
+export function generateMockStats(payments, supplierCount = null) {
   const completedPayments = payments.filter(p => p.status === 'Completed');
   const totalAmount = completedPayments.reduce((sum, p) => sum + p.amount, 0);
   const uniqueSuppliers = new Set(completedPayments.map(p => p.to)).size;
@@ -158,7 +159,7 @@ export function generateMockStats(payments) {
   return {
     totalPayments: completedPayments.length,
     totalAmount: parseFloat(totalAmount.toFixed(4)),
-    supplierCount: uniqueSuppliers,
+    supplierCount: supplierCount !== null ? supplierCount : uniqueSuppliers, // 使用传入的值或计算值
     averagePayment: completedPayments.length > 0 
       ? parseFloat((totalAmount / completedPayments.length).toFixed(4))
       : 0,
@@ -171,7 +172,7 @@ export function generateFullMockData(supplierCount = 12) {
   const suppliers = generateMockSuppliers(supplierCount);
   const paymentCount = Math.max(50, supplierCount * 4); // Scale payments with suppliers
   const payments = generateMockPayments(suppliers, mainWallet, paymentCount);
-  const stats = generateMockStats(payments);
+  const stats = generateMockStats(payments, supplierCount); // 传递 supplierCount
   
   return {
     mainWallet,
