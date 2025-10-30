@@ -166,7 +166,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                 <svg className="h-5 w-5" viewBox="0 0 24 24" fill="#1677FF">
                   <circle cx="12" cy="12" r="10" />
                 </svg>
-                <span className="text-gray-900 font-medium">使用支付宝Login (Alipay)</span>
+                <span className="text-gray-900 font-medium">Login with Alipay</span>
               </button>
 
               {/* 分隔线 */}
