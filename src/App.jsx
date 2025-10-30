@@ -293,12 +293,11 @@ function AppContent() {
                 </div>
               ) : (
                 <Button 
-                  onClick={connectWallet}
-                  disabled={isConnecting}
+                  onClick={openLoginModal}
                   className="bg-gray-900 hover:bg-gray-800 text-white text-sm px-4 py-2 h-9"
                 >
                   <Wallet className="h-4 w-4 mr-2" />
-                  {isConnecting ? 'Connecting...' : 'Connect Wallet'}
+                  Connect Wallet
                 </Button>
               )}
             </div>
