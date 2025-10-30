@@ -41,7 +41,7 @@ import { generateFullMockData } from './utils/mockData.js'
 import { Web3Provider, useWeb3 } from './contexts/Web3Context.jsx'
 
 function AppContent() {
-  const { account, isConnecting, connectWallet, disconnectWallet, isConnected } = useWeb3()
+  const { account, balance, isConnecting, connectWallet, disconnectWallet, isConnected } = useWeb3()
   const [balanceVisible, setBalanceVisible] = useState(true)
   const [activeTab, setActiveTab] = useState('payments')
   const [showLoginModal, setShowLoginModal] = useState(false)
@@ -220,8 +220,13 @@ function AppContent() {
               <div className="h-6 w-px bg-gray-200 dark:bg-gray-800"></div>
               {isConnected ? (
                 <div className="flex items-center space-x-2">
+                  <div className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center space-x-2 border border-blue-200 dark:border-blue-800">
+                    <Wallet className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                    <span className="text-sm text-blue-700 dark:text-blue-300 font-semibold">
+                      {parseFloat(balance).toFixed(4)} ETH
+                    </span>
+                  </div>
                   <div className="px-3 py-1.5 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center space-x-2">
-                    <Wallet className="h-4 w-4 text-gray-600 dark:text-gray-400" />
                     <span className="text-sm text-gray-700 dark:text-gray-300 font-medium">
                       {account.slice(0, 6)}...{account.slice(-4)}
                     </span>

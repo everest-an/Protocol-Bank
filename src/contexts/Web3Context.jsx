@@ -16,6 +16,7 @@ export const Web3Provider = ({ children }) => {
   const [provider, setProvider] = useState(null);
   const [signer, setSigner] = useState(null);
   const [chainId, setChainId] = useState(null);
+  const [balance, setBalance] = useState('0');
   const [isConnecting, setIsConnecting] = useState(false);
   const [error, setError] = useState(null);
 
@@ -89,6 +90,35 @@ export const Web3Provider = ({ children }) => {
     }
   };
 
+  // Fetch balance
+  const fetchBalance = async (address) => {
+    if (!provider || !address) return '0';
+    
+    try {
+      const balance = await provider.getBalance(address);
+      return ethers.formatEther(balance);
+    } catch (error) {
+      console.error('Failed to fetch balance:', error);
+      return '0';
+    }
+  };
+
+  // Update balance when account or provider changes
+  useEffect(() => {
+    if (account && provider) {
+      fetchBalance(account).then(setBalance);
+      
+      // Set up interval to update balance every 10 seconds
+      const interval = setInterval(() => {
+        fetchBalance(account).then(setBalance);
+      }, 10000);
+      
+      return () => clearInterval(interval);
+    } else {
+      setBalance('0');
+    }
+  }, [account, provider]);
+
   // Get contract instance
   const getContract = (address, abi) => {
     if (!signer) {
@@ -154,6 +184,7 @@ export const Web3Provider = ({ children }) => {
     provider,
     signer,
     chainId,
+    balance,
     isConnecting,
     error,
     isConnected: !!account,
@@ -162,6 +193,7 @@ export const Web3Provider = ({ children }) => {
     disconnectWallet,
     switchNetwork,
     getContract,
+    refreshBalance: () => account && fetchBalance(account).then(setBalance),
   };
 
   return <Web3Context.Provider value={value}>{children}</Web3Context.Provider>;
