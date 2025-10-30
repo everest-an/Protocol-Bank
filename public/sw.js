@@ -1,5 +1,5 @@
 // Service Worker for Protocol Bank PWA
-const CACHE_NAME = 'protocol-bank-v1';
+const CACHE_NAME = 'protocol-bank-v2';
 const RUNTIME_CACHE = 'protocol-bank-runtime';
 
 // 静态资源列表
