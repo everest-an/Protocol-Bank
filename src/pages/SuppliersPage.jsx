@@ -2,10 +2,9 @@ import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Search, Users, DollarSign, TrendingUp, Plus, ExternalLink, X } from 'lucide-react'
-import { useWeb3 } from '@/contexts/Web3Context'
 
 export default function SuppliersPage() {
-  const { account, contract } = useWeb3()
+  // const { account, contract } = useWeb3() // Commented out until Web3Context is implemented
   const [suppliers, setSuppliers] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
@@ -238,7 +237,7 @@ export default function SuppliersPage() {
 
 // Register Supplier Modal Component
 function RegisterSupplierModal({ onClose, onSuccess }) {
-  const { account, contract } = useWeb3()
+  // const { account, contract } = useWeb3() // Commented out until Web3Context is implemented
   const [formData, setFormData] = useState({
     address: '',
     name: '',
