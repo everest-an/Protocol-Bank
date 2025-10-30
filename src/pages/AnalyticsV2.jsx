@@ -32,8 +32,8 @@ export default function AnalyticsV2() {
       setDataMode('real');
     } catch (err) {
       console.error('Failed to load real data:', err);
-      setError(err.message || '加载真实数据失败');
-      setDataMode('test'); // 回退到测试模式
+      setError(err.message || 'Failed to load real data');
+      setDataMode('test'); // 回退到Test Mode
     } finally {
       setIsLoading(false);
     }
@@ -95,7 +95,7 @@ export default function AnalyticsV2() {
     return Array.from(grouped.entries())
       .map(([date, amount]) => ({ date, amount }))
       .sort((a, b) => a.date.localeCompare(b.date))
-      .slice(-30); // 最近30天
+      .slice(-30); // Last 30 days
   }, [payments]);
 
   // Top供应商
@@ -123,16 +123,16 @@ export default function AnalyticsV2() {
   ];
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-gray-50 text-gray-900">
       <div className="container mx-auto px-4 py-6">
         {/* Header with Mode Toggle */}
         <div className="mb-6">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-green-400 bg-clip-text text-transparent">
-                数据分析
+                Analytics
               </h1>
-              <p className="text-gray-400 mt-2">多维度资金流分析和可视化</p>
+              <p className="text-gray-600 mt-2">Multi-dimensional payment flow analysis and visualization</p>
             </div>
             
             {/* Data Mode Toggle */}
@@ -151,15 +151,15 @@ export default function AnalyticsV2() {
                 ) : (
                   <div className={`w-3 h-3 rounded-full ${dataMode === 'test' ? 'bg-purple-500' : 'bg-green-500'} animate-pulse`} />
                 )}
-                <span>{dataMode === 'test' ? '测试模式' : '真实模式'}</span>
+                <span>{dataMode === 'test' ? 'Test Mode' : 'Real Mode'}</span>
               </button>
               
               {dataMode === 'real' && (
                 <button
                   onClick={loadRealData}
                   disabled={isLoading}
-                  className="p-3 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors disabled:opacity-50"
-                  title="刷新数据"
+                  className="p-3 rounded-lg bg-white border border-gray-200 hover:bg-gray-100 transition-colors disabled:opacity-50"
+                  title="Refresh Data"
                 >
                   <RefreshCw className={`w-5 h-5 ${isLoading ? 'animate-spin' : ''}`} />
                 </button>
@@ -170,19 +170,19 @@ export default function AnalyticsV2() {
           {/* Mode Description */}
           <div className={`mt-4 p-4 rounded-lg border ${
             dataMode === 'test'
-              ? 'bg-purple-500/10 border-purple-500/30'
-              : 'bg-green-500/10 border-green-500/30'
+              ? 'bg-purple-50 border-purple-200'
+              : 'bg-green-50 border-green-200'
           }`}>
             <div className="flex items-start gap-3">
               <AlertCircle className={`w-5 h-5 mt-0.5 ${dataMode === 'test' ? 'text-purple-400' : 'text-green-400'}`} />
               <div>
                 <p className={`font-semibold ${dataMode === 'test' ? 'text-purple-400' : 'text-green-400'}`}>
-                  {dataMode === 'test' ? '测试模式已启用' : '真实模式已启用'}
+                  {dataMode === 'test' ? 'Test Mode已启用' : 'Real Mode已启用'}
                 </p>
-                <p className="text-sm text-gray-400 mt-1">
+                <p className="text-sm text-gray-600 mt-1">
                   {dataMode === 'test'
-                    ? `当前显示模拟数据，包含 ${payments.length} 条支付记录和 ${suppliers.length} 个供应商，用于演示目的。`
-                    : `当前显示来自 Sepolia 测试网的真实链上数据，所有交易均可在 Etherscan 上验证。`
+                    ? `Currently displaying mock data with ${payments.length}  payment records and ${suppliers.length}  suppliers for demonstration purposes.`
+                    : `Currently displaying real on-chain data from Sepolia testnet. All transactions can be verified on Etherscan.`
                   }
                 </p>
               </div>
@@ -191,12 +191,12 @@ export default function AnalyticsV2() {
           
           {/* Error Display */}
           {error && (
-            <div className="mt-4 p-4 rounded-lg border bg-red-500/10 border-red-500/30">
+            <div className="mt-4 p-4 rounded-lg border bg-red-50 border-red-200">
               <div className="flex items-start gap-3">
                 <AlertCircle className="w-5 h-5 mt-0.5 text-red-400" />
                 <div>
-                  <p className="font-semibold text-red-400">加载失败</p>
-                  <p className="text-sm text-gray-400 mt-1">{error}</p>
+                  <p className="font-semibold text-red-400">Loading Failed</p>
+                  <p className="text-sm text-gray-600 mt-1">{error}</p>
                 </div>
               </div>
             </div>
@@ -211,77 +211,77 @@ export default function AnalyticsV2() {
               onClick={() => setTimeRange(range)}
               className={`px-4 py-2 rounded-lg transition-colors ${
                 timeRange === range
-                  ? 'bg-cyan-500 text-white'
-                  : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                  ? 'bg-cyan-500 text-gray-900'
+                  : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-100'
               }`}
             >
-              {range === 'all' ? '全部' : range.toUpperCase()}
+              {range === 'all' ? 'All' : range.toUpperCase()}
             </button>
           ))}
         </div>
 
         {/* 关键指标 */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-500/50 rounded-lg p-6">
+          <div className="bg-gradient-to-br from-cyan-50 to-blue-50 border border-cyan-200 rounded-lg p-6">
             <div className="flex items-center justify-between mb-2">
               <DollarSign className="w-8 h-8 text-cyan-400" />
               <TrendingUp className="w-5 h-5 text-green-400" />
             </div>
-            <div className="text-3xl font-bold text-white mb-1">
+            <div className="text-3xl font-bold text-gray-900 mb-1">
               {(stats.totalAmount || 0).toFixed(2)} ETH
             </div>
-            <div className="text-sm text-gray-300">总Payment Amount</div>
+            <div className="text-sm text-gray-700">Total Payment Amount</div>
             <div className="text-xs text-cyan-400 mt-2">
               {formatEthWithFiat((stats.totalAmount || 0).toString()).fiat}
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-green-500/50 rounded-lg p-6">
+          <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-lg p-6">
             <div className="flex items-center justify-between mb-2">
               <BarChart3 className="w-8 h-8 text-green-400" />
             </div>
-            <div className="text-3xl font-bold text-white mb-1">
+            <div className="text-3xl font-bold text-gray-900 mb-1">
               {stats.totalPayments || 0}
             </div>
-            <div className="text-sm text-gray-300">总支付笔数</div>
+            <div className="text-sm text-gray-700">Total Payments</div>
             <div className="text-xs text-green-400 mt-2">
-              平均 {(stats.averagePayment || 0).toFixed(4)} ETH/笔
+              Average {(stats.averagePayment || 0).toFixed(4)} ETH/tx
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/50 rounded-lg p-6">
+          <div className="bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-6">
             <div className="flex items-center justify-between mb-2">
               <Users className="w-8 h-8 text-purple-400" />
             </div>
-            <div className="text-3xl font-bold text-white mb-1">
+            <div className="text-3xl font-bold text-gray-900 mb-1">
               {stats.supplierCount || 0}
             </div>
-            <div className="text-sm text-gray-300">活跃供应商</div>
+            <div className="text-sm text-gray-700">Active Suppliers</div>
             <div className="text-xs text-purple-400 mt-2">
-              {categoryStats.length} 个Category
+              {categoryStats.length}  Categories
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-orange-500/20 to-red-500/20 border border-orange-500/50 rounded-lg p-6">
+          <div className="bg-gradient-to-br from-orange-50 to-red-50 border border-orange-200 rounded-lg p-6">
             <div className="flex items-center justify-between mb-2">
               <Calendar className="w-8 h-8 text-orange-400" />
             </div>
-            <div className="text-3xl font-bold text-white mb-1">
+            <div className="text-3xl font-bold text-gray-900 mb-1">
               {timeSeriesData.length}
             </div>
-            <div className="text-sm text-gray-300">活跃天数</div>
+            <div className="text-sm text-gray-700">Active Days</div>
             <div className="text-xs text-orange-400 mt-2">
-              最近30天
+              Last 30 days
             </div>
           </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          {/* 按Category分布 */}
+          {/* Distribution by Category */}
           <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
             <div className="flex items-center gap-2 mb-6">
               <PieChart className="w-5 h-5 text-cyan-400" />
-              <h2 className="text-lg font-bold">按Category分布</h2>
+              <h2 className="text-lg font-bold">Distribution by Category</h2>
             </div>
 
             <div className="space-y-4">
@@ -289,12 +289,12 @@ export default function AnalyticsV2() {
                 categoryStats.map((stat, index) => (
                   <div key={stat.category}>
                     <div className="flex items-center justify-between text-sm mb-2">
-                      <span className="text-gray-300">{stat.category}</span>
-                      <span className="text-white font-semibold">
+                      <span className="text-gray-700">{stat.category}</span>
+                      <span className="text-gray-900 font-semibold">
                         {stat.amount.toFixed(4)} ETH ({stat.percentage.toFixed(1)}%)
                       </span>
                     </div>
-                    <div className="relative h-2 bg-gray-800 rounded-full overflow-hidden">
+                    <div className="relative h-2 bg-white border border-gray-200 rounded-full overflow-hidden">
                       <div
                         className={`absolute inset-y-0 left-0 bg-gradient-to-r ${
                           categoryColors[index % categoryColors.length]
@@ -303,7 +303,7 @@ export default function AnalyticsV2() {
                       />
                     </div>
                     <div className="text-xs text-gray-500 mt-1">
-                      {stat.count} 笔支付
+                      {stat.count} tx支付
                     </div>
                   </div>
                 ))
@@ -317,7 +317,7 @@ export default function AnalyticsV2() {
           <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
             <div className="flex items-center gap-2 mb-6">
               <TrendingUp className="w-5 h-5 text-green-400" />
-              <h2 className="text-lg font-bold">Top 10 供应商</h2>
+              <h2 className="text-lg font-bold">Top 10 Suppliers</h2>
             </div>
 
             <div className="space-y-3">
@@ -325,14 +325,14 @@ export default function AnalyticsV2() {
                 topSuppliers.map((supplier, index) => (
                   <div
                     key={supplier.id || supplier.wallet}
-                    className="flex items-center gap-3 p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800 transition-colors group"
+                    className="flex items-center gap-3 p-3 bg-white border border-gray-200/50 rounded-lg hover:bg-white border border-gray-200 transition-colors group"
                   >
-                    <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-cyan-500 to-green-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                    <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-cyan-500 to-green-500 rounded-full flex items-center justify-center text-gray-900 font-bold text-sm">
                       {index + 1}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <div className="text-white font-semibold truncate">
+                        <div className="text-gray-900 font-semibold truncate">
                           {supplier.brand || supplier.name || 'Unknown'}
                         </div>
                         {dataMode === 'real' && supplier.etherscanLink && (
@@ -346,12 +346,12 @@ export default function AnalyticsV2() {
                           </a>
                         )}
                       </div>
-                      <div className="text-xs text-gray-400">
-                        {supplier.category} · {supplier.paymentCount} 笔
+                      <div className="text-xs text-gray-600">
+                        {supplier.category} · {supplier.paymentCount} tx
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-white font-semibold">
+                      <div className="text-gray-900 font-semibold">
                         {supplier.totalAmount.toFixed(4)} ETH
                       </div>
                       <div className="text-xs text-green-400">
@@ -371,7 +371,7 @@ export default function AnalyticsV2() {
         <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
           <div className="flex items-center gap-2 mb-6">
             <BarChart3 className="w-5 h-5 text-cyan-400" />
-            <h2 className="text-lg font-bold">支付趋势 (最近30天)</h2>
+            <h2 className="text-lg font-bold">支付趋势 (Last 30 days)</h2>
           </div>
 
           {timeSeriesData.length > 0 ? (
@@ -387,7 +387,7 @@ export default function AnalyticsV2() {
                         className="w-full bg-gradient-to-t from-cyan-500 to-green-500 rounded-t transition-all group-hover:from-cyan-400 group-hover:to-green-400"
                         style={{ height: `${height * 2}px`, minHeight: '2px' }}
                       />
-                      <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 px-2 py-1 rounded text-xs text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                      <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 px-2 py-1 rounded text-xs text-gray-900 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-10">
                         {data.amount.toFixed(4)} ETH
                       </div>
                     </div>
@@ -409,7 +409,7 @@ export default function AnalyticsV2() {
         {dataMode === 'real' && (
           <div className="mt-6 p-4 bg-gray-900 border border-gray-800 rounded-lg">
             <div className="flex items-center justify-between">
-              <div className="text-sm text-gray-400">
+              <div className="text-sm text-gray-600">
                 数据来源: Sepolia 测试网 · 合约地址: {STREAM_PAYMENT_CONTRACT.address.slice(0, 6)}...{STREAM_PAYMENT_CONTRACT.address.slice(-4)}
               </div>
               <a
