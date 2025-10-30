@@ -329,7 +329,12 @@ function AppContent() {
         {activeTab === 'suppliers' && <SuppliersPage />}
         {activeTab === 'analytics' && (
           <ErrorBoundary>
-            <DataAnalytics />
+            <DataAnalytics 
+              suppliers={[]}
+              payments={[]}
+              testMode={true}
+              mockData={generateFullMockData()}
+            />
           </ErrorBoundary>
         )}
         {activeTab === 'agent-market' && (
