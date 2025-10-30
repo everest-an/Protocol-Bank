@@ -20,9 +20,9 @@ const MobileNav = ({
 }) => {
   const menuItems = [
     { id: 'payments', label: 'Payments', icon: Send },
-    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
     { id: 'suppliers', label: 'Suppliers', icon: Users },
-    { id: 'dashboard', label: 'Dashboard', icon: Home },
+    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+    { id: 'agent-market', label: 'Agent Market', icon: Home },
   ];
 
   const handleMenuClick = (tabId) => {
