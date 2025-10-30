@@ -31,7 +31,7 @@ import BatchPayment from './pages/BatchPayment.jsx'
 import ScheduledPayment from './pages/ScheduledPaymentV2.jsx'
 import DataAnalytics from './pages/DataAnalyticsV3.jsx'
 import AnalyticsV2 from './pages/AnalyticsV2.jsx'
-import DashboardWithFlowPayment from './pages/DashboardWithFlowPayment.jsx'
+
 import AgentMarket from './pages/AgentMarket.jsx'
 import DeFiPage from './pages/DeFiPage.jsx'
 import BusinessPage from './pages/BusinessPage.jsx'
@@ -175,12 +175,6 @@ function AppContent() {
                 <span className="text-lg font-normal text-gray-900 dark:text-white hidden sm:inline">Protocol Bank</span>
               </div>
               <nav className="hidden md:flex space-x-6">
-                <button 
-                  onClick={() => setActiveTab('dashboard')}
-                  className={`text-sm font-medium ${activeTab === 'dashboard' ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'}`}
-                >
-                  Dashboard
-                </button>
                 <DropdownMenu
                   label="Payments"
                   items={[
@@ -308,11 +302,7 @@ function AppContent() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-8">
         {/* Tab Content */}
-        {activeTab === 'dashboard' && (
-          <ErrorBoundary>
-            <DashboardWithFlowPayment />
-          </ErrorBoundary>
-        )}
+
         {activeTab === 'payments' && (
           <ErrorBoundary>
             <FlowPaymentVisualization />
@@ -340,130 +330,6 @@ function AppContent() {
           <ErrorBoundary>
             <AgentMarket />
           </ErrorBoundary>
-        )}
-        
-        
-        {activeTab === 'dashboard_old' && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Recent Activity */}
-            <Card className="border border-gray-100 shadow-sm">
-              <CardContent className="p-6">
-                <h3 className="text-base font-medium text-gray-900 dark:text-white mb-1">Recent Activity</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Your latest transactions</p>
-                
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
-                        <ArrowDownLeft className="h-5 w-5 text-green-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">Payment received</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">From ABC Company</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-medium text-green-600">+$2,500.00</p>
-                      <p className="text-xs text-gray-500">2h ago</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center">
-                        <ArrowUpRight className="h-5 w-5 text-gray-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">DeFi Investment</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">Solana Liquidity Pool</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">-$1,000.00</p>
-                      <p className="text-xs text-gray-500">Yesterday</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center">
-                        <Send className="h-5 w-5 text-gray-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">Vendor Payment</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">Auto Insurance</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">-$3,200.00</p>
-                      <p className="text-xs text-gray-500">2 days ago</p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Portfolio */}
-            <Card className="border border-gray-100 shadow-sm">
-              <CardContent className="p-6">
-                <h3 className="text-base font-medium text-gray-900 dark:text-white mb-1">Portfolio</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Investment performance overview</p>
-                
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between py-3">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
-                        <div className="w-4 h-4 bg-purple-500 rounded-full"></div>
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">Solana (SOL)</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">$4,234.56</p>
-                      <p className="text-xs text-green-600">+15.2%</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between py-3">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
-                        <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">Ethereum (ETH)</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">$12,567.89</p>
-                      <p className="text-xs text-green-600">+8.7%</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between py-3">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center">
-                        <div className="w-4 h-4 bg-gray-500 rounded-full"></div>
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">USDC Stablecoin</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">$25,000.00</p>
-                      <p className="text-xs text-gray-500">+0.1%</p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-
-        {activeTab !== 'dashboard' && (
-          <div className="text-center py-12">
-            <p className="text-gray-500">Content for {activeTab} coming soon...</p>
-          </div>
         )}
       </main>
 
