@@ -38,12 +38,12 @@ import MobileMenu from './components/MobileMenu.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
 import DropdownMenu from './components/DropdownMenu.jsx'
 import { generateFullMockData } from './utils/mockData.js'
+import { Web3Provider, useWeb3 } from './contexts/Web3Context.jsx'
 
-function App() {
+function AppContent() {
+  const { account, isConnecting, connectWallet, disconnectWallet, isConnected } = useWeb3()
   const [balanceVisible, setBalanceVisible] = useState(true)
   const [activeTab, setActiveTab] = useState('payments')
-  const [walletAddress, setWalletAddress] = useState(null)
-  const [isConnecting, setIsConnecting] = useState(false)
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [userInfo, setUserInfo] = useState(null)
 
@@ -218,20 +218,31 @@ function App() {
               
               {/* 分隔线 */}
               <div className="h-6 w-px bg-gray-200 dark:bg-gray-800"></div>
-              {walletAddress ? (
-                <div className="flex items-center space-x-2 px-3 py-1.5 bg-gray-100 rounded-lg">
-                  <Wallet className="h-4 w-4 text-gray-600" />
-                  <span className="text-sm text-gray-700 font-medium">
-                    {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
-                  </span>
+              {isConnected ? (
+                <div className="flex items-center space-x-2">
+                  <div className="px-3 py-1.5 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center space-x-2">
+                    <Wallet className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300 font-medium">
+                      {account.slice(0, 6)}...{account.slice(-4)}
+                    </span>
+                  </div>
+                  <Button 
+                    onClick={disconnectWallet}
+                    variant="outline"
+                    size="sm"
+                    className="text-xs"
+                  >
+                    Disconnect
+                  </Button>
                 </div>
               ) : (
                 <Button 
-                  onClick={openLoginModal}
+                  onClick={connectWallet}
+                  disabled={isConnecting}
                   className="bg-gray-900 hover:bg-gray-800 text-white text-sm px-4 py-2 h-9"
                 >
                   <Wallet className="h-4 w-4 mr-2" />
-                  Connect Wallet
+                  {isConnecting ? 'Connecting...' : 'Connect Wallet'}
                 </Button>
               )}
             </div>
@@ -407,6 +418,14 @@ function App() {
         </div>
       </footer>
     </div>
+  )
+}
+
+function App() {
+  return (
+    <Web3Provider>
+      <AppContent />
+    </Web3Provider>
   )
 }
 
