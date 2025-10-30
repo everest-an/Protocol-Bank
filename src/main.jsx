@@ -6,6 +6,7 @@ import './styles/mobile-fixes.css' // Additional mobile fixes
 import App from './App.jsx'
 import { ThemeProvider } from './contexts/ThemeContext.jsx'
 import './i18n/config' // Initialize i18n
+import { registerServiceWorker } from './utils/pwaUtils'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -14,3 +15,8 @@ createRoot(document.getElementById('root')).render(
     </ThemeProvider>
   </StrictMode>,
 )
+
+// Register Service Worker for PWA
+if (import.meta.env.PROD) {
+  registerServiceWorker()
+}
