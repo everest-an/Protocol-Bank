@@ -177,7 +177,7 @@ export default function AnalyticsV2() {
               <AlertCircle className={`w-5 h-5 mt-0.5 ${dataMode === 'test' ? 'text-purple-400' : 'text-green-400'}`} />
               <div>
                 <p className={`font-semibold ${dataMode === 'test' ? 'text-purple-400' : 'text-green-400'}`}>
-                  {dataMode === 'test' ? 'Test Mode已启用' : 'Real Mode已启用'}
+                  {dataMode === 'test' ? 'Test Mode Enabled' : 'Real Mode Enabled'}
                 </p>
                 <p className="text-sm text-gray-600 mt-1">
                   {dataMode === 'test'
@@ -278,7 +278,7 @@ export default function AnalyticsV2() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           {/* Distribution by Category */}
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+          <div className="bg-white border border-gray-200 rounded-lg p-6">
             <div className="flex items-center gap-2 mb-6">
               <PieChart className="w-5 h-5 text-cyan-400" />
               <h2 className="text-lg font-bold">Distribution by Category</h2>
@@ -303,18 +303,18 @@ export default function AnalyticsV2() {
                       />
                     </div>
                     <div className="text-xs text-gray-500 mt-1">
-                      {stat.count} tx支付
+                      {stat.count} transactions
                     </div>
                   </div>
                 ))
               ) : (
-                <div className="text-center text-gray-500 py-8">暂无数据</div>
+                <div className="text-center text-gray-500 py-8">No data available</div>
               )}
             </div>
           </div>
 
-          {/* Top 供应商 */}
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+          {/* Top Suppliers */}
+          <div className="bg-white border border-gray-200 rounded-lg p-6">
             <div className="flex items-center gap-2 mb-6">
               <TrendingUp className="w-5 h-5 text-green-400" />
               <h2 className="text-lg font-bold">Top 10 Suppliers</h2>
@@ -355,23 +355,23 @@ export default function AnalyticsV2() {
                         {supplier.totalAmount.toFixed(4)} ETH
                       </div>
                       <div className="text-xs text-green-400">
-                        {(supplier.profitMargin || 0).toFixed(1)}% 利润率
+                        {(supplier.profitMargin || 0).toFixed(1)}% Margin
                       </div>
                     </div>
                   </div>
                 ))
               ) : (
-                <div className="text-center text-gray-500 py-8">暂无数据</div>
+                <div className="text-center text-gray-500 py-8">No data available</div>
               )}
             </div>
           </div>
         </div>
 
-        {/* 时间序列图 */}
-        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+        {/* Time Series Chart */}
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
           <div className="flex items-center gap-2 mb-6">
             <BarChart3 className="w-5 h-5 text-cyan-400" />
-            <h2 className="text-lg font-bold">支付趋势 (Last 30 days)</h2>
+            <h2 className="text-lg font-bold">Payment Trends (Last 30 days)</h2>
           </div>
 
           {timeSeriesData.length > 0 ? (
@@ -400,17 +400,17 @@ export default function AnalyticsV2() {
             </div>
           ) : (
             <div className="h-64 flex items-center justify-center text-gray-500">
-              暂无数据
+              No data available
             </div>
           )}
         </div>
 
         {/* Real Mode Footer */}
         {dataMode === 'real' && (
-          <div className="mt-6 p-4 bg-gray-900 border border-gray-800 rounded-lg">
+          <div className="mt-6 p-4 bg-white border border-gray-200 rounded-lg">
             <div className="flex items-center justify-between">
               <div className="text-sm text-gray-600">
-                数据来源: Sepolia 测试网 · 合约地址: {STREAM_PAYMENT_CONTRACT.address.slice(0, 6)}...{STREAM_PAYMENT_CONTRACT.address.slice(-4)}
+                Data Source: Sepolia Testnet · Contract Address: {STREAM_PAYMENT_CONTRACT.address.slice(0, 6)}...{STREAM_PAYMENT_CONTRACT.address.slice(-4)}
               </div>
               <a
                 href={getEtherscanLink('address', STREAM_PAYMENT_CONTRACT.address)}
@@ -418,7 +418,7 @@ export default function AnalyticsV2() {
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition-colors"
               >
-                <span className="text-sm">在 Etherscan 上查看</span>
+                <span className="text-sm">View on Etherscan</span>
                 <ExternalLink className="w-4 h-4" />
               </a>
             </div>
