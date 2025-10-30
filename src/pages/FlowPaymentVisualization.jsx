@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Wallet, RefreshCw, Users, Send, TestTube2, TrendingUp, DollarSign } from 'lucide-react';
 import { useWeb3 } from '../hooks/useWeb3';
 import { useStreamContract } from '../hooks/useStreamContract';
