@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   Play, Save, Download, Upload, Trash2, Plus, Info, 
   Wallet, Clock, Zap, Users, GitBranch, Repeat, AlertCircle,
@@ -140,7 +140,7 @@ const DEMO_TEMPLATES = [
   }
 ];
 
-export default function PaymentFlowBuilder({ onDeploy }) {
+export default function PaymentFlowBuilder({ onDeploy, editingFlow, onCancelEdit }) {
   const [nodes, setNodes] = useState([]);
   const [connections, setConnections] = useState([]);
   const [selectedNode, setSelectedNode] = useState(null);
@@ -148,6 +148,15 @@ export default function PaymentFlowBuilder({ onDeploy }) {
   const [connecting, setConnecting] = useState(null);
   const [demoMode, setDemoMode] = useState(true);
   const canvasRef = useRef(null);
+
+  // Load editing flow when editingFlow prop changes
+  useEffect(() => {
+    if (editingFlow && editingFlow.flowData) {
+      setNodes(editingFlow.flowData.nodes || []);
+      setConnections(editingFlow.flowData.connections || []);
+      setDemoMode(false);
+    }
+  }, [editingFlow]);
 
   // Load demo template
   const loadDemo = (template) => {

@@ -1,10 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, List, Workflow, Info, Play, Pause, Trash2, Edit2 } from 'lucide-react';
 import PaymentFlowBuilder from '../components/PaymentFlowBuilder';
 
 export default function ScheduledPaymentV2() {
   const [viewMode, setViewMode] = useState('builder'); // builder, list
-  const [deployedFlows, setDeployedFlows] = useState([
+  const [editingFlow, setEditingFlow] = useState(null);
+  
+  // Load flows from localStorage on mount
+  const [deployedFlows, setDeployedFlows] = useState(() => {
+    const saved = localStorage.getItem('protocolbank_scheduled_flows');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error('Failed to parse saved flows:', e);
+      }
+    }
+    return [
     {
       id: 1,
       name: 'Monthly Salary Payment',
@@ -35,21 +47,38 @@ export default function ScheduledPaymentV2() {
       lastExecution: '2025-09-15 10:20:00',
       createdAt: '2025-08-01'
     }
-  ]);
+  ];
+  });
+
+  // Save flows to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('protocolbank_scheduled_flows', JSON.stringify(deployedFlows));
+  }, [deployedFlows]);
 
   const handleDeploy = (flowData) => {
-    const newFlow = {
-      id: Date.now(),
-      name: `Flow ${deployedFlows.length + 1}`,
-      description: 'Custom payment flow',
-      status: 'active',
-      nextExecution: 'Pending',
-      executedCount: 0,
-      lastExecution: '-',
-      createdAt: new Date().toISOString().split('T')[0],
-      flowData
-    };
-    setDeployedFlows([newFlow, ...deployedFlows]);
+    if (editingFlow) {
+      // Update existing flow
+      setDeployedFlows(deployedFlows.map(flow => 
+        flow.id === editingFlow.id
+          ? { ...flow, flowData, name: flowData.name || flow.name }
+          : flow
+      ));
+      setEditingFlow(null);
+    } else {
+      // Create new flow
+      const newFlow = {
+        id: Date.now(),
+        name: flowData.name || `Flow ${deployedFlows.length + 1}`,
+        description: flowData.description || 'Custom payment flow',
+        status: 'active',
+        nextExecution: 'Pending',
+        executedCount: 0,
+        lastExecution: '-',
+        createdAt: new Date().toISOString().split('T')[0],
+        flowData
+      };
+      setDeployedFlows([newFlow, ...deployedFlows]);
+    }
   };
 
   const toggleFlowStatus = (id) => {
@@ -107,7 +136,11 @@ export default function ScheduledPaymentV2() {
       {/* Content */}
       <div className="flex-1 overflow-hidden">
         {viewMode === 'builder' ? (
-          <PaymentFlowBuilder onDeploy={handleDeploy} />
+          <PaymentFlowBuilder 
+            onDeploy={handleDeploy} 
+            editingFlow={editingFlow}
+            onCancelEdit={() => setEditingFlow(null)}
+          />
         ) : (
           <div className="h-full overflow-y-auto p-6">
             {/* Info Banner */}
@@ -239,7 +272,10 @@ export default function ScheduledPaymentV2() {
                         )}
                       </button>
                       <button
-                        onClick={() => setViewMode('builder')}
+                        onClick={() => {
+                          setEditingFlow(flow);
+                          setViewMode('builder');
+                        }}
                         className="p-2 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
                         title="Edit"
                       >
