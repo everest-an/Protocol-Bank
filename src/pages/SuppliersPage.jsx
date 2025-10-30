@@ -42,7 +42,7 @@ export default function SuppliersPage() {
 
   useEffect(() => {
     loadSuppliers()
-  }, [contract])
+  }, [])
 
   const loadSuppliers = async () => {
     // TODO: Load from contract when connected
@@ -252,12 +252,11 @@ function RegisterSupplierModal({ onClose, onSuccess }) {
     setIsSubmitting(true)
 
     try {
-      if (!contract) {
-        alert('Please connect your wallet first')
-        return
-      }
-
-      // TODO: Call smart contract to register supplier
+      // TODO: Uncomment when Web3Context is implemented
+      // if (!contract) {
+      //   alert('Please connect your wallet first')
+      //   return
+      // }
       // const tx = await contract.registerSupplier(formData.address, formData.name, formData.category)
       // await tx.wait()
 

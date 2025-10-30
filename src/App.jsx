@@ -98,6 +98,32 @@ function App() {
     checkExistingLogin()
   }, [])
 
+  // Handle hash-based routing
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.slice(2) || 'payments' // Remove '#/' prefix, default to payments
+      setActiveTab(hash)
+    }
+
+    // Set initial tab based on hash
+    handleHashChange()
+
+    // Listen for hash changes
+    window.addEventListener('hashchange', handleHashChange)
+
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange)
+    }
+  }, []) // Empty deps is fine - we only want to set up listener once
+
+  // Update hash when activeTab changes (from button clicks)
+  useEffect(() => {
+    const currentHash = window.location.hash.slice(2)
+    if (currentHash !== activeTab && activeTab) {
+      window.location.hash = `/${activeTab}`
+    }
+  }, [activeTab])
+
   const toggleBalanceVisibility = () => {
     setBalanceVisible(!balanceVisible)
   }
