@@ -40,6 +40,8 @@ import DropdownMenu from './components/DropdownMenu.jsx'
 import { generateFullMockData } from './utils/mockData.js'
 import { Web3Provider, useWeb3 } from './contexts/Web3Context.jsx'
 import SendTransactionModal from './components/SendTransactionModal.jsx'
+import MobileNav from './components/MobileNav.jsx'
+import { Menu } from 'lucide-react'
 
 function AppContent() {
   const { account, balance, isConnecting, connectWallet, disconnectWallet, isConnected } = useWeb3()
@@ -48,6 +50,7 @@ function AppContent() {
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [userInfo, setUserInfo] = useState(null)
   const [showSendModal, setShowSendModal] = useState(false)
+  const [showMobileNav, setShowMobileNav] = useState(false)
 
   // Open login modal
   const openLoginModal = () => {
@@ -133,12 +136,35 @@ function AppContent() {
   return (
     <div className="min-h-screen bg-white dark:bg-black transition-colors duration-200">
       {/* Header */}
+      {/* 移动端导航菜单 */}
+      <MobileNav
+        isOpen={showMobileNav}
+        onClose={() => setShowMobileNav(false)}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        isConnected={isConnected}
+        account={account}
+        balance={balance}
+        connectWallet={connectWallet}
+        disconnectWallet={disconnectWallet}
+        isConnecting={isConnecting}
+        theme={document.documentElement.classList.contains('dark') ? 'dark' : 'light'}
+        toggleTheme={() => document.documentElement.classList.toggle('dark')}
+        language="en"
+        setLanguage={() => {}}
+      />
+
       <header className="border-b border-gray-100 dark:border-gray-700 sticky top-0 z-50 bg-white dark:bg-black transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
-              {/* Mobile Menu */}
-              <MobileMenu activeTab={activeTab} onTabChange={setActiveTab} />
+              {/* 移动端汉堡菜单按钮 */}
+              <button
+                onClick={() => setShowMobileNav(true)}
+                className="md:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+              >
+                <Menu className="h-6 w-6 text-gray-600 dark:text-gray-400" />
+              </button>
               
               <div className="flex items-center space-x-2">
                 <img src={protocolBankLogo} alt="Protocol Bank" className="h-8 w-8" />
