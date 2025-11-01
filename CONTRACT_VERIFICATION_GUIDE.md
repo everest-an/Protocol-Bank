@@ -309,5 +309,5 @@ chmod +x verify-contracts.sh
 
 **文档版本**: v1.0  
 **创建时间**: 2025-10-30  
-**作者**: Manus AI Agent
+**作者**: EverestAn Agent
 

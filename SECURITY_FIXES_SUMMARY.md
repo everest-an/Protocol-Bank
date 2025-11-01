@@ -457,5 +457,5 @@ Files:
 
 **报告生成时间**: 2025年10月30日  
 **报告版本**: 1.0  
-**作者**: Manus AI Security Team
+**作者**: EverestAn Security Team
 

@@ -1,6 +1,6 @@
 # EIP-8004 and x402: A New Paradigm for Programmable Payments in the Machine Economy
 
-**Author**: Manus AI
+**Author**: EverestAn
 
 **Date**: November 2, 2025
 

@@ -13,7 +13,7 @@ import "../interfaces/IStreamPayment.sol";
  * @dev Protocol Bank streaming payment implementation
  * @notice Enables continuous token streaming from sender to recipient over time
  * @notice Uses high-precision arithmetic to prevent rounding errors
- * @author Protocol Bank Team
+ * @author EverestAn
  */
 contract StreamPayment is IStreamPayment, ReentrancyGuard, Ownable, Pausable {
     using SafeERC20 for IERC20;

@@ -1,6 +1,6 @@
 # 為 AI 經濟注入新動力：Protocol Banks 流支付與 AI 開發平台集成戰略報告
 
-**作者**: Manus AI
+**作者**: EverestAn
 **日期**: 2025年11月1日
 
 ---

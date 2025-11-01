@@ -1,6 +1,6 @@
 # Fueling the AI Economy: A Strategic Report on Integrating Protocol Banks Streaming Payments with AI Development Platforms
 
-**Author**: Manus AI
+**Author**: EverestAn
 **Date**: November 1, 2025
 
 ---

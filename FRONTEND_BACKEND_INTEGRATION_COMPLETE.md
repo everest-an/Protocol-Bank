@@ -280,4 +280,4 @@ curl -X POST https://3001-ivn27ux1317ucw3gofr3f-4499548a.manus-asia.computer/api
 ---
 
 **最后更新**: 2025-11-01
-**开发者**: Manus AI Agent
+**开发者**: EverestAn

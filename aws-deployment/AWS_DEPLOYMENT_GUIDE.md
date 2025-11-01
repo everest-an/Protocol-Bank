@@ -2,7 +2,7 @@
 > **部署方式**: AWS CloudFormation + 自动化脚本
 > **区域**: ap-southeast-2 (悉尼)
 > **预计时间**: 15-20分钟
-> **作者**: Manus AI
+> **作者**: EverestAn
 
 # Protocol Bank - AWS生产环境部署指南
 
