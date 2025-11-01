@@ -192,7 +192,6 @@ Resources:
       DBInstanceIdentifier: protocol-bank-db
       DBName: protocolbank
       Engine: postgres
-      EngineVersion: '15.8'
       DBInstanceClass: !Ref DBInstanceClass
       AllocatedStorage: 20
       StorageType: gp3
