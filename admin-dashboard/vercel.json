@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "buildCommand": "pnpm install && pnpm build",
+  "outputDirectory": "dist",
+  "framework": null,
+  "installCommand": "pnpm install",
+  "devCommand": "pnpm dev",
+  "regions": ["sin1"],
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
