@@ -6,6 +6,9 @@ const pool = new Pool({
   database: process.env.DB_NAME || 'protocol_bank',
   user: process.env.DB_USER || 'postgres',
   password: process.env.DB_PASSWORD || 'postgres',
+  ssl: process.env.DB_HOST && process.env.DB_HOST.includes('rds.amazonaws.com') ? {
+    rejectUnauthorized: false
+  } : false,
 });
 
 pool.on('connect', () => {
