@@ -8,6 +8,7 @@ import EnterprisePaymentNetwork from '../components/EnterprisePaymentNetworkV2';
 import EnterprisePaymentTable from '../components/EnterprisePaymentTable';
 import RegisterSupplierModal from '../components/modals/RegisterSupplierModal';
 import CreatePaymentModal from '../components/modals/CreatePaymentModal';
+// CreateStreamModal functionality is now integrated into CreatePaymentModal
 import LiveIndicator from '../components/LiveIndicator';
 import CurrencySelector from '../components/CurrencySelector';
 import { useExchangeRates } from '../hooks/useExchangeRates';
@@ -53,7 +54,7 @@ export default function FlowPaymentVisualization() {
   // Removed real-time notifications - payments now only show in the table below
   const [testMode, setTestMode] = useState(true); // Auto-enable test mode
   const [mockData, setMockData] = useState(null);
-  const [supplierCount, setSupplierCount] = useState(100);
+  const [supplierCount, setSupplierCount] = useState(12);
   const [demoCase, setDemoCase] = useState('two-tier'); // simple, two-tier, three-tier, complex
   const [selectedCurrency, setSelectedCurrency] = useState('ETH');
   const { rates, loading: ratesLoading, lastUpdated, refreshRates } = useExchangeRates();
@@ -76,7 +77,7 @@ export default function FlowPaymentVisualization() {
   // 生成测试数据
   useEffect(() => {
     if (testMode) {
-      const data = generateFullMockData(supplierCount);
+      const data = generateFullMockData(supplierCount, 20); // 12 个供应商，20 笔支付
       setMockData(data);
     } else {
       setMockData(null);
@@ -299,24 +300,7 @@ export default function FlowPaymentVisualization() {
                 </button>
               )}
 
-              {/* 连接钱包 */}
-              {!isConnected ? (
-                <button
-                  onClick={connect}
-                  disabled={isConnecting || !isMetaMaskInstalled}
-                  className="flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <Wallet className="w-4 h-4" />
-                  {isConnecting ? t('common.connecting') : t('common.connect')}
-                </button>
-              ) : (
-                <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-900 rounded-lg">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span className="text-sm text-gray-700 dark:text-white font-mono">
-                    {account?.slice(0, 6)}...{account?.slice(-4)}
-                  </span>
-                </div>
-              )}
+              {/* Create Stream functionality is now integrated into Create Payment modal */}
             </div>
           </div>
         </div>
@@ -455,9 +439,13 @@ export default function FlowPaymentVisualization() {
         <CreatePaymentModal
           suppliers={suppliers}
           onClose={() => setShowPaymentModal(false)}
-          onSubmit={handleCreatePayment}
+          onCreate={handleCreatePayment}
+          signer={signer}
+          account={account}
         />
       )}
+
+      {/* CreateStreamModal is no longer needed - functionality integrated into CreatePaymentModal */}
     </div>
   );
 }

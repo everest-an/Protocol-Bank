@@ -76,5 +76,6 @@ export default defineConfig({
   server: {
     port: 5173,
     host: true,
+    allowedHosts: ['8080-ivn27ux1317ucw3gofr3f-4499548a.manus-asia.computer'],
   },
 })

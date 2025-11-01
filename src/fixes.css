@@ -1,0 +1,97 @@
+/* 修复字体重叠和显示问题 */
+
+/* 确保所有文本元素有合适的行高和间距 */
+body, p, div, span, h1, h2, h3, h4, h5, h6 {
+  line-height: 1.6;
+  letter-spacing: normal;
+}
+
+/* 修复表格中的文本重叠 */
+table td, table th {
+  padding: 0.75rem 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 修复卡片标题重叠 */
+.card-title, .card-header {
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+/* 修复按钮文本 */
+button {
+  white-space: nowrap;
+  line-height: 1.5;
+}
+
+/* 修复通知中心z-index */
+.notification-panel {
+  z-index: 9999 !important;
+}
+
+/* 修复模态框z-index */
+.modal-overlay {
+  z-index: 9998 !important;
+}
+
+/* 修复下拉菜单z-index */
+.dropdown-menu {
+  z-index: 9997 !important;
+}
+
+/* 修复移动端菜单 */
+@media (max-width: 768px) {
+  .mobile-menu {
+    z-index: 9996 !important;
+  }
+}
+
+/* 防止文本溢出 */
+.text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 修复深色模式下的对比度 */
+.dark {
+  color-scheme: dark;
+}
+
+.dark body {
+  background-color: #0a0a0a;
+  color: #ededed;
+}
+
+/* 修复输入框文本 */
+input, textarea, select {
+  line-height: 1.5;
+  padding: 0.5rem 0.75rem;
+}
+
+/* 修复表单标签 */
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+/* 修复网格布局中的文本 */
+.grid {
+  gap: 1rem;
+}
+
+.grid > * {
+  min-width: 0; /* 防止flex/grid子元素溢出 */
+}
+
+/* 修复Flex布局中的文本 */
+.flex {
+  gap: 0.5rem;
+}
+
+.flex > * {
+  min-width: 0; /* 防止flex子元素溢出 */
+}
