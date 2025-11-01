@@ -211,6 +211,61 @@ Format your response as JSON with these fields: riskAssessment, anomalyIndicator
 
         return { success: true };
       }),
+
+    batchUpdateRiskLevel: protectedProcedure
+      .input(
+        z.object({
+          accountIds: z.array(z.number()),
+          riskLevel: z.enum(["low", "medium", "high", "critical"]),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        const { batchUpdateAccountRiskLevel, createAuditLog } = await import("./db");
+        const result = await batchUpdateAccountRiskLevel(input.accountIds, input.riskLevel);
+
+        await createAuditLog({
+          adminId: ctx.user.id,
+          action: "batch_update_risk_level",
+          entityType: "account",
+          entityId: 0,
+          changes: JSON.stringify({ accountIds: input.accountIds, riskLevel: input.riskLevel }),
+          ipAddress: ctx.req.ip,
+          userAgent: ctx.req.get("user-agent"),
+        });
+
+        return result;
+      }),
+
+    batchUpdateStatus: protectedProcedure
+      .input(
+        z.object({
+          accountIds: z.array(z.number()),
+          status: z.enum(["active", "frozen", "suspended", "closed"]),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        const { batchUpdateAccountStatus, createAuditLog } = await import("./db");
+        const result = await batchUpdateAccountStatus(input.accountIds, input.status);
+
+        await createAuditLog({
+          adminId: ctx.user.id,
+          action: "batch_update_status",
+          entityType: "account",
+          entityId: 0,
+          changes: JSON.stringify({ accountIds: input.accountIds, status: input.status }),
+          ipAddress: ctx.req.ip,
+          userAgent: ctx.req.get("user-agent"),
+        });
+
+        return result;
+      }),
+
+    getByIds: protectedProcedure
+      .input(z.array(z.number()))
+      .query(async ({ input }) => {
+        const { getAccountsByIds } = await import("./db");
+        return await getAccountsByIds(input);
+      }),
   }),
 
   // Dashboard and analytics routes

@@ -8,6 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Checkbox } from "@/components/ui/checkbox";
+import { BatchActionsToolbar } from "@/components/BatchActionsToolbar";
+import { toast } from "sonner";
 
 export default function Dashboard() {
   const { data: stats, isLoading, error } = trpc.dashboard.stats.useQuery();
@@ -16,6 +19,87 @@ export default function Dashboard() {
     { riskLevel: riskFilter },
     { enabled: !!stats }
   );
+  const [selectedAccounts, setSelectedAccounts] = useState<number[]>([]);
+  const utils = trpc.useUtils();
+
+  const batchUpdateRiskLevel = trpc.accounts.batchUpdateRiskLevel.useMutation({
+    onSuccess: () => {
+      toast.success("風險等級已更新");
+      setSelectedAccounts([]);
+      utils.dashboard.activeAccountsByRisk.invalidate();
+      utils.dashboard.stats.invalidate();
+    },
+    onError: (error) => {
+      toast.error(`更新失敗: ${error.message}`);
+    },
+  });
+
+  const batchUpdateStatus = trpc.accounts.batchUpdateStatus.useMutation({
+    onSuccess: () => {
+      toast.success("帳戶狀態已更新");
+      setSelectedAccounts([]);
+      utils.dashboard.activeAccountsByRisk.invalidate();
+      utils.dashboard.stats.invalidate();
+    },
+    onError: (error) => {
+      toast.error(`更新失敗: ${error.message}`);
+    },
+  });
+
+  const handleSelectAccount = (accountId: number, checked: boolean) => {
+    if (checked) {
+      setSelectedAccounts([...selectedAccounts, accountId]);
+    } else {
+      setSelectedAccounts(selectedAccounts.filter(id => id !== accountId));
+    }
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked && activeAccounts) {
+      setSelectedAccounts(activeAccounts.map(acc => acc.id));
+    } else {
+      setSelectedAccounts([]);
+    }
+  };
+
+  const handleBatchUpdateRiskLevel = (riskLevel: string) => {
+    if (selectedAccounts.length === 0) return;
+    batchUpdateRiskLevel.mutate({ accountIds: selectedAccounts, riskLevel: riskLevel as any });
+  };
+
+  const handleBatchFreeze = () => {
+    if (selectedAccounts.length === 0) return;
+    batchUpdateStatus.mutate({ accountIds: selectedAccounts, status: "frozen" });
+  };
+
+  const handleBatchUnfreeze = () => {
+    if (selectedAccounts.length === 0) return;
+    batchUpdateStatus.mutate({ accountIds: selectedAccounts, status: "active" });
+  };
+
+  const handleBatchExport = async () => {
+    if (selectedAccounts.length === 0 || !activeAccounts) return;
+
+    const selectedData = activeAccounts.filter(acc => selectedAccounts.includes(acc.id));
+    const csv = [
+      ["地址", "餘額", "風險等級", "KYC狀態", "狀態", "創建日期"],
+      ...selectedData.map(acc => [
+        acc.address,
+        acc.balance,
+        acc.riskLevel,
+        acc.kycStatus,
+        acc.status,
+        new Date(acc.createdAt).toLocaleString("zh-CN"),
+      ]),
+    ].map(row => row.join(",")).join("\n");
+
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `accounts_${new Date().toISOString().split("T")[0]}.csv`;
+    link.click();
+    toast.success("已導出 CSV 文件");
+  };
 
   if (isLoading) {
     return (
@@ -191,6 +275,14 @@ export default function Dashboard() {
           </div>
         </CardHeader>
         <CardContent>
+          <BatchActionsToolbar
+            selectedCount={selectedAccounts.length}
+            onClearSelection={() => setSelectedAccounts([])}
+            onBatchUpdateRiskLevel={handleBatchUpdateRiskLevel}
+            onBatchFreeze={handleBatchFreeze}
+            onBatchUnfreeze={handleBatchUnfreeze}
+            onBatchExport={handleBatchExport}
+          />
           {accountsLoading ? (
             <div className="space-y-3">
               {[...Array(3)].map((_, i) => (
@@ -200,38 +292,51 @@ export default function Dashboard() {
               ))}
             </div>
           ) : activeAccounts && activeAccounts.length > 0 ? (
-            <div className="space-y-3">
-              {activeAccounts.slice(0, 10).map((account) => (
-                <div
-                  key={account.id}
-                  className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50 transition-colors"
-                >
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Badge
-                        variant={account.riskLevel === "high" ? "destructive" : account.riskLevel === "medium" ? "default" : "secondary"}
-                        className="text-xs"
-                      >
-                        {account.riskLevel === "high" ? "高風險" : account.riskLevel === "medium" ? "中風險" : "低風險"}
-                      </Badge>
-                      <span className="text-sm font-medium truncate">
-                        {account.address.slice(0, 10)}...{account.address.slice(-8)}
-                      </span>
+            <>
+              <div className="flex items-center gap-2 mb-3 pb-3 border-b">
+                <Checkbox
+                  checked={activeAccounts.length > 0 && selectedAccounts.length === activeAccounts.length}
+                  onCheckedChange={handleSelectAll}
+                />
+                <span className="text-sm text-muted-foreground">全選</span>
+              </div>
+              <div className="space-y-3">
+                {activeAccounts.slice(0, 10).map((account) => (
+                  <div
+                    key={account.id}
+                    className="flex items-center gap-3 p-3 border rounded-lg hover:bg-accent/50 transition-colors"
+                  >
+                    <Checkbox
+                      checked={selectedAccounts.includes(account.id)}
+                      onCheckedChange={(checked) => handleSelectAccount(account.id, checked as boolean)}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Badge
+                          variant={account.riskLevel === "high" ? "destructive" : account.riskLevel === "medium" ? "default" : "secondary"}
+                          className="text-xs"
+                        >
+                          {account.riskLevel === "high" ? "高風險" : account.riskLevel === "medium" ? "中風險" : "低風險"}
+                        </Badge>
+                        <span className="text-sm font-medium truncate">
+                          {account.address.slice(0, 10)}...{account.address.slice(-8)}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                        <span>餘額: {parseFloat(account.balance).toFixed(4)} ETH</span>
+                        <span>KYC: {account.kycStatus === "verified" ? "已驗證" : account.kycStatus === "pending" ? "待審" : "未驗證"}</span>
+                        <span>{new Date(account.createdAt).toLocaleDateString("zh-CN")}</span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                      <span>餘額: {parseFloat(account.balance).toFixed(4)} ETH</span>
-                      <span>KYC: {account.kycStatus === "verified" ? "已驗證" : account.kycStatus === "pending" ? "待審" : "未驗證"}</span>
-                      <span>{new Date(account.createdAt).toLocaleDateString("zh-CN")}</span>
-                    </div>
+                    <Link href={`/accounts?id=${account.id}`}>
+                      <Button variant="outline" size="sm">
+                        查看
+                      </Button>
+                    </Link>
                   </div>
-                  <Link href={`/accounts?id=${account.id}`}>
-                    <Button variant="outline" size="sm">
-                      查看
-                    </Button>
-                  </Link>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            </>
           ) : (
             <div className="text-center py-8 text-muted-foreground">
               沒有找到符合條件的帳戶

@@ -400,3 +400,37 @@ export async function getActiveAccountsByRisk(riskLevel?: string) {
     .orderBy(desc(accounts.createdAt))
     .limit(20);
 }
+
+export async function batchUpdateAccountRiskLevel(accountIds: number[], riskLevel: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db
+    .update(accounts)
+    .set({ riskLevel: riskLevel as any })
+    .where(sql`id IN (${sql.join(accountIds.map(id => sql`${id}`), sql`, `)})`);
+
+  return { success: true, updated: accountIds.length };
+}
+
+export async function batchUpdateAccountStatus(accountIds: number[], status: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db
+    .update(accounts)
+    .set({ status: status as any })
+    .where(sql`id IN (${sql.join(accountIds.map(id => sql`${id}`), sql`, `)})`);
+
+  return { success: true, updated: accountIds.length };
+}
+
+export async function getAccountsByIds(accountIds: number[]) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(accounts)
+    .where(sql`id IN (${sql.join(accountIds.map(id => sql`${id}`), sql`, `)})`);
+}
