@@ -57,7 +57,7 @@ To illustrate how EIP-8004 and x402 work in concert, we have conceptualized a de
 
 The following diagram illustrates the system architecture and value flow of the Decomp-AI platform:
 
-![Decomp-AI Architecture Diagram](decomp_ai_architecture.png)
+![Decomp-AI Architecture Diagram](decomp_ai_architecture_en.png)
 
 *Figure 1: Decomp-AI Platform System Architecture and Value Flow*
 
