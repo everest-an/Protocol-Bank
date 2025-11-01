@@ -31,6 +31,7 @@ import BatchPayment from './pages/BatchPayment.jsx'
 import ScheduledPayment from './pages/ScheduledPaymentV2.jsx'
 import DataAnalytics from './pages/DataAnalyticsV3.jsx'
 import AnalyticsV2 from './pages/AnalyticsV2.jsx'
+import FinancialAnalytics from './pages/FinancialAnalytics.jsx'
 
 import AgentMarket from './pages/AgentMarket.jsx'
 import DeFiPage from './pages/DeFiPage.jsx'
@@ -161,6 +162,7 @@ function AppContent() {
       <header className="border-b border-gray-100 dark:border-gray-700 sticky top-0 z-50 bg-white dark:bg-black transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex justify-between items-center h-16">
+            {/* 左侧：汉堡菜单 + Logo */}
             <div className="flex items-center space-x-4">
               {/* 移动端汉堡菜单按钮 */}
               <button
@@ -172,9 +174,12 @@ function AppContent() {
               
               <div className="flex items-center space-x-2">
                 <img src={protocolBankLogo} alt="Protocol Bank" className="h-8 w-8" />
-                <span className="text-lg font-normal text-gray-900 dark:text-white hidden sm:inline">Protocol Bank</span>
+                <span className="text-lg font-normal text-gray-900 dark:text-white hidden sm:inline whitespace-nowrap">Protocol Bank</span>
               </div>
-              <nav className="hidden md:flex space-x-6">
+            </div>
+
+            {/* 中间：导航菜单 */}
+            <nav className="hidden md:flex items-center space-x-6 flex-1 justify-center">
                 <DropdownMenu
                   label="Payments"
                   items={[
@@ -194,6 +199,12 @@ function AppContent() {
                   Suppliers
                 </button>
                 <button
+                  onClick={() => setActiveTab('financial')}
+                  className={`text-sm font-medium ${activeTab === 'financial' ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'}`}
+                >
+                  Financial
+                </button>
+                <button
                   onClick={() => setActiveTab('analytics')}
                   className={`text-sm font-medium ${activeTab === 'analytics' ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'}`}
                 >
@@ -205,8 +216,9 @@ function AppContent() {
                 >
                   Agent Market
                 </button>
-              </nav>
-            </div>
+            </nav>
+
+            {/* 右侧：搜索、通知、设置、钱包 */}
             <div className="flex items-center space-x-3">
               {/* 搜索框 - 桌面端显示 */}
               <div className="relative hidden lg:block">
@@ -258,32 +270,69 @@ function AppContent() {
               <div className="h-6 w-px bg-gray-200 dark:bg-gray-800"></div>
               {isConnected ? (
                 <div className="flex items-center space-x-2">
+                  {/* Send 按钮 - 只在大屏幕显示 */}
                   <Button
                     onClick={() => setShowSendModal(true)}
-                    className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 h-9"
+                    className="hidden lg:flex bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-2 h-9"
                   >
-                    <Send className="h-4 w-4 mr-2" />
+                    <Send className="h-4 w-4 mr-1.5" />
                     Send
                   </Button>
-                  <div className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center space-x-2 border border-blue-200 dark:border-blue-800">
-                    <Wallet className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                    <span className="text-sm text-blue-700 dark:text-blue-300 font-semibold">
-                      {parseFloat(balance).toFixed(4)} ETH
-                    </span>
+                  
+                  {/* 钱包下拉菜单 */}
+                  <div className="relative group">
+                    <button className="px-3 py-1.5 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg flex items-center space-x-2 transition-colors">
+                      <Wallet className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                      <span className="text-sm text-gray-700 dark:text-gray-300 font-medium">
+                        {account.slice(0, 6)}...{account.slice(-4)}
+                      </span>
+                      <svg className="h-4 w-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    
+                    {/* 下拉菜单内容 */}
+                    <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-900 rounded-lg shadow-lg border border-gray-100 dark:border-gray-800 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                      {/* 余额显示 */}
+                      <div className="p-4 border-b border-gray-100 dark:border-gray-800">
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Balance</div>
+                        <div className="flex items-center space-x-2">
+                          <Wallet className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                          <span className="text-lg text-gray-900 dark:text-white font-semibold">
+                            {parseFloat(balance).toFixed(4)} ETH
+                          </span>
+                        </div>
+                      </div>
+                      
+                      {/* 钱包地址 */}
+                      <div className="p-4 border-b border-gray-100 dark:border-gray-800">
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Wallet Address</div>
+                        <div className="text-sm text-gray-900 dark:text-white font-mono break-all">
+                          {account}
+                        </div>
+                      </div>
+                      
+                      {/* 操作按钮 */}
+                      <div className="p-2">
+                        <button
+                          onClick={() => setShowSendModal(true)}
+                          className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center space-x-2 rounded-lg lg:hidden"
+                        >
+                          <Send className="h-4 w-4" />
+                          <span>Send Payment</span>
+                        </button>
+                        <button
+                          onClick={disconnectWallet}
+                          className="w-full px-4 py-2.5 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center space-x-2 rounded-lg"
+                        >
+                          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                          </svg>
+                          <span>Disconnect</span>
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                  <div className="px-3 py-1.5 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center space-x-2">
-                    <span className="text-sm text-gray-700 dark:text-gray-300 font-medium">
-                      {account.slice(0, 6)}...{account.slice(-4)}
-                    </span>
-                  </div>
-                  <Button 
-                    onClick={disconnectWallet}
-                    variant="outline"
-                    size="sm"
-                    className="text-xs"
-                  >
-                    Disconnect
-                  </Button>
                 </div>
               ) : (
                 <Button 
@@ -316,6 +365,11 @@ function AppContent() {
         {activeTab === 'batch' && <BatchPayment />}
         {activeTab === 'schedule' && <ScheduledPayment />}
         {activeTab === 'suppliers' && <SuppliersPage />}
+        {activeTab === 'financial' && (
+          <ErrorBoundary>
+            <FinancialAnalytics />
+          </ErrorBoundary>
+        )}
         {activeTab === 'analytics' && (
           <ErrorBoundary>
             <DataAnalytics 
