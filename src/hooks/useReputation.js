@@ -146,8 +146,8 @@ export const useReputation = () => {
         const fileuri = await uploadFeedback(feedbackDetails);
 
         // 2. 计算文件哈希
-        const filehash = ethers.utils.keccak256(
-          ethers.utils.toUtf8Bytes(JSON.stringify(feedbackDetails))
+        const filehash = ethers.keccak256(
+          ethers.toUtf8Bytes(JSON.stringify(feedbackDetails))
         );
 
         // 3. 获取或生成反馈授权签名
@@ -246,8 +246,8 @@ export const useReputation = () => {
         const responseUri = await uploadFeedback(response);
 
         // 2. 计算响应哈希
-        const responseHash = ethers.utils.keccak256(
-          ethers.utils.toUtf8Bytes(JSON.stringify(response))
+        const responseHash = ethers.keccak256(
+          ethers.toUtf8Bytes(JSON.stringify(response))
         );
 
         // 3. 提交响应到链上

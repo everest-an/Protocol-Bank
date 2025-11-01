@@ -1,178 +1,153 @@
-// 生成丰富的测试数据用于演示
-
-// JSDoc type definitions for better IDE support
-/**
- * @typedef {Object} MockSupplier
- * @property {string} id
- * @property {string} name
- * @property {string} brand
- * @property {string} category
- * @property {number} profitMargin
- * @property {number} totalAmount
- * @property {number} paymentCount
- * @property {Date} lastPayment
- */
-
-/**
- * @typedef {Object} MockPayment
- * @property {string} id
- * @property {string} from
- * @property {string} to
- * @property {number} amount
- * @property {string} category
- * @property {'Pending'|'Completed'|'Failed'} status
- * @property {Date} timestamp
- * @property {string} txHash
- */
-
-const SUPPLIER_NAMES = [
-  { name: 'TechCorp Solutions', brand: 'TechCorp', category: 'Technical Services' },
-  { name: 'Cloud Services Inc', brand: 'CloudServe', category: 'Cloud Computing' },
-  { name: 'Global Logistics', brand: 'GloLog', category: 'Logistics' },
-  { name: 'Design Studio Pro', brand: 'DesignPro', category: 'Design Services' },
-  { name: 'Marketing Masters', brand: 'MarketMaster', category: 'Marketing' },
-  { name: 'Consulting Group', brand: 'ConsultG', category: 'Consulting Services' },
-  { name: 'Raw Materials Co', brand: 'RawMat', category: 'Raw Materials' },
-  { name: 'AI Analytics Ltd', brand: 'AIAnalytics', category: 'Technical Services' },
-  { name: 'Data Center Pro', brand: 'DataCenter', category: 'Cloud Computing' },
-  { name: 'Creative Agency', brand: 'Creative', category: 'Design Services' },
-  { name: 'Supply Chain Hub', brand: 'SupplyHub', category: 'Logistics' },
-  { name: 'Brand Strategy', brand: 'BrandStrat', category: 'Marketing' },
-];
-
-const CATEGORIES = [
-  'Technical Services',
-  'Cloud Computing',
-  'Raw Materials',
-  'Logistics',
-  'Consulting Services',
-  'Design Services',
-  'Marketing',
-  'Other',
-];
+// Mock data generation utilities for Protocol Bank
 
 // 生成随机地址
 function generateAddress() {
-  return '0x' + Array.from({ length: 40 }, () => 
-    Math.floor(Math.random() * 16).toString(16)
-  ).join('');
+  const chars = '0123456789abcdef';
+  let address = '0x';
+  for (let i = 0; i < 40; i++) {
+    address += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return address;
 }
 
 // 生成随机交易哈希
 function generateTxHash() {
-  return '0x' + Array.from({ length: 64 }, () => 
-    Math.floor(Math.random() * 16).toString(16)
-  ).join('');
+  const chars = '0123456789abcdef';
+  let hash = '0x';
+  for (let i = 0; i < 64; i++) {
+    hash += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return hash;
 }
 
-// 生成随机日期(最近30天)
+// 生成随机日期
 function generateRandomDate(daysAgo = 30) {
   const now = new Date();
   const randomDays = Math.floor(Math.random() * daysAgo);
-  const randomHours = Math.floor(Math.random() * 24);
-  const randomMinutes = Math.floor(Math.random() * 60);
-  
-  const date = new Date(now);
-  date.setDate(date.getDate() - randomDays);
-  date.setHours(randomHours, randomMinutes, 0, 0);
-  
+  const date = new Date(now.getTime() - randomDays * 24 * 60 * 60 * 1000);
   return date;
 }
 
-// 生成供应商数据
+// 供应商名称和类别
+const SUPPLIER_NAMES = [
+  { name: 'Acme Corp', brand: 'Acme', category: 'Raw Materials' },
+  { name: 'TechVision Inc', brand: 'TechVision', category: 'Technical Services' },
+  { name: 'Global Logistics', brand: 'Global', category: 'Logistics' },
+  { name: 'CloudNet Solutions', brand: 'CloudNet', category: 'Cloud Computing' },
+  { name: 'Design Studio Pro', brand: 'DesignPro', category: 'Design Services' },
+  { name: 'Marketing Masters', brand: 'MarketMasters', category: 'Marketing' },
+  { name: 'Consulting Group', brand: 'ConsultGroup', category: 'Consulting Services' },
+  { name: 'DataFlow Systems', brand: 'DataFlow', category: 'Data Services' },
+  { name: 'SecureNet', brand: 'SecureNet', category: 'Security Services' },
+  { name: 'EcoSupply', brand: 'EcoSupply', category: 'Sustainable Materials' },
+  { name: 'FastShip Logistics', brand: 'FastShip', category: 'Express Delivery' },
+  { name: 'AI Solutions Ltd', brand: 'AISolutions', category: 'AI Services' },
+];
+
 /**
- * @param {number} count
- * @returns {MockSupplier[]}
+ * 生成完整的测试数据集
+ * @param {number} supplierCount - 供应商数量（默认 12）
+ * @param {number} paymentCount - 支付记录数量（默认 20）
+ * @returns {Object} 包含 suppliers, payments, stats 的对象
  */
-export function generateMockSuppliers(count = 12) {
-  const suppliers = [];
+export function generateFullMockData(supplierCount = 12, paymentCount = 20) {
+  const mainWallet = '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb0';
   
-  for (let i = 0; i < count; i++) {
+  // 1. 生成供应商
+  const suppliers = [];
+  for (let i = 0; i < supplierCount; i++) {
     const supplier = SUPPLIER_NAMES[i % SUPPLIER_NAMES.length];
-    const paymentCount = Math.floor(Math.random() * 20) + 5;
-    const avgPayment = Math.random() * 5 + 0.5; // 0.5-5.5 ETH
-    const totalAmount = avgPayment * paymentCount;
-    
     suppliers.push({
       id: generateAddress(),
-      name: `${supplier.name} ${i > SUPPLIER_NAMES.length - 1 ? i - SUPPLIER_NAMES.length + 1 : ''}`.trim(),
+      name: `${supplier.name}${i >= SUPPLIER_NAMES.length ? ` ${i - SUPPLIER_NAMES.length + 2}` : ''}`,
       brand: supplier.brand,
       category: supplier.category,
       profitMargin: Math.random() * 30 + 10, // 10-40%
-      totalAmount: parseFloat(totalAmount.toFixed(4)),
-      paymentCount,
-      lastPayment: generateRandomDate(7),
+      totalAmount: 0, // 稍后计算
+      paymentCount: 0, // 稍后计算
+      lastPayment: null, // 稍后计算
     });
   }
   
-  return suppliers;
-}
-
-// 生成支付数据
-/**
- * @param {MockSupplier[]} suppliers
- * @param {string} mainWallet
- * @param {number} count
- * @returns {MockPayment[]}
- */
-export function generateMockPayments(
-  suppliers,
-  mainWallet,
-  count = 50
-) {
+  // 2. 为每个供应商分配支付数量（使用更均匀的分布）
+  const paymentsPerSupplier = [];
+  let remainingPayments = paymentCount;
+  
+  // 先给每个供应商至少 1 笔支付
+  for (let i = 0; i < supplierCount; i++) {
+    paymentsPerSupplier[i] = 1;
+    remainingPayments--;
+  }
+  
+  // 随机分配剩余的支付
+  while (remainingPayments > 0) {
+    const randomIndex = Math.floor(Math.random() * supplierCount);
+    paymentsPerSupplier[randomIndex]++;
+    remainingPayments--;
+  }
+  
+  // 3. 生成支付记录
   const payments = [];
-  const statuses = ['Completed', 'Completed', 'Completed', 'Pending', 'Failed'];
+  const statuses = ['Completed', 'Completed', 'Completed', 'Pending'];
+  let paymentId = 1;
   
-  for (let i = 0; i < count; i++) {
-    const supplier = suppliers[Math.floor(Math.random() * suppliers.length)];
-    const amount = Math.random() * 5 + 0.1; // 0.1-5.1 ETH
-    const status = statuses[Math.floor(Math.random() * statuses.length)];
+  for (let i = 0; i < supplierCount; i++) {
+    const supplier = suppliers[i];
+    const numPayments = paymentsPerSupplier[i];
     
-    payments.push({
-      id: (i + 1).toString(),
-      from: mainWallet,
-      to: supplier.id,
-      amount: parseFloat(amount.toFixed(4)),
-      category: supplier.category,
-      status,
-      timestamp: generateRandomDate(30),
-      txHash: generateTxHash(),
-    });
+    for (let j = 0; j < numPayments; j++) {
+      const amount = Math.random() * 4.5 + 0.5; // 0.5-5.0 ETH
+      const status = statuses[Math.floor(Math.random() * statuses.length)];
+      const timestamp = generateRandomDate(30);
+      
+      const payment = {
+        id: paymentId.toString(),
+        from: mainWallet,
+        to: supplier.id,
+        supplierName: supplier.name, // 添加供应商名称
+        amount: parseFloat(amount.toFixed(4)),
+        category: supplier.category,
+        status,
+        timestamp,
+        txHash: generateTxHash(),
+      };
+      
+      payments.push(payment);
+      
+      // 更新供应商统计
+      if (status === 'Completed') {
+        supplier.totalAmount += payment.amount;
+        supplier.paymentCount++;
+        if (!supplier.lastPayment || timestamp > supplier.lastPayment) {
+          supplier.lastPayment = timestamp;
+        }
+      }
+      
+      paymentId++;
+    }
   }
   
-  // 按时间排序(最新的在前)
+  // 格式化供应商的 totalAmount
+  suppliers.forEach(s => {
+    s.totalAmount = parseFloat(s.totalAmount.toFixed(4));
+  });
+  
+  // 按时间排序支付记录（最新的在前）
   payments.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
   
-  return payments;
-}
-
-// 生成统计数据
-/**
- * @param {MockPayment[]} payments
- * @param {number} [supplierCount] - 可选的供应商总数，如果提供则使用此值而不是计算唯一供应商
- */
-export function generateMockStats(payments, supplierCount = null) {
+  // 4. 计算统计数据
   const completedPayments = payments.filter(p => p.status === 'Completed');
   const totalAmount = completedPayments.reduce((sum, p) => sum + p.amount, 0);
   const uniqueSuppliers = new Set(completedPayments.map(p => p.to)).size;
   
-  return {
+  const stats = {
     totalPayments: completedPayments.length,
     totalAmount: parseFloat(totalAmount.toFixed(4)),
-    supplierCount: supplierCount !== null ? supplierCount : uniqueSuppliers, // 使用传入的值或计算值
+    supplierCount: uniqueSuppliers,
     averagePayment: completedPayments.length > 0 
       ? parseFloat((totalAmount / completedPayments.length).toFixed(4))
       : 0,
   };
-}
-
-// 生成完整的测试数据集
-export function generateFullMockData(supplierCount = 12) {
-  const mainWallet = '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb0'; // 主钱包
-  const suppliers = generateMockSuppliers(supplierCount);
-  const paymentCount = Math.max(50, supplierCount * 4); // Scale payments with suppliers
-  const payments = generateMockPayments(suppliers, mainWallet, paymentCount);
-  const stats = generateMockStats(payments, supplierCount); // 传递 supplierCount
   
   return {
     mainWallet,
@@ -182,15 +157,16 @@ export function generateFullMockData(supplierCount = 12) {
   };
 }
 
-// 生成网络图数据
 /**
- * @param {MockSupplier[]} suppliers
- * @param {MockPayment[]} payments
+ * 生成网络图数据
+ * @param {Array} suppliers - 供应商列表
+ * @param {Array} payments - 支付记录列表
+ * @returns {Object} 包含 nodes 和 links 的网络图数据
  */
 export function generateNetworkGraphData(suppliers, payments) {
   const mainWallet = payments[0]?.from || '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb0';
   
-  // 计算每个供应商的总Payment Amount
+  // 计算每个供应商的总支付金额（只计算已完成的）
   const supplierAmounts = new Map();
   payments
     .filter(p => p.status === 'Completed')
@@ -207,13 +183,15 @@ export function generateNetworkGraphData(suppliers, payments) {
       type: 'main',
       value: Array.from(supplierAmounts.values()).reduce((sum, v) => sum + v, 0),
     },
-    ...suppliers.map(s => ({
-      id: s.id,
-      name: s.brand,
-      type: 'supplier',
-      category: s.category,
-      value: supplierAmounts.get(s.id) || 0,
-    })),
+    ...suppliers
+      .filter(s => supplierAmounts.has(s.id)) // 只显示有支付记录的供应商
+      .map(s => ({
+        id: s.id,
+        name: s.brand || s.name,
+        type: 'supplier',
+        category: s.category,
+        value: supplierAmounts.get(s.id) || 0,
+      })),
   ];
   
   // 创建连接
@@ -229,3 +207,5 @@ export function generateNetworkGraphData(suppliers, payments) {
   return { nodes, links };
 }
 
+// 导出默认的测试数据（12 个供应商，20 笔支付）
+export const defaultMockData = generateFullMockData(12, 20);

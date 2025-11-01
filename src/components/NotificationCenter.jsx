@@ -116,7 +116,7 @@ export default function NotificationCenter() {
           />
           
           {/* Panel */}
-          <div className="absolute right-0 top-12 z-50 w-96 max-h-[600px] overflow-hidden">
+          <div className="absolute right-0 top-12 z-[9999] w-96 max-h-[600px] overflow-hidden shadow-2xl">
             <Card className="border border-gray-200 dark:border-gray-700 shadow-xl">
               {/* Header */}
               <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">

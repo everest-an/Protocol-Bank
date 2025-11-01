@@ -83,7 +83,7 @@ export const useAgentRegistry = () => {
         const metadata = agentData.metadata || [];
         const metadataEntries = metadata.map((m) => ({
           key: m.key,
-          value: ethers.utils.toUtf8Bytes(m.value),
+          value: ethers.toUtf8Bytes(m.value),
         }));
 
         // 4. 调用合约注册 Agent
@@ -201,7 +201,7 @@ export const useAgentRegistry = () => {
       try {
         const contract = getContract();
         const value = await contract.getMetadata(agentId, key);
-        return ethers.utils.toUtf8String(value);
+        return ethers.toUtf8String(value);
       } catch (err) {
         console.error('Get agent metadata error:', err);
         return null;
@@ -228,7 +228,7 @@ export const useAgentRegistry = () => {
         const tx = await contract.setMetadata(
           agentId,
           key,
-          ethers.utils.toUtf8Bytes(value)
+          ethers.toUtf8Bytes(value)
         );
         return await tx.wait();
       } catch (err) {

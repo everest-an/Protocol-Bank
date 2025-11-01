@@ -141,7 +141,7 @@ export default function EnterprisePaymentTable({ payments = [], selectedCurrency
                       {payment.supplierName || payment.brand || 'Unknown'}
                     </div>
                     <div className="text-xs text-gray-500 dark:text-gray-300 font-mono">
-                      {payment.recipient?.slice(0, 6)}...{payment.recipient?.slice(-4)}
+                      {(payment.to || payment.recipient)?.slice(0, 6)}...{(payment.to || payment.recipient)?.slice(-4)}
                     </div>
                   </div>
                 </td>
