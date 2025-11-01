@@ -1,5 +1,5 @@
 const fireflyService = require('../services/fireflyService');
-const db = require('../config/database');
+const { pool: db } = require('../config/database');
 const logger = require('../utils/logger');
 
 /**
