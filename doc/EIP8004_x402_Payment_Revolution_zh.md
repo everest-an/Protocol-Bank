@@ -57,7 +57,7 @@ Protocol Banks 泛指一类构建在区块链协议层面的去中心化银行�
 
 下图展示了 Decomp-AI 平台的系统架构和价值流转路径：
 
-![Decomp-AI 架构图](decomp_ai_architecture.png)
+![Decomp-AI 架构图](decomp_ai_architecture_zh.png)
 
 *图 1: Decomp-AI 平台系统架构与价值流* 
 
