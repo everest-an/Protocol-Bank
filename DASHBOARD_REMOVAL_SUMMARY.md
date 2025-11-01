@@ -91,4 +91,4 @@ After deployment completes, verify:
 
 **Date**: October 30, 2025  
 **Status**: ✅ Complete (waiting for Vercel deployment)  
-**Developer**: Manus AI Agent
+**Developer**: EverestAn
