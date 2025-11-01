@@ -357,6 +357,9 @@ export async function getDashboardStats() {
         total: sql<number>`count(*)`,
         active: sql<number>`sum(case when status = 'active' then 1 else 0 end)`,
         frozen: sql<number>`sum(case when status = 'frozen' then 1 else 0 end)`,
+        highRisk: sql<number>`sum(case when status = 'active' and riskLevel = 'high' then 1 else 0 end)`,
+        mediumRisk: sql<number>`sum(case when status = 'active' and riskLevel = 'medium' then 1 else 0 end)`,
+        lowRisk: sql<number>`sum(case when status = 'active' and riskLevel = 'low' then 1 else 0 end)`,
       })
       .from(accounts),
     db
@@ -372,4 +375,28 @@ export async function getDashboardStats() {
     accounts: accountStats[0],
     flaggedTransactions: flaggedTx,
   };
+}
+
+export async function getActiveAccountsByRisk(riskLevel?: string) {
+  const db = await getDb();
+  if (!db) return [];
+
+  if (riskLevel && riskLevel !== "all") {
+    return await db
+      .select()
+      .from(accounts)
+      .where(and(
+        eq(accounts.status, "active"),
+        eq(accounts.riskLevel, riskLevel as any)
+      ))
+      .orderBy(desc(accounts.createdAt))
+      .limit(20);
+  }
+
+  return await db
+    .select()
+    .from(accounts)
+    .where(eq(accounts.status, "active"))
+    .orderBy(desc(accounts.createdAt))
+    .limit(20);
 }

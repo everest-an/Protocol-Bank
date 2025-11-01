@@ -220,6 +220,17 @@ Format your response as JSON with these fields: riskAssessment, anomalyIndicator
       return await getDashboardStats();
     }),
 
+    activeAccountsByRisk: protectedProcedure
+      .input(
+        z.object({
+          riskLevel: z.string().optional(),
+        })
+      )
+      .query(async ({ input }) => {
+        const { getActiveAccountsByRisk } = await import("./db");
+        return await getActiveAccountsByRisk(input.riskLevel);
+      }),
+
     analytics: protectedProcedure
       .input(
         z.object({
