@@ -8,6 +8,7 @@ const transactionRoutes = require('./src/routes/transactionRoutes');
 const batchPaymentRoutes = require('./src/routes/batchPaymentRoutes');
 const scheduledPaymentRoutes = require('./src/routes/scheduledPaymentRoutes');
 const fireflyRoutes = require('./src/routes/fireflyRoutes');
+const amlRoutes = require('./src/routes/amlRoutes');
 
 const app = express();
 
@@ -39,6 +40,7 @@ app.use('/api/v1/transaction', transactionRoutes);
 app.use('/api/v1/batch-payment', batchPaymentRoutes);
 app.use('/api/v1/scheduled-payment', scheduledPaymentRoutes);
 app.use('/api/v1/firefly', fireflyRoutes);
+app.use('/api/v1/aml', amlRoutes);
 
 // 404 处理
 app.use((req, res) => {
