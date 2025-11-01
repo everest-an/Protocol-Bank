@@ -215,7 +215,7 @@ Resources:
     Properties:
       InstanceType: !Ref InstanceType
       KeyName: !Ref KeyPairName
-      ImageId: ami-0892a9a01908fafd1  # Ubuntu 22.04 LTS in ap-southeast-2
+      ImageId: ami-0eeab253db7e765a9  # Ubuntu 22.04 LTS in ap-southeast-2 (2025-10-15)
       SubnetId: !Ref PublicSubnet1
       SecurityGroupIds:
         - !Ref EC2SecurityGroup
