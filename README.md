@@ -143,6 +143,24 @@ Protocol-Bank/
 
 ## 📚 文档
 
+### 📖 白皮书与架构图
+
+**最新更新**: 已添加流支付功能详细介绍和双钱包架构设计
+
+- 📄 [**英文白皮书**](docs/design/protocol_bank_complete_whitepaper.md) - Protocol Bank Complete Whitepaper
+- 📄 [**中文白皮书**](docs/design/protocol_bank_complete_whitepaper_zh.md) - Protocol Bank 完整白皮书
+- 🎨 [**钱包架构图 (英文)**](docs/design/wallet_architecture_en_hd.png) - Dual Wallet Architecture
+- 🎨 [**钱包架构图 (中文)**](docs/design/wallet_architecture_zh_hd.png) - 双钱包架构图
+- 🔄 [**清算网络流程图 (英文)**](docs/design/clearing_network_flow_en_hd.png) - Clearing Network Flow
+- 🔄 [**清算网络流程图 (中文)**](docs/design/clearing_network_flow_zh_hd.png) - 清算网络流程图
+- 📋 [**更新说明**](docs/UPDATE_NOTES.md) - 白皮书更新详情
+
+**核心特性**:
+- ✅ 双钱包架构 (个人非托管 + 企业托管)
+- ✅ 三层清算记账网络
+- ✅ 99%+ 手续费降低
+- ✅ 四种支付类型支持
+
 ### 用户文档
 - [快速开始](docs/user-guide/getting-started.md)
 - [功能介绍](docs/user-guide/features.md)
