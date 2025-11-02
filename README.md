@@ -6,6 +6,26 @@
 [![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
 
+---
+
+## 📖 白皮书 / Whitepaper
+
+<div align="center">
+
+### 🌐 **[在线阅读白皮书 / Read Whitepaper Online](https://3000-i6ui3ye3yle5elptm687i-c6cd7e7c.manus-asia.computer)** 🌐
+
+[![Whitepaper](https://img.shields.io/badge/📄_Whitepaper-Read_Online-blue?style=for-the-badge)](https://3000-i6ui3ye3yle5elptm687i-c6cd7e7c.manus-asia.computer)
+[![English](https://img.shields.io/badge/English-white?style=for-the-badge&logo=googletranslate)](https://3000-i6ui3ye3yle5elptm687i-c6cd7e7c.manus-asia.computer/en)
+[![中文](https://img.shields.io/badge/中文-white?style=for-the-badge&logo=googletranslate)](https://3000-i6ui3ye3yle5elptm687i-c6cd7e7c.manus-asia.computer/zh)
+
+**完整的11章白皮书，包含超高清架构图和详细的协议演进机制**
+
+[📥 下载 PDF (English)](https://github.com/everest-an/Protocol-Bank/raw/main/docs/design/protocol_bank_complete_whitepaper.pdf) | [📥 下载 PDF (中文)](https://github.com/everest-an/Protocol-Bank/raw/main/docs/design/protocol_bank_complete_whitepaper_zh.pdf)
+
+</div>
+
+---
+
 ## 🌟 项目简介
 
 Protocol Bank 是一个基于区块链的去中心化跨境支付平台，提供实时支付流、智能合约托管、批量支付和定时支付等功能。
