@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, accounts, transactions, auditLogs, operationHistory, analyticsSnapshots, verificationCodes, InsertAccount, InsertAuditLog, InsertTransaction } from "../drizzle/schema";
+import { InsertUser, users, accounts, transactions, auditLogs, operationHistory, analyticsSnapshots, verificationCodes, batchOperationLocks, InsertAccount, InsertAuditLog, InsertTransaction } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -666,4 +666,104 @@ export async function incrementVerificationAttempts(userId: number, code: string
         eq(verificationCodes.code, code)
       )
     );
+}
+
+
+// Batch operation lock functions
+export async function checkBatchOperationLock(userId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const locks = await db
+    .select()
+    .from(batchOperationLocks)
+    .where(eq(batchOperationLocks.userId, userId))
+    .limit(1);
+
+  if (locks.length === 0) return null;
+
+  const lock = locks[0];
+  
+  // Check if lock has expired
+  if (lock.lockedUntil && new Date() < lock.lockedUntil) {
+    return lock; // Still locked
+  }
+
+  // Lock expired, reset failed attempts
+  if (lock.lockedUntil && new Date() >= lock.lockedUntil) {
+    await db
+      .update(batchOperationLocks)
+      .set({
+        failedAttempts: 0,
+        lockedUntil: null,
+        lastFailedAt: null,
+      })
+      .where(eq(batchOperationLocks.userId, userId));
+    return null;
+  }
+
+  return null;
+}
+
+export async function recordVerificationFailure(userId: number) {
+  const db = await getDb();
+  if (!db) return;
+
+  const locks = await db
+    .select()
+    .from(batchOperationLocks)
+    .where(eq(batchOperationLocks.userId, userId))
+    .limit(1);
+
+  const now = new Date();
+  const failedAttempts = locks.length > 0 ? locks[0].failedAttempts + 1 : 1;
+
+  // Lock for 15 minutes if failed 3 times
+  const lockedUntil = failedAttempts >= 3 
+    ? new Date(now.getTime() + 15 * 60 * 1000) 
+    : null;
+
+  if (locks.length === 0) {
+    await db.insert(batchOperationLocks).values({
+      userId,
+      failedAttempts,
+      lockedUntil,
+      lastFailedAt: now,
+    });
+  } else {
+    await db
+      .update(batchOperationLocks)
+      .set({
+        failedAttempts,
+        lockedUntil,
+        lastFailedAt: now,
+      })
+      .where(eq(batchOperationLocks.userId, userId));
+  }
+
+  // Log to audit
+  await createAuditLog({
+    adminId: userId,
+    action: failedAttempts >= 3 ? "batch_operation_locked" : "verification_failed",
+    entityType: "system",
+    entityId: userId,
+    changes: JSON.stringify({
+      failedAttempts,
+      lockedUntil: lockedUntil?.toISOString(),
+    }),
+  });
+}
+
+export async function resetVerificationFailures(userId: number) {
+  const db = await getDb();
+  if (!db) return;
+
+  await db
+    .update(batchOperationLocks)
+    .set({
+      failedAttempts: 0,
+      lockedUntil: null,
+      lastFailedAt: null,
+    })
+    .where(eq(batchOperationLocks.userId, userId));
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,7 +11,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, Shield } from "lucide-react";
+import { Loader2, Shield, AlertTriangle } from "lucide-react";
+import { toast } from "sonner";
 
 interface VerificationDialogProps {
   open: boolean;
@@ -35,11 +36,42 @@ export function VerificationDialog({
   const [isVerifying, setIsVerifying] = useState(false);
   const [codeSent, setCodeSent] = useState(false);
   const [error, setError] = useState("");
+  const [remainingTime, setRemainingTime] = useState(0);
 
   const requestCodeMutation = trpc.accounts.requestVerificationCode.useMutation();
   const verifyCodeMutation = trpc.accounts.verifyCode.useMutation();
+  const { data: lockStatus } = trpc.accounts.checkLockStatus.useQuery(undefined, {
+    enabled: open,
+    refetchInterval: 5000, // Check every 5 seconds
+  });
+
+  // Countdown timer for verification code
+  useEffect(() => {
+    if (remainingTime > 0) {
+      const timer = setTimeout(() => {
+        setRemainingTime(remainingTime - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [remainingTime]);
+
+  // Calculate lock remaining time
+  const getLockRemainingTime = () => {
+    if (!lockStatus?.isLocked || !lockStatus.lockedUntil) return 0;
+    const now = new Date().getTime();
+    const lockEnd = new Date(lockStatus.lockedUntil).getTime();
+    return Math.max(0, Math.ceil((lockEnd - now) / 1000));
+  };
+
+  const lockRemainingSeconds = getLockRemainingTime();
+  const isLocked = lockStatus?.isLocked && lockRemainingSeconds > 0;
 
   const handleRequestCode = async () => {
+    if (isLocked) {
+      toast.error("您的帳戶已被暫時鎖定，請稍後再試");
+      return;
+    }
+
     setIsRequesting(true);
     setError("");
 
@@ -49,8 +81,12 @@ export function VerificationDialog({
       });
 
       setCodeSent(true);
-    } catch (err) {
-      setError("發送驗證碼失敗，請重試");
+      setRemainingTime(300); // 5 minutes
+      toast.success("驗證碼已發送");
+    } catch (err: any) {
+      const errorMsg = err.message || "發送驗證碼失敗，請重試";
+      setError(errorMsg);
+      toast.error(errorMsg);
     } finally {
       setIsRequesting(false);
     }
@@ -59,6 +95,11 @@ export function VerificationDialog({
   const handleVerify = async () => {
     if (code.length !== 6) {
       setError("請輸入6位數驗證碼");
+      return;
+    }
+
+    if (isLocked) {
+      toast.error("您的帳戶已被暫時鎖定，請稍後再試");
       return;
     }
 
@@ -71,10 +112,20 @@ export function VerificationDialog({
         operation,
       });
 
+      toast.success("驗證成功");
       onVerified();
       handleClose();
-    } catch (err) {
-      setError("驗證碼無效或已過期");
+    } catch (err: any) {
+      const errorMsg = err.message || "驗證失敗";
+      setError(errorMsg);
+      toast.error(errorMsg);
+
+      // Check if user is now locked
+      if (errorMsg.includes("鎖定") || errorMsg.includes("locked")) {
+        setTimeout(() => {
+          handleClose();
+        }, 2000);
+      }
     } finally {
       setIsVerifying(false);
     }
@@ -84,12 +135,19 @@ export function VerificationDialog({
     setCode("");
     setCodeSent(false);
     setError("");
+    setRemainingTime(0);
     onOpenChange(false);
   };
 
   const handleCancelClick = () => {
     handleClose();
     onCancel();
+  };
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
   return (
@@ -108,7 +166,28 @@ export function VerificationDialog({
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
-          {!codeSent ? (
+          {isLocked ? (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-red-600">
+                <AlertTriangle className="h-5 w-5" />
+                <span className="font-semibold">帳戶已鎖定</span>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                由於驗證失敗次數過多（{lockStatus?.failedAttempts || 0}次），您的批量操作功能已被暫時鎖定。
+              </p>
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                <p className="text-sm text-red-700">
+                  剩餘鎖定時間：
+                  <span className="ml-2 font-mono font-bold text-lg">
+                    {formatTime(lockRemainingSeconds)}
+                  </span>
+                </p>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                鎖定將在 {formatTime(lockRemainingSeconds)} 後自動解除，屆時您可以重新嘗試。
+              </p>
+            </div>
+          ) : !codeSent ? (
             <div className="space-y-2">
               <p className="text-sm text-muted-foreground">
                 點擊下方按鈕，我們將向您發送一個6位數驗證碼。
@@ -141,6 +220,11 @@ export function VerificationDialog({
               />
               <p className="text-xs text-muted-foreground">
                 驗證碼已發送至您的通知中心，有效期5分鐘。
+                {remainingTime > 0 && (
+                  <span className="ml-2 text-orange-600 font-medium">
+                    剩餘時間：{formatTime(remainingTime)}
+                  </span>
+                )}
               </p>
             </div>
           )}
@@ -156,7 +240,7 @@ export function VerificationDialog({
           <Button variant="outline" onClick={handleCancelClick}>
             取消
           </Button>
-          {codeSent && (
+          {codeSent && !isLocked && (
             <Button
               onClick={handleVerify}
               disabled={isVerifying || code.length !== 6}

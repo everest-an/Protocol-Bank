@@ -144,3 +144,19 @@ export const verificationCodes = mysqlTable("verification_codes", {
 
 export type VerificationCode = typeof verificationCodes.$inferSelect;
 export type InsertVerificationCode = typeof verificationCodes.$inferInsert;
+
+/**
+ * Batch operation locks table - stores temporary locks for users who failed verification
+ */
+export const batchOperationLocks = mysqlTable("batch_operation_locks", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().unique(),
+  failedAttempts: int("failedAttempts").default(0).notNull(),
+  lockedUntil: timestamp("lockedUntil"),
+  lastFailedAt: timestamp("lastFailedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type BatchOperationLock = typeof batchOperationLocks.$inferSelect;
+export type InsertBatchOperationLock = typeof batchOperationLocks.$inferInsert;

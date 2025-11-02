@@ -297,12 +297,13 @@ Format your response as JSON with these fields: riskAssessment, anomalyIndicator
         })
       )
       .mutation(async ({ input, ctx }) => {
-        const { verifyCode, incrementVerificationAttempts, createAuditLog } = await import("./db");
+        const { verifyCode, incrementVerificationAttempts, createAuditLog, recordVerificationFailure, resetVerificationFailures } = await import("./db");
         
         const isValid = await verifyCode(ctx.user.id, input.code, input.operation);
         
         if (!isValid) {
           await incrementVerificationAttempts(ctx.user.id, input.code);
+          await recordVerificationFailure(ctx.user.id);
           
           await createAuditLog({
             adminId: ctx.user.id,
@@ -317,6 +318,9 @@ Format your response as JSON with these fields: riskAssessment, anomalyIndicator
           throw new Error("驗證碼無效或已過期");
         }
         
+        // Reset failed attempts on successful verification
+        await resetVerificationFailures(ctx.user.id);
+        
         await createAuditLog({
           adminId: ctx.user.id,
           action: "verification_success",
@@ -329,6 +333,22 @@ Format your response as JSON with these fields: riskAssessment, anomalyIndicator
         
         return { success: true };
       }),
+
+    checkLockStatus: protectedProcedure.query(async ({ ctx }) => {
+      const { checkBatchOperationLock } = await import("./db");
+      
+      const lock = await checkBatchOperationLock(ctx.user.id);
+      
+      if (!lock || !lock.lockedUntil) {
+        return { isLocked: false };
+      }
+      
+      return {
+        isLocked: true,
+        lockedUntil: lock.lockedUntil,
+        failedAttempts: lock.failedAttempts,
+      };
+    }),
 
     undoLastOperation: protectedProcedure.mutation(async ({ ctx }) => {
       const { getLatestUndoableOperation, undoOperation, createAuditLog } = await import("./db");

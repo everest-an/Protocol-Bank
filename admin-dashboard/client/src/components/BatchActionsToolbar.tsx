@@ -12,6 +12,8 @@ import { Badge } from "@/components/ui/badge";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { VerificationDialog } from "@/components/VerificationDialog";
 import { useState } from "react";
+import { trpc } from "@/lib/trpc";
+import { toast } from "sonner";
 
 interface BatchActionsToolbarProps {
   selectedCount: number;
@@ -36,6 +38,11 @@ export function BatchActionsToolbar({
   onUndo,
   lastOperationType,
 }: BatchActionsToolbarProps) {
+  const { data: lockStatus } = trpc.accounts.checkLockStatus.useQuery(undefined, {
+    refetchInterval: 5000, // Check every 5 seconds
+  });
+
+  const isLocked = lockStatus?.isLocked || false;
   const [confirmDialog, setConfirmDialog] = useState<{
     open: boolean;
     title: string;
@@ -77,6 +84,10 @@ export function BatchActionsToolbar({
   };
 
   const handleBatchFreeze = () => {
+    if (isLocked) {
+      toast.error("您的帳戶已被暫時鎖定，無法執行批量操作");
+      return;
+    }
     // Batch freeze is a high-risk operation
     setVerificationDialog({
       open: true,
@@ -153,12 +164,24 @@ export function BatchActionsToolbar({
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <Button variant="outline" size="sm" onClick={handleBatchFreeze}>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={handleBatchFreeze}
+          disabled={isLocked}
+          title={isLocked ? "帳戶已鎖定，無法執行批量操作" : ""}
+        >
           <Lock className="h-4 w-4 mr-2" />
           凍結
         </Button>
 
-        <Button variant="outline" size="sm" onClick={handleBatchUnfreeze}>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={handleBatchUnfreeze}
+          disabled={isLocked}
+          title={isLocked ? "帳戶已鎖定，無法執行批量操作" : ""}
+        >
           <Unlock className="h-4 w-4 mr-2" />
           解凍
         </Button>
