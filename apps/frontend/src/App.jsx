@@ -163,7 +163,7 @@ function AppContent() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex justify-between items-center h-16">
             {/* 左侧：汉堡菜单 + Logo */}
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4 min-w-fit">
               {/* 移动端汉堡菜单按钮 */}
               <button
                 onClick={() => setShowMobileNav(true)}
@@ -172,14 +172,14 @@ function AppContent() {
                 <Menu className="h-6 w-6 text-gray-600 dark:text-gray-400" />
               </button>
               
-              <div className="flex items-center space-x-2">
-                <img src={protocolBankLogo} alt="Protocol Bank" className="h-8 w-8" />
+              <div className="flex items-center space-x-3">
+                <img src={protocolBankLogo} alt="Protocol Bank" className="h-8 w-8 flex-shrink-0" />
                 <span className="text-lg font-normal text-gray-900 dark:text-white hidden sm:inline whitespace-nowrap">Protocol Bank</span>
               </div>
             </div>
 
             {/* 中间：导航菜单 */}
-            <nav className="hidden md:flex items-center space-x-6 flex-1 justify-center">
+            <nav className="hidden md:flex items-center space-x-8 flex-1 justify-center ml-8">
                 <DropdownMenu
                   label="Payments"
                   items={[
