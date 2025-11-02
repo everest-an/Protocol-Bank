@@ -1,0 +1,7 @@
+/home/ubuntu/Protocol-Bank/加密设施/mpc-wallet/target/debug/deps/crypto_common-f48ec45746eca379.d: /home/ubuntu/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crypto-common-0.1.6/src/lib.rs
+
+/home/ubuntu/Protocol-Bank/加密设施/mpc-wallet/target/debug/deps/libcrypto_common-f48ec45746eca379.rlib: /home/ubuntu/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crypto-common-0.1.6/src/lib.rs
+
+/home/ubuntu/Protocol-Bank/加密设施/mpc-wallet/target/debug/deps/libcrypto_common-f48ec45746eca379.rmeta: /home/ubuntu/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crypto-common-0.1.6/src/lib.rs
+
+/home/ubuntu/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crypto-common-0.1.6/src/lib.rs:
