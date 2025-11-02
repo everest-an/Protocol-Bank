@@ -154,6 +154,7 @@ Protocol-Bank/
 - 🔄 [**清算网络流程图 (英文)**](docs/design/clearing_network_flow_en_hd.png) - Clearing Network Flow
 - 🔄 [**清算网络流程图 (中文)**](docs/design/clearing_network_flow_zh_hd.png) - 清算网络流程图
 - 📋 [**更新说明**](docs/UPDATE_NOTES.md) - 白皮书更新详情
+- 🔧 [**净额结算引擎原理**](docs/design/netting_engine_explanation.md) - 详解如何实现99%+费用降低
 
 **核心特性**:
 - ✅ 双钱包架构 (个人非托管 + 企业托管)
