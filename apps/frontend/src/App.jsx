@@ -172,14 +172,14 @@ function AppContent() {
                 <Menu className="h-6 w-6 text-gray-600 dark:text-gray-400" />
               </button>
               
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-4">
                 <img src={protocolBankLogo} alt="Protocol Bank" className="h-8 w-8 flex-shrink-0" />
                 <span className="text-lg font-normal text-gray-900 dark:text-white hidden sm:inline whitespace-nowrap">Protocol Bank</span>
               </div>
             </div>
 
             {/* 中间：导航菜单 */}
-            <nav className="hidden md:flex items-center space-x-8 flex-1 justify-center ml-8">
+            <nav className="hidden md:flex items-center space-x-10 flex-1 justify-center ml-12">
                 <DropdownMenu
                   label="Payments"
                   items={[
@@ -198,12 +198,7 @@ function AppContent() {
                 >
                   Suppliers
                 </button>
-                <button
-                  onClick={() => setActiveTab('financial')}
-                  className={`text-sm font-medium ${activeTab === 'financial' ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'}`}
-                >
-                  Financial
-                </button>
+
                 <button
                   onClick={() => setActiveTab('analytics')}
                   className={`text-sm font-medium ${activeTab === 'analytics' ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'}`}
