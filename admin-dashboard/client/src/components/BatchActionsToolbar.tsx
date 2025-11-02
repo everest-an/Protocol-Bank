@@ -10,6 +10,7 @@ import {
 import { Download, Flag, Lock, Unlock, X, Undo2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { VerificationDialog } from "@/components/VerificationDialog";
 import { useState } from "react";
 
 interface BatchActionsToolbarProps {
@@ -42,26 +43,47 @@ export function BatchActionsToolbar({
     onConfirm: () => void;
   }>({ open: false, title: "", description: "", onConfirm: () => {} });
 
+  const [verificationDialog, setVerificationDialog] = useState<{
+    open: boolean;
+    operation: string;
+    operationName: string;
+    onVerified: () => void;
+  }>({ open: false, operation: "", operationName: "", onVerified: () => {} });
+
   const handleBatchUpdateRiskLevel = (riskLevel: string) => {
-    setConfirmDialog({
-      open: true,
-      title: "確認批量更新風險等級",
-      description: `您確定要將 ${selectedCount} 個帳戶的風險等級設置為 ${riskLevel} 嗎？此操作可以撤銷。`,
-      onConfirm: () => {
-        onBatchUpdateRiskLevel(riskLevel);
-        setConfirmDialog({ ...confirmDialog, open: false });
-      },
-    });
+    // High-risk operations require two-factor authentication
+    const isHighRisk = riskLevel === "high" || riskLevel === "critical";
+    
+    if (isHighRisk) {
+      setVerificationDialog({
+        open: true,
+        operation: `bulk_update_risk_${riskLevel}`,
+        operationName: `批量設置為${riskLevel === "high" ? "高" : "極高"}風險等級`,
+        onVerified: () => {
+          onBatchUpdateRiskLevel(riskLevel);
+        },
+      });
+    } else {
+      setConfirmDialog({
+        open: true,
+        title: "確認批量更新風險等級",
+        description: `您確定要將 ${selectedCount} 個帳戶的風險等級設置為 ${riskLevel} 嗎？此操作可以撤銷。`,
+        onConfirm: () => {
+          onBatchUpdateRiskLevel(riskLevel);
+          setConfirmDialog({ ...confirmDialog, open: false });
+        },
+      });
+    }
   };
 
   const handleBatchFreeze = () => {
-    setConfirmDialog({
+    // Batch freeze is a high-risk operation
+    setVerificationDialog({
       open: true,
-      title: "確認批量凍結帳戶",
-      description: `您確定要凍結 ${selectedCount} 個帳戶嗎？此操作可以撤銷。`,
-      onConfirm: () => {
+      operation: "bulk_freeze",
+      operationName: "批量凍結帳戶",
+      onVerified: () => {
         onBatchFreeze();
-        setConfirmDialog({ ...confirmDialog, open: false });
       },
     });
   };
@@ -160,6 +182,19 @@ export function BatchActionsToolbar({
         title={confirmDialog.title}
         description={confirmDialog.description}
         onConfirm={confirmDialog.onConfirm}
+      />
+
+      <VerificationDialog
+        open={verificationDialog.open}
+        onOpenChange={(open) =>
+          setVerificationDialog({ ...verificationDialog, open })
+        }
+        operation={verificationDialog.operation}
+        operationName={verificationDialog.operationName}
+        onVerified={verificationDialog.onVerified}
+        onCancel={() =>
+          setVerificationDialog({ ...verificationDialog, open: false })
+        }
       />
     </div>
   );

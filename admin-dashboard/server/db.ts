@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, accounts, transactions, auditLogs, operationHistory, analyticsSnapshots, InsertAccount, InsertAuditLog, InsertTransaction } from "../drizzle/schema";
+import { InsertUser, users, accounts, transactions, auditLogs, operationHistory, analyticsSnapshots, verificationCodes, InsertAccount, InsertAuditLog, InsertTransaction } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -586,4 +586,84 @@ export async function getOperationHistory(adminId: number, limit: number = 10) {
     previousState: JSON.parse(op.previousState),
     newState: JSON.parse(op.newState),
   }));
+}
+
+
+// ============= Verification Codes =============
+
+export async function createVerificationCode(userId: number, operation: string): Promise<string> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // Generate 6-digit code
+  const code = Math.floor(100000 + Math.random() * 900000).toString();
+  
+  // Expires in 5 minutes
+  const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+
+  await db.insert(verificationCodes).values({
+    userId,
+    code,
+    operation,
+    expiresAt,
+  });
+
+  return code;
+}
+
+export async function verifyCode(userId: number, code: string, operation: string): Promise<boolean> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db
+    .select()
+    .from(verificationCodes)
+    .where(
+      and(
+        eq(verificationCodes.userId, userId),
+        eq(verificationCodes.code, code),
+        eq(verificationCodes.operation, operation),
+        eq(verificationCodes.used, 0)
+      )
+    )
+    .limit(1);
+
+  if (result.length === 0) {
+    return false;
+  }
+
+  const record = result[0];
+
+  // Check if expired
+  if (new Date() > record.expiresAt) {
+    return false;
+  }
+
+  // Check attempts
+  if (record.attempts >= 3) {
+    return false;
+  }
+
+  // Mark as used
+  await db
+    .update(verificationCodes)
+    .set({ used: 1 })
+    .where(eq(verificationCodes.id, record.id));
+
+  return true;
+}
+
+export async function incrementVerificationAttempts(userId: number, code: string): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db
+    .update(verificationCodes)
+    .set({ attempts: sql`${verificationCodes.attempts} + 1` })
+    .where(
+      and(
+        eq(verificationCodes.userId, userId),
+        eq(verificationCodes.code, code)
+      )
+    );
 }

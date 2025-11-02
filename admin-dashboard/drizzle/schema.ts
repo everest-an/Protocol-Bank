@@ -128,3 +128,19 @@ export const operationHistory = mysqlTable("operationHistory", {
 
 export type OperationHistory = typeof operationHistory.$inferSelect;
 export type InsertOperationHistory = typeof operationHistory.$inferInsert;
+/**
+ * Verification codes table - stores OTP codes for two-factor authentication
+ */
+export const verificationCodes = mysqlTable("verification_codes", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  code: varchar("code", { length: 6 }).notNull(),
+  operation: varchar("operation", { length: 50 }).notNull(), // e.g., "bulk_freeze", "bulk_delete"
+  expiresAt: timestamp("expiresAt").notNull(),
+  attempts: int("attempts").default(0).notNull(),
+  used: int("used").default(0).notNull(), // 0 = not used, 1 = used
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type VerificationCode = typeof verificationCodes.$inferSelect;
+export type InsertVerificationCode = typeof verificationCodes.$inferInsert;

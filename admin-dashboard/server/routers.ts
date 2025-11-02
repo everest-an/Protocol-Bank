@@ -272,6 +272,64 @@ Format your response as JSON with these fields: riskAssessment, anomalyIndicator
       return await getLatestUndoableOperation(ctx.user.id);
     }),
 
+    requestVerificationCode: protectedProcedure
+      .input(z.object({ operation: z.string() }))
+      .mutation(async ({ input, ctx }) => {
+        const { createVerificationCode } = await import("./db");
+        const { notifyOwner } = await import("./_core/notification");
+        
+        const code = await createVerificationCode(ctx.user.id, input.operation);
+        
+        // Send verification code via notification
+        await notifyOwner({
+          title: "二次驗證碼",
+          content: `您的驗證碼是：${code}\n\n操作類型：${input.operation}\n有效期：5分鐘\n\n如非本人操作，請立即檢查帳戶安全。`,
+        });
+        
+        return { success: true };
+      }),
+
+    verifyCode: protectedProcedure
+      .input(
+        z.object({
+          code: z.string().length(6),
+          operation: z.string(),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        const { verifyCode, incrementVerificationAttempts, createAuditLog } = await import("./db");
+        
+        const isValid = await verifyCode(ctx.user.id, input.code, input.operation);
+        
+        if (!isValid) {
+          await incrementVerificationAttempts(ctx.user.id, input.code);
+          
+          await createAuditLog({
+            adminId: ctx.user.id,
+            action: "verification_failed",
+            entityType: "user",
+            entityId: ctx.user.id,
+            changes: JSON.stringify({ operation: input.operation }),
+            ipAddress: ctx.req.ip,
+            userAgent: ctx.req.get("user-agent"),
+          });
+          
+          throw new Error("驗證碼無效或已過期");
+        }
+        
+        await createAuditLog({
+          adminId: ctx.user.id,
+          action: "verification_success",
+          entityType: "user",
+          entityId: ctx.user.id,
+          changes: JSON.stringify({ operation: input.operation }),
+          ipAddress: ctx.req.ip,
+          userAgent: ctx.req.get("user-agent"),
+        });
+        
+        return { success: true };
+      }),
+
     undoLastOperation: protectedProcedure.mutation(async ({ ctx }) => {
       const { getLatestUndoableOperation, undoOperation, createAuditLog } = await import("./db");
       
