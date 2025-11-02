@@ -9,7 +9,7 @@
 
 ## Abstract
 
-Protocol Bank is a decentralized, blockchain-based platform designed to revolutionize the global payments landscape. By providing a secure, efficient, and low-cost alternative to traditional correspondent banking, Protocol Bank aims to become a leading competitor to SWIFT. The platform will integrate with major global payment systems, including CHIPS, CHAPS, Fedwire, TARGET2, and CIPS, to facilitate seamless cross-border transactions in major currencies. Leveraging the power of the Ethereum blockchain, Protocol Bank will offer real-time settlement, enhanced transparency, and significantly lower transaction costs.
+Protocol Bank is a decentralized, blockchain-based platform designed to revolutionize the global payments landscape. By providing a secure, efficient, and low-cost alternative to traditional correspondent banking, Protocol Bank aims to become a leading competitor to SWIFT. The platform will integrate with major global payment systems, including CHIPS, CHAPS, Fedwire, TARGET2, and CIPS, to facilitate seamless cross-border transactions in major currencies. Leveraging the power of the Solana blockchain, Protocol Bank will offer real-time settlement, enhanced transparency, and significantly lower transaction costs.
 
 ## 1. The Challenge of Global Payments: A Fragmented and Inefficient System
 
@@ -52,23 +52,24 @@ This network of gateways allows Protocol Bank to act as a single, global clearin
 Protocol Bank is designed for a world where both traditional fiat currencies and digital assets coexist. Our platform achieves this through a sophisticated hybrid architecture:
 
 - **Fiat On/Off-Ramps:** Through our gateways, we can receive and send payments directly in native fiat currencies (USD, EUR, GBP, RMB, etc.).
-- **Stablecoin Settlement Core:** On-chain, transactions are settled using fully-backed, 1:1 stablecoins (e.g., USDC, EURC) on the Ethereum blockchain. When a user initiates a USD payment, for example, the funds are received via the Fedwire gateway, instantly converted to USDC, and settled on-chain. The reverse process occurs for payouts.
+- **Stablecoin Settlement Core:** On-chain, transactions are settled using fully-backed, 1:1 stablecoins (e.g., USDC, EURC) on the high-performance Solana blockchain. When a user initiates a USD payment, for example, the funds are received via the Fedwire gateway, instantly converted to USDC, and settled on-chain. The reverse process occurs for payouts.
 - **Digital Asset Interoperability:** For users in the crypto economy, Protocol Bank provides seamless interoperability with major digital assets like Bitcoin (BTC) and Ethereum (ETH) through secure cross-chain bridges and wrapped assets. This allows for true global liquidity, connecting the fiat and crypto worlds in a single, fluid network.
 
 Protocol Bank addresses these challenges by providing a decentralized, blockchain-based platform for cross-border payments. The platform is built on the following core principles:
 
-- **Decentralization:** By leveraging the power of the Ethereum blockchain, Protocol Bank eliminates the need for intermediaries, resulting in faster, cheaper, and more secure transactions.
+- **Decentralization:** By leveraging the power of the Solana blockchain, Protocol Bank eliminates the need for intermediaries, resulting in faster, cheaper, and more secure transactions.
 - **Interoperability:** Protocol Bank is designed to be interoperable with both traditional financial systems and other blockchain ecosystems. This is achieved through a multi-chain strategy that includes support for wrapped assets, cross-chain bridges, and Ethereum Improvement Proposals (EIPs).
-- **Scalability:** The platform is built on the Ethereum blockchain and its Layer 2 scaling solutions, which are capable of processing thousands of transactions per second with low latency.* Protocol Bank implements robust security measures to protect against fraud and cyber-attacks. These include the use of multi-signature wallets, hardware security modules (HSMs), and regular security audits.
+- **Scalability:** The platform is built on the high-performance Solana blockchain, which is capable of processing thousands of transactions per second with low latency.
+- **Security:** Protocol Bank implements robust security measures to protect against fraud and cyber-attacks. These include the use of multi-signature wallets, hardware security modules (HSMs), and regular security audits.
 - **Compliance:** The platform is designed to be fully compliant with international standards and regulations, including Know Your Customer (KYC), Anti-Money Laundering (AML), and the ISO 20022 standard for financial messaging.
 
 ## 3. Technical Architecture
 
 Protocol Bank's technical architecture is comprised of the following key components:
 
-- **Multi-Chain Strategy:** While Ethereum serves as the primary settlement layer, Protocol Bank will support a variety of other blockchains, including Ethereum and BNB Chain. This will be achieved through the use of wrapped assets and secure cross-chain bridges.
+- **Multi-Chain Strategy:** While Solana serves as the primary settlement layer, Protocol Bank will support a variety of other blockchains, including Ethereum and BNB Chain. This will be achieved through the use of wrapped assets and secure cross-chain bridges.
 - **Messaging Layer:** A secure and reliable messaging layer, based on the ISO 20022 standard, will be used to facilitate communication between financial institutions.
-- **Settlement Layer:** The settlement layer, built on the Ethereum blockchain, will use smart contracts to automate the clearing and settlement process. Key features include atomic swaps, automated market makers (AMMs), and streaming payments.
+- **Settlement Layer:** The settlement layer, built on the Solana blockchain, will use smart contracts to automate the clearing and settlement process. Key features include atomic swaps, automated market makers (AMMs), and streaming payments.
 - **Foreign Exchange (FX) Engine:** A real-time FX engine will provide competitive exchange rates for cross-currency transactions by aggregating liquidity from multiple providers.
 - **API Gateway:** A comprehensive set of RESTful APIs will allow financial institutions to easily integrate with the Protocol Bank platform.
 
@@ -123,9 +124,9 @@ This section provides a detailed technical specification of the Protocol Bank pl
 
 ### 5.1. System Components
 
-#### 5.1.1. Ethereum Smart Contracts
+#### 5.1.1. Solana Smart Contracts
 
-The core logic of Protocol Bank is implemented as a set of smart contracts on the Ethereum blockchain. These contracts are written in Solidity and are designed to be highly efficient and secure.
+The core logic of Protocol Bank is implemented as a set of smart contracts on the Solana blockchain. These contracts are written in Rust and are designed to be highly efficient and secure.
 
 - **Registry Contract:** This contract maintains a registry of all participating financial institutions, as well as their associated public keys and other metadata.
 - **Settlement Contract:** This contract is responsible for the clearing and settlement of transactions. It implements a variety of features, including atomic swaps, automated market makers (AMMs), and streaming payments.
@@ -142,7 +143,7 @@ Fiat gateways are responsible for connecting the Protocol Bank platform to tradi
 
 #### 5.1.3. Cross-chain Bridges
 
-Cross-chain bridges are used to facilitate the transfer of assets between the Ethereum blockchain and other blockchain ecosystems, such as BNB Chain and Polygon. Protocol Bank will utilize a combination of existing bridge solutions and a custom-built bridge for specific use cases.
+Cross-chain bridges are used to facilitate the transfer of assets between the Solana blockchain and other blockchain ecosystems, such as Ethereum and BNB Chain. Protocol Bank will utilize a combination of existing bridge solutions and a custom-built bridge for specific use cases.
 
 ### 5.2. ISO 20022 Messaging
 
@@ -201,7 +202,6 @@ The protocol's lending function is designed to serve, not to extract. This creat
 - **For Borrowers:** Access capital at costs that reflect only the actual risk premium and minimal operational overhead, not institutional markup.
 - **For the Economy:** Capital circulates more efficiently, reducing friction and enabling productive economic activity that would otherwise be stifled by high borrowing costs.
 
-
 The protocol acts as a transparent intermediary, not a profit-extracting middleman. Every basis point of interest spread is justified by actual costs or risk, not by the desire to generate returns for external shareholders.
 
 #### 4.3. Automation Replaces Exploitation
@@ -220,7 +220,7 @@ By replacing costly human intermediaries with immutable, automated code, the pro
 
 ### 6.1. Introduction to the PBX Token
 
-The Protocol Bank Token (PBX) is the native utility and governance token of the Protocol Bank ecosystem. It is a critical component of the platform, designed to incentivize participation, secure the network, and facilitate decentralized governance. The PBX token is an ERC-20 token on the Ethereum blockchain, ensuring high-speed, low-cost transactions.
+The Protocol Bank Token (PBX) is the native utility and governance token of the Protocol Bank ecosystem. It is a critical component of the platform, designed to incentivize participation, secure the network, and facilitate decentralized governance. The PBX token is an ERC-20 token on the Solana blockchain, ensuring high-speed, low-cost transactions.
 
 ### 6.2. Token Utility
 
@@ -252,93 +252,43 @@ The PBX token is designed to accrue value through the following mechanisms:
 - **Buyback and Burn:** A portion of the transaction fees will be used to buy back and burn PBX tokens, reducing the total supply and increasing the value of the remaining tokens.
 - **Staking Yield:** PBX stakers will earn a competitive yield on their staked tokens, further incentivizing participation in the network.
 
-## 7. Streaming Payments: A Scalable Network for Real-Time Value Transfer
-
-Protocol Bank introduces Streaming Payments, a revolutionary feature designed to facilitate the seamless, real-time flow of value across its network. This system evolves beyond simple transactions, establishing a sophisticated clearing and settlement network that dramatically reduces costs while enhancing efficiency and transparency. By supporting both personal non-custodial and enterprise custodial wallets, Protocol Bank provides a tailored solution for every type of user, from individuals to large corporations.
-
-### 7.1. The Evolution from Escrow to a Global Clearing Network
-
-Our initial foray into advanced payment flows, formerly known as "Flow Payment (Stake)," was designed to bring transparency to venture capital funding through a smart contract-based escrow system. While successful, we recognized a far greater opportunity: to build a universal network that could apply the principles of on-chain traceability and automated settlement to all forms of payment.
-
-Streaming Payments represents the culmination of this vision. We have generalized the concept of controlled, auditable fund flows into a scalable clearing network that serves as the backbone for a new generation of payment applications, moving beyond the niche of VC funding to address the broader needs of the global economy.
-
-### 7.2. The Dual Wallet Architecture: Empowering Every User
-
-At the core of the Streaming Payments feature is a flexible dual wallet architecture that allows users to choose the model that best fits their needs for security, control, and convenience.
-
-#### 7.2.1. Personal Non-Custodial Wallets
-
-Designed for individuals who prioritize sovereignty over their assets, the personal non-custodial wallet ensures that only the user has access to their private keys. This model embodies the core principle of decentralization: "not your keys, not your coins."
-
-- **Complete User Control**: Private keys are managed by the user via mnemonic phrases or integrated hardware wallets. All transactions must be signed and authorized directly by the user.
-- **Smart Contract Accounts**: Leveraging Ethereum's smart contract accounts, each user gets a secure, on-chain account that can support advanced features like social recovery.
-- **Stream Authorization**: Users can pre-authorize recurring payments (e.g., subscriptions, allowances) by setting specific parameters in a smart contract, which then executes the stream automatically without requiring manual intervention for each payment.
-
-#### 7.2.2. Enterprise Custodial Wallets
-
-Tailored for businesses and institutions, the enterprise custodial wallet provides a secure, managed environment that simplifies treasury operations and enhances security. Protocol Bank acts as a trusted custodian, handling the complexities of key management while providing powerful tools for financial administration.
-
-- **Advanced Security**: Private keys are secured within Hardware Security Modules (HSMs) using multi-signature and cold/hot wallet segregation protocols, offering institutional-grade protection.
-- **Multi-Level Role Management**: Enterprises can define a sophisticated hierarchy of user roles—such as admin, finance, approver, and operator—to enforce internal controls and approval workflows.
-- **Batch Processing Engine**: A powerful engine allows for the creation and management of thousands of payment streams simultaneously, ideal for payroll, supplier payments, and platform payouts.
-- **Automated Compliance**: The system integrates KYC/AML checks and automatically generates audit logs and compliance reports, simplifying regulatory adherence.
-
-| Feature | Personal Non-Custodial Wallet | Enterprise Custodial Wallet |
-| :--- | :--- | :--- |
-| **Target User** | Individuals, Developers, Crypto Natives | Businesses, Institutions, Corporations |
-| **Key Management** | User-controlled (self-custody) | Professionally managed by Protocol Bank |
-| **Control** | Full and direct control over funds | Granular, role-based access and workflows |
-| **Security** | User's responsibility | Institutional-grade (HSM, multi-sig) |
-| **Use Cases** | P2P payments, subscriptions, payroll | Mass payouts, supply chain finance, treasury management |
-
-### 7.3. The Clearing and Settlement Network
-
-The engine powering Streaming Payments is a groundbreaking clearing and settlement network that combines the speed of off-chain bookkeeping with the finality of on-chain settlement. This hybrid approach allows Protocol Bank to reduce transaction fees by over 99% compared to traditional on-chain transactions.
-
-**The Mechanism: Off-Chain Netting, On-Chain Settlement**
-
-Instead of posting every single transaction to the blockchain, the clearing network records them in a high-throughput, off-chain ledger. At the end of a defined clearing cycle (e.g., every hour), the system calculates the net position of every participant. Only this final net settlement amount is committed to the Ethereum blockchain as a single transaction.
-
-**Example of Fee Reduction:**
-- **Traditional Method**: 1,000 individual payments would require 1,000 separate on-chain transactions.
-- **Clearing Network Method**: The network processes all 1,000 payments off-chain and executes only **one** net settlement transaction on-chain.
-
-This efficiency is achieved through a three-layer architecture:
-1.  **Layer 1: Blockchain Settlement Layer (Ethereum)**: Provides ultimate security and finality for net settlements.
-2.  **Layer 2: Clearing Network Layer**: A distributed network of nodes that records transactions, calculates net positions, and bundles them for settlement.
-3.  **Layer 3: Application Interface Layer**: Provides APIs and real-time dashboards for users to initiate payments and monitor balances.
-
-To ensure a real-time user experience, the network incorporates a credit and liquidity system. This allows recipients to access funds instantly based on their creditworthiness within the network, without having to wait for the on-chain settlement cycle to complete.
-
-### 7.4. Supported Payment Types
-
-The Streaming Payments architecture is highly flexible, supporting a variety of payment models to suit different use cases:
-
-- **Continuous Streaming Payments**: Funds flow from sender to receiver at a constant rate, calculated per second. Perfect for salaries and subscriptions.
-- **Scheduled Batch Payments**: Automate recurring bulk payments, such as monthly payroll or supplier invoices.
-- **Conditional Payments**: Payments are held in escrow and automatically released when predefined conditions are met (e.g., project milestones confirmed by an oracle).
-- **Escrow Streaming Payments**: The evolution of our original "Stake" feature, where an investor can deposit funds into a managed escrow and stream them to a project as it meets approved milestones, with full traceability.
-
-### 7.5. Unlocking Unprecedented Benefits
-
-The Streaming Payments and Dual Wallet architecture delivers a suite of powerful benefits:
-
-- **Drastic Cost Reduction**: By netting transactions off-chain, gas fees are minimized, making micropayments and high-volume transactions economically viable.
-- **Enhanced Efficiency**: Real-time visibility of funds, coupled with automation and batch processing, streamlines financial operations for both individuals and businesses.
-- **Superior Security & Flexibility**: Users can choose between the absolute control of a non-custodial wallet or the managed security of a custodial wallet, all within an interoperable ecosystem.
-- **Built-in Compliance**: The enterprise wallet provides a full suite of tools for audit, reporting, and regulatory adherence, simplifying financial management for organizations.
 
 
-### 7.6. Architecture Diagrams
 
-#### Wallet Architecture
+## 7. Flow Payment (Stake): Escrow and Traceability for Venture Capital
 
-The following diagram illustrates the dual wallet architecture and its integration with the clearing and settlement network:
+### 7.1. The Problem: Lack of Post-Investment Transparency
 
-![Wallet Architecture](./wallet_architecture_en_hd.png)
+A significant challenge in venture capital and private equity is the lack of transparency and control over how invested funds are utilized. After wiring capital to a portfolio company, VCs and LPs often have limited visibility into the company's expenditures. This creates several risks:
 
-#### Clearing Network Flow
+- **Misuse of Funds**: Capital intended for growth and operations could be diverted for unapproved purposes.
+- **Lack of Accountability**: Without a clear audit trail, it is difficult to hold companies accountable for their spending.
+- **Operational Inefficiencies**: Manual tracking and reporting of fund usage is time-consuming and prone to errors.
 
-The following sequence diagram demonstrates how the clearing network processes multiple transactions and settles them with a single on-chain transaction:
+### 7.2. The Solution: StakedPaymentEscrow Smart Contract
 
-![Clearing Network Flow](./clearing_network_flow_en_hd.png)
+Protocol Bank introduces **Flow Payment (Stake)**, an innovative solution that leverages a smart contract-based escrow system to provide unprecedented transparency and control for investors. This feature is powered by the `StakedPaymentEscrow` smart contract, deployed on the Sepolia testnet at `0x44a55360BaBc86d6443471Aa473E9Fa693037f04`.
+
+#### 7.2.1. Core Concepts
+
+- **Escrow Pool**: The VC/LP (staker) deposits funds into a dedicated escrow pool for a specific portfolio company.
+- **Whitelist Mechanism**: The company can only make payments to suppliers, employees, or vendors that have been added to a whitelist and explicitly approved by the staker.
+- **Complete Traceability**: Every transaction is executed on-chain, creating an immutable and fully auditable record of how funds are spent.
+- **Real-time Visualization**: A dedicated dashboard provides a real-time, force-directed graph of the payment flows, from the staker to the company and out to the approved recipients.
+
+### 7.3. Workflow
+
+1. **Pool Creation**: The VC/LP creates an escrow pool and stakes an initial amount of ETH, designating the portfolio company's address.
+2. **Whitelist Proposal**: The company proposes a new recipient (e.g., a key supplier) by adding their address, name, and category to the whitelist.
+3. **Whitelist Approval**: The VC/LP receives a notification and must approve the new recipient before any funds can be sent to them.
+4. **Payment Execution**: Once a recipient is approved, the company can execute payments from the escrow pool to that recipient, providing a purpose for each transaction.
+5. **Monitoring**: The VC/LP can monitor all activities in real-time through the Flow Payment (Stake) dashboard, including the current balance, total spent, and a complete history of payments.
+
+### 7.4. Benefits
+
+- **For VCs/LPs**: Drastically reduces investment risk, ensures capital is used as intended, and provides a real-time, auditable trail of all expenditures.
+- **For Companies**: Builds trust with investors by providing full transparency, and streamlines the payment approval process.
+- **For Suppliers/Employees**: Guarantees payment from a funded escrow pool, reducing payment uncertainty.
+
+This feature positions Protocol Bank not just as a payment platform, but as a comprehensive financial management tool for the venture capital ecosystem.
+
