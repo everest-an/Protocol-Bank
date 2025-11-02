@@ -1,0 +1,39 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'mpc-wallet'
+    environment: 'production'
+
+# 告警规则文件
+rule_files:
+  - 'alerts.yml'
+
+# 抓取配置
+scrape_configs:
+  # MPC 节点 1
+  - job_name: 'mpc-node-1'
+    static_configs:
+      - targets: ['mpc-node-1:9090']
+        labels:
+          node_id: 'node1'
+          party_id: '0'
+
+  # MPC 节点 2
+  - job_name: 'mpc-node-2'
+    static_configs:
+      - targets: ['mpc-node-2:9090']
+        labels:
+          node_id: 'node2'
+          party_id: '1'
+
+  # Prometheus 自身
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+# 告警管理器配置
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']

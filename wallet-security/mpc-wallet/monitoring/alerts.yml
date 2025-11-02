@@ -1,0 +1,123 @@
+groups:
+  - name: mpc_wallet_alerts
+    interval: 30s
+    rules:
+      # 节点健康检查
+      - alert: MPCNodeDown
+        expr: up{job=~"mpc-node-.*"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "MPC 节点 {{ $labels.node_id }} 宕机"
+          description: "节点 {{ $labels.node_id }} 已宕机超过 1 分钟"
+
+      # 高错误率
+      - alert: HighErrorRate
+        expr: rate(mpc_errors_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "节点 {{ $labels.node_id }} 错误率过高"
+          description: "节点 {{ $labels.node_id }} 的错误率为 {{ $value }} 错误/秒"
+
+      # 签名延迟过高
+      - alert: HighSigningLatency
+        expr: histogram_quantile(0.95, rate(mpc_signing_duration_seconds_bucket[5m])) > 10
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "签名延迟过高"
+          description: "节点 {{ $labels.node_id }} 的 P95 签名延迟为 {{ $value }} 秒"
+
+      # 内存使用过高
+      - alert: HighMemoryUsage
+        expr: process_resident_memory_bytes / 1024 / 1024 / 1024 > 4
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "内存使用过高"
+          description: "节点 {{ $labels.node_id }} 内存使用为 {{ $value }} GB"
+
+      # CPU 使用过高
+      - alert: HighCPUUsage
+        expr: rate(process_cpu_seconds_total[5m]) > 0.8
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "CPU 使用过高"
+          description: "节点 {{ $labels.node_id }} CPU 使用率为 {{ $value | humanizePercentage }}"
+
+      # 审计日志写入失败
+      - alert: AuditLogWriteFailure
+        expr: rate(audit_log_write_errors_total[5m]) > 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "审计日志写入失败"
+          description: "节点 {{ $labels.node_id }} 审计日志写入失败"
+
+      # 密钥操作失败
+      - alert: KeyOperationFailure
+        expr: rate(key_operation_errors_total[5m]) > 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "密钥操作失败"
+          description: "节点 {{ $labels.node_id }} 密钥操作失败"
+
+      # 策略违规
+      - alert: PolicyViolation
+        expr: rate(policy_violations_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "策略违规率过高"
+          description: "节点 {{ $labels.node_id }} 策略违规率为 {{ $value }} 次/秒"
+
+      # 重放攻击检测
+      - alert: ReplayAttackDetected
+        expr: rate(replay_attacks_detected_total[1m]) > 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "检测到重放攻击"
+          description: "节点 {{ $labels.node_id }} 检测到重放攻击"
+
+      # 篡改检测
+      - alert: TamperDetected
+        expr: rate(tamper_detected_total[1m]) > 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "检测到篡改"
+          description: "节点 {{ $labels.node_id }} 检测到数据篡改"
+
+      # 网络通信失败
+      - alert: NetworkCommunicationFailure
+        expr: rate(network_errors_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "网络通信失败率过高"
+          description: "节点 {{ $labels.node_id }} 网络通信失败率为 {{ $value }} 次/秒"
+
+      # 磁盘空间不足
+      - alert: LowDiskSpace
+        expr: (node_filesystem_avail_bytes / node_filesystem_size_bytes) < 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "磁盘空间不足"
+          description: "节点 {{ $labels.node_id }} 磁盘剩余空间低于 10%"
