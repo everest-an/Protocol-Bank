@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package mpc_protocol;
+
+// MPC 协议服务
+service MPCProtocol {
+    // 密钥生成协议
+    rpc KeyGeneration(KeyGenRequest) returns (KeyGenResponse);
+    
+    // 签名协议
+    rpc Signing(SigningRequest) returns (SigningResponse);
+    
+    // 协议版本协商
+    rpc NegotiateVersion(VersionRequest) returns (VersionResponse);
+    
+    // 健康检查
+    rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse);
+}
+
+// 协议版本请求
+message VersionRequest {
+    string client_version = 1;
+    repeated string supported_protocols = 2;
+}
+
+// 协议版本响应
+message VersionResponse {
+    string server_version = 1;
+    string negotiated_protocol = 2;
+    bool compatible = 3;
+}
+
+// 健康检查请求
+message HealthCheckRequest {
+    string party_id = 1;
+}
+
+// 健康检查响应
+message HealthCheckResponse {
+    bool healthy = 1;
+    string status = 2;
+}
+
+// 密钥生成请求
+message KeyGenRequest {
+    string session_id = 1;
+    uint32 party_index = 2;
+    bytes commitment = 3;
+    bytes proof = 4;
+}
+
+// 密钥生成响应
+message KeyGenResponse {
+    string session_id = 1;
+    bytes public_key_share = 2;
+    bytes proof = 3;
+    bool success = 4;
+    string error_message = 5;
+}
+
+// 签名请求
+message SigningRequest {
+    string session_id = 1;
+    uint32 party_index = 2;
+    bytes message_hash = 3;
+    bytes authorization_token = 4;
+    bytes partial_signature = 5;
+}
+
+// 签名响应
+message SigningResponse {
+    string session_id = 1;
+    bytes partial_signature = 2;
+    bool success = 3;
+    string error_message = 4;
+}
