@@ -123,13 +123,29 @@ This section provides a detailed technical specification of the Protocol Bank pl
 
 ### 5.1. System Components
 
-#### 5.1.1. Ethereum Smart Contracts
+#### 5.1.1. Dual-Layer Blockchain Architecture
 
-The core logic of Protocol Bank is implemented as a set of smart contracts on the Ethereum blockchain. These contracts are written in Solidity and are designed to be highly efficient and secure.
+Protocol Bank employs an innovative dual-layer blockchain architecture that separates high-performance transaction processing from final secure settlement:
 
-- **Registry Contract:** This contract maintains a registry of all participating financial institutions, as well as their associated public keys and other metadata.
-- **Settlement Contract:** This contract is responsible for the clearing and settlement of transactions. It implements a variety of features, including atomic swaps, automated market makers (AMMs), and streaming payments.
-- **Treasury Contract:** This contract manages the protocol's treasury, which is used to fund development, incentivize participation, and provide a backstop in case of a shortfall event.
+**Layer 1 (L1) - Ethereum Mainnet: Final Settlement Layer**
+
+Ethereum Mainnet serves as Layer 1, providing ultimate security and immutability guarantees. Protocol Bank's core settlement smart contracts are deployed on Ethereum, written in Solidity:
+
+- **Registry Contract:** Maintains a registry of all participating financial institutions, along with their associated public keys and other metadata.
+- **Final Settlement Contract:** Processes net settlement transactions submitted from Layer 2, executing final on-chain fund transfers to ensure transaction finality and security.
+- **Treasury Contract:** Manages the protocol's treasury, used to fund development, incentivize participation, and provide a backstop in case of shortfall events.
+- **Bridge Contract:** Validates net settlement proofs submitted from Layer 2 and executes final settlement on Layer 1.
+
+**Layer 2 (L2) - Proprietary Clearing Network: Off-Chain Netting Settlement Layer**
+
+Protocol Bank's self-developed Layer 2 clearing network is the core enabler of low-cost, high-performance streaming payments. This layer is responsible for:
+
+- **Off-Chain Ledger:** Records all high-frequency transactions, providing millisecond-level instant confirmation without Gas fees.
+- **Netting Engine:** Calculates net positions for thousands of transactions within clearing cycles, simplifying complex transaction relationships into final net positions for each user.
+- **Credit Liquidity System:** Provides instant credit authorization to users, allowing transactions before final settlement.
+- **Distributed Clearing Nodes:** Ensures decentralization and high availability of the clearing network.
+
+Through this dual-layer architecture, Protocol Bank achieves **99%+ fee reduction**: the vast majority of transactions are processed off-chain on Layer 2, with only final net results submitted to Layer 1 for secure settlement. For example, 1,000 transactions can be merged into 1 on-chain transaction, reducing Gas fees by 99.9%.
 
 #### 5.1.2. Fiat Gateways
 
@@ -220,16 +236,26 @@ By replacing costly human intermediaries with immutable, automated code, the pro
 
 ### 6.1. Introduction to the PBX Token
 
-The Protocol Bank Token (PBX) is the native utility and governance token of the Protocol Bank ecosystem. It is a critical component of the platform, designed to incentivize participation, secure the network, and facilitate decentralized governance. The PBX token is an ERC-20 token on the Ethereum blockchain, ensuring high-speed, low-cost transactions.
+The Protocol Bank Token (PBX) is the native utility token of the Protocol Bank ecosystem. It is a critical component of the platform, designed to incentivize participation and secure the network. The PBX token is an ERC-20 token on the Ethereum blockchain, ensuring high-speed, low-cost transactions.
+
+**Important Declaration: No-Governance Philosophy**
+
+Unlike traditional DeFi projects, Protocol Bank adheres to the philosophy of **"Achieving Governance through Inaction."** The PBX token **does not have governance functions**, and holders cannot modify protocol parameters or rules through voting. All core economic parameters (such as fee structures, clearing cycles, and security thresholds) are **permanently locked in smart contract code** and cannot be changed.
+
+This design ensures:
+- **True Decentralization:** No individual or organization can control the protocol.
+- **Long-term Predictability:** Users can trust that the protocol will always operate according to established rules.
+- **Resistance to Politicization:** Eliminates risks of governance attacks, interest group influence, and short-sighted decision-making.
 
 ### 6.2. Token Utility
 
-The PBX token has the following core utilities:
+As a pure utility token, the PBX token has the following core utilities:
 
-- **Governance:** PBX holders can participate in the governance of the Protocol Bank platform. This includes proposing and voting on changes to the protocol, such as adjusting fees, adding new features, and managing the community treasury.
-- **Staking:** Users can stake their PBX tokens in the Protocol Bank Safety Module. In return for securing the network, stakers receive a share of the protocol's revenue and other rewards.
-- **Transaction Fees:** A portion of the transaction fees generated by the platform will be used to buy back and burn PBX tokens, creating a deflationary effect and increasing the value of the remaining tokens.
-- **Liquidity Provision:** Users who provide liquidity to the Protocol Bank's automated market makers (AMMs) will be rewarded with PBX tokens.
+- **Security Staking:** Users can stake their PBX tokens in the Protocol Bank Safety Module to provide security guarantees for the network. In extreme cases (such as smart contract vulnerabilities or system failures), staked PBX may be partially slashed to compensate user losses. In return, stakers receive a share of the protocol's revenue.
+- **Fee Burn:** A portion of the transaction fees generated by the platform will be used to buy back and burn PBX tokens, creating a deflationary effect and increasing the value of the remaining tokens. This is an automated, immutable mechanism.
+- **Liquidity Incentive:** Users who provide liquidity to the Protocol Bank's automated market makers (AMMs) will be rewarded with PBX tokens to ensure platform liquidity and trading efficiency.
+
+**Note**: The PBX token **does not have governance functions**. Holding PBX does not grant any power to modify protocol parameters, adjust fee structures, or add new features. All core rules are permanently locked in smart contracts.
 
 ### 6.3. Token Supply and Distribution
 
@@ -246,11 +272,13 @@ The total supply of PBX is capped at 1 billion tokens. The tokens will be distri
 
 ### 6.4. Value Accrual
 
-The PBX token is designed to accrue value through the following mechanisms:
+The PBX token accrues value through the following **automated, immutable** mechanisms:
 
-- **Fee Revenue:** A portion of the fees generated by the platform will be distributed to PBX stakers.
-- **Buyback and Burn:** A portion of the transaction fees will be used to buy back and burn PBX tokens, reducing the total supply and increasing the value of the remaining tokens.
-- **Staking Yield:** PBX stakers will earn a competitive yield on their staked tokens, further incentivizing participation in the network.
+- **Staking Yield:** PBX stakers receive a share of the protocol's transaction fees. The distribution ratio is preset and locked in smart contracts, and cannot be modified by anyone.
+- **Automatic Buyback and Burn:** A portion of transaction fees is automatically used to buy back and burn PBX tokens, reducing total supply and increasing the value of remaining tokens. This is a deflationary mechanism executed entirely by smart contracts.
+- **Security Incentive:** Stakers secure the network by bearing potential risks (possible slashing in extreme cases) and receive ongoing yields in return.
+
+**Key Principle**: All parameters of these mechanisms (such as staking reward ratios, burn ratios, and slashing conditions) are permanently locked at deployment, and cannot be modified by anyone. This ensures system predictability and decentralization.
 
 ## 7. Streaming Payments: A Scalable Network for Real-Time Value Transfer
 

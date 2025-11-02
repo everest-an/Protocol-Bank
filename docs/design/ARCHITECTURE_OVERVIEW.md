@@ -66,9 +66,9 @@ Provide instant, low-cost, transparent cross-border payments by integrating bloc
 
 | Network | Purpose | Status |
 |---------|---------|--------|
-| **Solana** | Primary settlement layer | Planned |
+| **Ethereum Mainnet** | Layer 1 - Final settlement layer | Planned |
 | **Ethereum Sepolia** | Testnet deployment | ✅ Active |
-| **Ethereum Mainnet** | Production deployment | Planned |
+| **Layer 2 Clearing Network** | Off-chain netting settlement | In Development |
 
 ### Infrastructure
 
@@ -106,7 +106,7 @@ Provide instant, low-cost, transparent cross-border payments by integrating bloc
                           ↓
 ┌─────────────────────────────────────────────────────────┐
 │                   Infrastructure Layer                   │
-│  (Solana, Ethereum, IPFS, Oracles)                      │
+│  (Ethereum L1, L2 Clearing Network, IPFS, Oracles)      │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -564,8 +564,9 @@ Production (www.protocolbanks.com)
 ### Planned Enhancements
 
 1. **Multi-chain Support**
-   - Solana integration (primary settlement)
-   - Polygon for low-cost transactions
+   - Ethereum Mainnet (Layer 1 final settlement)
+   - Layer 2 Clearing Network (off-chain netting)
+   - Optional L2 integration (Arbitrum/Optimism/Polygon)
    - Cross-chain bridges
 
 2. **Backend Services**
@@ -615,8 +616,8 @@ Production (www.protocolbanks.com)
         │               │               │
         ↓               ↓               ↓
 ┌──────────────┐ ┌──────────────┐ ┌──────────────┐
-│   Ethereum   │ │    Solana    │ │   Payment    │
-│  Contracts   │ │  Contracts   │ │   Gateways   │
+│ Ethereum L1  │ │ L2 Clearing  │ │   Payment    │
+│  Contracts   │ │   Network    │ │   Gateways   │
 └──────────────┘ └──────────────┘ └──────────────┘
         │               │               │
         └───────────────┼───────────────┘
