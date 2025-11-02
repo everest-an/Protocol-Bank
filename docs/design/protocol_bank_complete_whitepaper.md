@@ -197,17 +197,25 @@ The essence of this concept lies in its complete rejection of active, human-driv
 
 This principle redefines the purpose of lending, shifting it from a profit-generating mechanism for institutions to a service designed to return capital to the people. Unlike traditional banks that thrive on high interest-rate spreads to reward shareholders, the protocol operates as a non-profit conduit for capital, facilitated by hyper-efficient smart contracts.
 
-#### 4.1. Eliminating Profit-Driven Spreads
+#### 4.1. Cost-Neutral Lending: Eliminating Shareholder Profit
 
-Traditional banking is built on a model where the institution profits from the spread between the interest paid to depositors (typically 1-2%) and the interest charged to borrowers (typically 5-8%). This spread serves to enrich shareholders and cover bloated operational costs. 
+Protocol Bank introduces a **Cost-Neutral Lending** model, fundamentally shifting the purpose of lending from shareholder profit generation to a self-sustaining, non-profit service. Traditional banking profits from the spread between deposit and lending rates (e.g., 1-2% vs. 5-8%) to enrich shareholders. Protocol Bank eliminates this shareholder-driven profit motive.
 
-Protocol Bank dismantles this exploitative model. By automating all lending operations through smart contracts, it reduces operational costs to near zero. There are no physical branches, no loan officers, no management hierarchies extracting value. The minimal interest spread that does exist serves solely to:
+**Dual-Layer Risk Coverage Mechanism**
 
-- Cover protocol maintenance and development costs
-- Hedge against systemic risk and potential defaults
-- Ensure long-term sustainability of the platform
+By automating operations with smart contracts, costs are minimized. The minimal interest spread that remains is not for profit, but serves as the first layer of a dual-layer risk coverage mechanism:
 
-This represents a fundamental shift from **profit maximization** to **cost minimization**.
+1. **Minimal Interest Spread (First Line of Defense):**
+   - Covers essential protocol maintenance and development costs.
+   - Provides a buffer for minor, isolated default events.
+   - Ensures day-to-day operational sustainability.
+
+2. **PBX Safety Module (Backstop for Systemic Risk):**
+   - Acts as the final line of defense against major, systemic default events.
+   - In a crisis where the minimal spread is insufficient to cover losses, the protocol can **slash** a portion of the staked PBX in the Safety Module to recapitalize the system and ensure the stability of its stablecoins.
+   - This mechanism provides robust, decentralized insurance, with PBX stakers acting as the ultimate guarantors of the protocol's solvency.
+
+This represents a fundamental shift from **profit maximization** to **risk-managed sustainability**. Every basis point of the spread is justified by actual costs or risk, not by the desire to generate returns for external shareholders.
 
 #### 4.2. Capital Returns to the People
 
