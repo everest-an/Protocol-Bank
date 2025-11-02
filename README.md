@@ -147,8 +147,8 @@ Protocol-Bank/
 
 **最新更新**: 已添加流支付功能详细介绍和双钱包架构设计
 
-- 📄 [**英文白皮书**](docs/design/protocol_bank_complete_whitepaper.md) - Protocol Bank Complete Whitepaper
-- 📄 [**中文白皮书**](docs/design/protocol_bank_complete_whitepaper_zh.md) - Protocol Bank 完整白皮书
+- 📄 [**英文白皮书**](docs/design/protocol_bank_complete_whitepaper.md) - Protocol Bank Complete Whitepaper ([PDF](docs/design/protocol_bank_complete_whitepaper.pdf))
+- 📄 [**中文白皮书**](docs/design/protocol_bank_complete_whitepaper_zh.md) - Protocol Bank 完整白皮书 ([PDF](docs/design/protocol_bank_complete_whitepaper_zh.pdf))
 - 🎨 [**钱包架构图 (英文)**](docs/design/wallet_architecture_en_hd.png) - Dual Wallet Architecture
 - 🎨 [**钱包架构图 (中文)**](docs/design/wallet_architecture_zh_hd.png) - 双钱包架构图
 - 🔄 [**清算网络流程图 (英文)**](docs/design/clearing_network_flow_en_hd.png) - Clearing Network Flow
