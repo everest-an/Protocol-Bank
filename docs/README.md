@@ -1,22 +1,24 @@
-# Protocol Bank Documentation
+# Protocol Bank 文档中心
 
-This folder contains the official documentation and assets for Protocol Bank.
+欢迎来到 Protocol Bank 文档中心！
 
-## Contents
+## 📚 文档分类
 
-- **protocol_bank_complete_whitepaper.md** - Complete whitepaper detailing Protocol Bank's vision, architecture, and tokenomics
-- **new-protocol-bank-logo.png** - Protocol Bank official logo
-- **high_level_architecture.png** - High-level system architecture diagram
-- **fiat_gateway_architecture.png** - Fiat gateway architecture diagram
-- **cross_chain_bridge_architecture.png** - Cross-chain bridge architecture diagram
-- **detailed_transaction_flow.png** - Detailed transaction flow diagram
-- **tokenomics_model.png** - Tokenomics model diagram
+- 📡 [API 文档](api/) - 后端 API 接口文档
+- 🚀 [部署文档](deployment/) - 生产环境部署指南
+- 🎨 [设计文档](design/) - 系统架构和设计文档
+- 💻 [开发者文档](developer/) - 开发指南和最佳实践
+- 👥 [用户指南](user-guide/) - 用户使用手册
+- 📦 [归档文档](archive/) - 历史文档归档
 
-## Images
+## 🔍 快速导航
 
-All images referenced in the whitepaper are stored in this directory for easy access and maintenance.
+**新用户**: [快速开始](user-guide/getting-started.md)  
+**开发者**: [环境搭建](developer/setup.md) → [系统架构](design/architecture.md)  
+**部署**: [AWS 部署](deployment/aws-setup.md) | [Vercel 部署](deployment/vercel-setup.md)
 
-## Usage
+## 💬 获取帮助
 
-To view the whitepaper with proper image rendering, use any Markdown viewer that supports relative image paths.
-
+- Discord: https://discord.gg/protocolbank
+- Email: everest9812@gmail.com
+- GitHub: https://github.com/everest-an/Protocol-Bank/issues
