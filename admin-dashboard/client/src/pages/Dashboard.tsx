@@ -21,6 +21,7 @@ export default function Dashboard() {
   );
   const [selectedAccounts, setSelectedAccounts] = useState<number[]>([]);
   const utils = trpc.useUtils();
+  const { data: latestOperation } = trpc.accounts.getLatestUndoableOperation.useQuery();
 
   const batchUpdateRiskLevel = trpc.accounts.batchUpdateRiskLevel.useMutation({
     onSuccess: () => {
@@ -28,6 +29,7 @@ export default function Dashboard() {
       setSelectedAccounts([]);
       utils.dashboard.activeAccountsByRisk.invalidate();
       utils.dashboard.stats.invalidate();
+      utils.accounts.getLatestUndoableOperation.invalidate();
     },
     onError: (error) => {
       toast.error(`更新失敗: ${error.message}`);
@@ -40,9 +42,22 @@ export default function Dashboard() {
       setSelectedAccounts([]);
       utils.dashboard.activeAccountsByRisk.invalidate();
       utils.dashboard.stats.invalidate();
+      utils.accounts.getLatestUndoableOperation.invalidate();
     },
     onError: (error) => {
       toast.error(`更新失敗: ${error.message}`);
+    },
+  });
+
+  const undoLastOperation = trpc.accounts.undoLastOperation.useMutation({
+    onSuccess: () => {
+      toast.success("操作已撤銷");
+      utils.dashboard.activeAccountsByRisk.invalidate();
+      utils.dashboard.stats.invalidate();
+      utils.accounts.getLatestUndoableOperation.invalidate();
+    },
+    onError: (error) => {
+      toast.error(`撤銷失敗: ${error.message}`);
     },
   });
 
@@ -282,6 +297,9 @@ export default function Dashboard() {
             onBatchFreeze={handleBatchFreeze}
             onBatchUnfreeze={handleBatchUnfreeze}
             onBatchExport={handleBatchExport}
+            canUndo={!!latestOperation && !latestOperation.undoneAt}
+            onUndo={() => undoLastOperation.mutate()}
+            lastOperationType={latestOperation?.operationType}
           />
           {accountsLoading ? (
             <div className="space-y-3">

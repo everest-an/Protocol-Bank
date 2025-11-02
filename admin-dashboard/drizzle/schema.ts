@@ -109,3 +109,22 @@ export const analyticsSnapshots = mysqlTable("analyticsSnapshots", {
 
 export type AnalyticsSnapshot = typeof analyticsSnapshots.$inferSelect;
 export type InsertAnalyticsSnapshot = typeof analyticsSnapshots.$inferInsert;
+
+/**
+ * Operation history table - stores batch operation history for undo/redo
+ */
+export const operationHistory = mysqlTable("operationHistory", {
+  id: int("id").autoincrement().primaryKey(),
+  adminId: int("adminId").notNull(),
+  operationType: varchar("operationType", { length: 50 }).notNull(), // bulk_update_risk, bulk_freeze, bulk_unfreeze
+  entityType: varchar("entityType", { length: 50 }).notNull(), // account, transaction
+  affectedIds: text("affectedIds").notNull(), // JSON array of affected entity IDs
+  previousState: text("previousState").notNull(), // JSON object of previous values
+  newState: text("newState").notNull(), // JSON object of new values
+  canUndo: int("canUndo").default(1).notNull(), // 1 = can undo, 0 = cannot undo
+  undoneAt: timestamp("undoneAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type OperationHistory = typeof operationHistory.$inferSelect;
+export type InsertOperationHistory = typeof operationHistory.$inferInsert;

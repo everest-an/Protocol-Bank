@@ -7,8 +7,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Download, Flag, Lock, Unlock, X } from "lucide-react";
+import { Download, Flag, Lock, Unlock, X, Undo2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { useState } from "react";
 
 interface BatchActionsToolbarProps {
   selectedCount: number;
@@ -17,6 +19,9 @@ interface BatchActionsToolbarProps {
   onBatchFreeze: () => void;
   onBatchUnfreeze: () => void;
   onBatchExport: () => void;
+  canUndo?: boolean;
+  onUndo?: () => void;
+  lastOperationType?: string;
 }
 
 export function BatchActionsToolbar({
@@ -26,8 +31,67 @@ export function BatchActionsToolbar({
   onBatchFreeze,
   onBatchUnfreeze,
   onBatchExport,
+  canUndo = false,
+  onUndo,
+  lastOperationType,
 }: BatchActionsToolbarProps) {
-  if (selectedCount === 0) return null;
+  const [confirmDialog, setConfirmDialog] = useState<{
+    open: boolean;
+    title: string;
+    description: string;
+    onConfirm: () => void;
+  }>({ open: false, title: "", description: "", onConfirm: () => {} });
+
+  const handleBatchUpdateRiskLevel = (riskLevel: string) => {
+    setConfirmDialog({
+      open: true,
+      title: "確認批量更新風險等級",
+      description: `您確定要將 ${selectedCount} 個帳戶的風險等級設置為 ${riskLevel} 嗎？此操作可以撤銷。`,
+      onConfirm: () => {
+        onBatchUpdateRiskLevel(riskLevel);
+        setConfirmDialog({ ...confirmDialog, open: false });
+      },
+    });
+  };
+
+  const handleBatchFreeze = () => {
+    setConfirmDialog({
+      open: true,
+      title: "確認批量凍結帳戶",
+      description: `您確定要凍結 ${selectedCount} 個帳戶嗎？此操作可以撤銷。`,
+      onConfirm: () => {
+        onBatchFreeze();
+        setConfirmDialog({ ...confirmDialog, open: false });
+      },
+    });
+  };
+
+  const handleBatchUnfreeze = () => {
+    setConfirmDialog({
+      open: true,
+      title: "確認批量解凍帳戶",
+      description: `您確定要解凍 ${selectedCount} 個帳戶嗎？此操作可以撤銷。`,
+      onConfirm: () => {
+        onBatchUnfreeze();
+        setConfirmDialog({ ...confirmDialog, open: false });
+      },
+    });
+  };
+
+  const handleUndo = () => {
+    if (!onUndo) return;
+    setConfirmDialog({
+      open: true,
+      title: "確認撤銷操作",
+      description: `您確定要撤銷上次的 ${lastOperationType || "批量操作"} 嗎？這將恢復到操作前的狀態。`,
+      onConfirm: () => {
+        onUndo();
+        setConfirmDialog({ ...confirmDialog, open: false });
+      },
+    });
+  };
+
+  if (selectedCount === 0 && !canUndo) return null;
 
   return (
     <div className="flex items-center justify-between p-4 bg-accent/50 border rounded-lg mb-4">
@@ -52,27 +116,27 @@ export function BatchActionsToolbar({
           <DropdownMenuContent>
             <DropdownMenuLabel>選擇風險等級</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => onBatchUpdateRiskLevel("low")}>
+            <DropdownMenuItem onClick={() => handleBatchUpdateRiskLevel("low")}>
               <span className="text-green-600">● 低風險</span>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onBatchUpdateRiskLevel("medium")}>
+            <DropdownMenuItem onClick={() => handleBatchUpdateRiskLevel("medium")}>
               <span className="text-orange-600">● 中風險</span>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onBatchUpdateRiskLevel("high")}>
+            <DropdownMenuItem onClick={() => handleBatchUpdateRiskLevel("high")}>
               <span className="text-red-600">● 高風險</span>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onBatchUpdateRiskLevel("critical")}>
+            <DropdownMenuItem onClick={() => handleBatchUpdateRiskLevel("critical")}>
               <span className="text-purple-600">● 極高風險</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <Button variant="outline" size="sm" onClick={onBatchFreeze}>
+        <Button variant="outline" size="sm" onClick={handleBatchFreeze}>
           <Lock className="h-4 w-4 mr-2" />
           凍結
         </Button>
 
-        <Button variant="outline" size="sm" onClick={onBatchUnfreeze}>
+        <Button variant="outline" size="sm" onClick={handleBatchUnfreeze}>
           <Unlock className="h-4 w-4 mr-2" />
           解凍
         </Button>
@@ -81,7 +145,22 @@ export function BatchActionsToolbar({
           <Download className="h-4 w-4 mr-2" />
           導出
         </Button>
+
+        {canUndo && onUndo && (
+          <Button variant="outline" size="sm" onClick={handleUndo} className="ml-2">
+            <Undo2 className="h-4 w-4 mr-2" />
+            撤銷上次操作
+          </Button>
+        )}
       </div>
+
+      <ConfirmDialog
+        open={confirmDialog.open}
+        onOpenChange={(open) => setConfirmDialog({ ...confirmDialog, open })}
+        title={confirmDialog.title}
+        description={confirmDialog.description}
+        onConfirm={confirmDialog.onConfirm}
+      />
     </div>
   );
 }

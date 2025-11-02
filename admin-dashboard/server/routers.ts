@@ -221,7 +221,7 @@ Format your response as JSON with these fields: riskAssessment, anomalyIndicator
       )
       .mutation(async ({ input, ctx }) => {
         const { batchUpdateAccountRiskLevel, createAuditLog } = await import("./db");
-        const result = await batchUpdateAccountRiskLevel(input.accountIds, input.riskLevel);
+        const result = await batchUpdateAccountRiskLevel(input.accountIds, input.riskLevel, ctx.user.id);
 
         await createAuditLog({
           adminId: ctx.user.id,
@@ -245,7 +245,7 @@ Format your response as JSON with these fields: riskAssessment, anomalyIndicator
       )
       .mutation(async ({ input, ctx }) => {
         const { batchUpdateAccountStatus, createAuditLog } = await import("./db");
-        const result = await batchUpdateAccountStatus(input.accountIds, input.status);
+        const result = await batchUpdateAccountStatus(input.accountIds, input.status, ctx.user.id);
 
         await createAuditLog({
           adminId: ctx.user.id,
@@ -265,6 +265,41 @@ Format your response as JSON with these fields: riskAssessment, anomalyIndicator
       .query(async ({ input }) => {
         const { getAccountsByIds } = await import("./db");
         return await getAccountsByIds(input);
+      }),
+
+    getLatestUndoableOperation: protectedProcedure.query(async ({ ctx }) => {
+      const { getLatestUndoableOperation } = await import("./db");
+      return await getLatestUndoableOperation(ctx.user.id);
+    }),
+
+    undoLastOperation: protectedProcedure.mutation(async ({ ctx }) => {
+      const { getLatestUndoableOperation, undoOperation, createAuditLog } = await import("./db");
+      
+      const operation = await getLatestUndoableOperation(ctx.user.id);
+      if (!operation) {
+        throw new Error("No operation to undo");
+      }
+
+      await undoOperation(operation.id);
+
+      await createAuditLog({
+        adminId: ctx.user.id,
+        action: "undo_operation",
+        entityType: operation.entityType,
+        entityId: operation.id,
+        changes: JSON.stringify({ operationType: operation.operationType }),
+        ipAddress: ctx.req.ip,
+        userAgent: ctx.req.get("user-agent"),
+      });
+
+      return { success: true, operation };
+    }),
+
+    getOperationHistory: protectedProcedure
+      .input(z.object({ limit: z.number().optional() }))
+      .query(async ({ input, ctx }) => {
+        const { getOperationHistory } = await import("./db");
+        return await getOperationHistory(ctx.user.id, input.limit);
       }),
   }),
 

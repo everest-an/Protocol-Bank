@@ -15,6 +15,13 @@
       "when": 1762001077284,
       "tag": "0001_melodic_blindfold",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1762067930109,
+      "tag": "0002_secret_champions",
+      "breakpoints": true
     }
   ]
 }

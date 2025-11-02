@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, accounts, transactions, auditLogs, operationHistory, analyticsSnapshots, InsertAccount, InsertAuditLog, InsertTransaction } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,8 +89,8 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-import { accounts, analyticsSnapshots, auditLogs, InsertAccount, InsertAuditLog, InsertTransaction, transactions } from "../drizzle/schema";
-import { and, desc, gte, like, lte, or, sql } from "drizzle-orm";
+// Imports consolidated above
+import { and, desc, gte, like, lte, or, sql, isNull } from "drizzle-orm";
 
 // ==================== Transaction Queries ====================
 
@@ -401,26 +401,77 @@ export async function getActiveAccountsByRisk(riskLevel?: string) {
     .limit(20);
 }
 
-export async function batchUpdateAccountRiskLevel(accountIds: number[], riskLevel: string) {
+export async function batchUpdateAccountRiskLevel(accountIds: number[], riskLevel: string, adminId?: number) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
 
+  // Get previous state
+  const previousAccounts = await getAccountsByIds(accountIds);
+  const previousState: Record<string, any> = {};
+  previousAccounts.forEach(acc => {
+    previousState[acc.id] = { riskLevel: acc.riskLevel, status: acc.status };
+  });
+
+  // Update accounts
   await db
     .update(accounts)
     .set({ riskLevel: riskLevel as any })
     .where(sql`id IN (${sql.join(accountIds.map(id => sql`${id}`), sql`, `)})`);
 
+  // Record operation history if adminId provided
+  if (adminId) {
+    const newState: Record<string, any> = {};
+    accountIds.forEach(id => {
+      newState[id] = { riskLevel, status: previousState[id]?.status };
+    });
+
+    await createOperationHistory({
+      adminId,
+      operationType: "bulk_update_risk",
+      entityType: "account",
+      affectedIds: accountIds,
+      previousState,
+      newState,
+    });
+  }
+
   return { success: true, updated: accountIds.length };
 }
 
-export async function batchUpdateAccountStatus(accountIds: number[], status: string) {
+export async function batchUpdateAccountStatus(accountIds: number[], status: string, adminId?: number) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
 
+  // Get previous state
+  const previousAccounts = await getAccountsByIds(accountIds);
+  const previousState: Record<string, any> = {};
+  previousAccounts.forEach(acc => {
+    previousState[acc.id] = { riskLevel: acc.riskLevel, status: acc.status };
+  });
+
+  // Update accounts
   await db
     .update(accounts)
     .set({ status: status as any })
     .where(sql`id IN (${sql.join(accountIds.map(id => sql`${id}`), sql`, `)})`);
+
+  // Record operation history if adminId provided
+  if (adminId) {
+    const operationType = status === "frozen" ? "bulk_freeze" : status === "active" ? "bulk_unfreeze" : "bulk_update_status";
+    const newState: Record<string, any> = {};
+    accountIds.forEach(id => {
+      newState[id] = { riskLevel: previousState[id]?.riskLevel, status };
+    });
+
+    await createOperationHistory({
+      adminId,
+      operationType,
+      entityType: "account",
+      affectedIds: accountIds,
+      previousState,
+      newState,
+    });
+  }
 
   return { success: true, updated: accountIds.length };
 }
@@ -433,4 +484,106 @@ export async function getAccountsByIds(accountIds: number[]) {
     .select()
     .from(accounts)
     .where(sql`id IN (${sql.join(accountIds.map(id => sql`${id}`), sql`, `)})`);
+}
+
+// Operation History Functions
+export async function createOperationHistory(data: {
+  adminId: number;
+  operationType: string;
+  entityType: string;
+  affectedIds: number[];
+  previousState: Record<string, any>;
+  newState: Record<string, any>;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const [result] = await db.insert(operationHistory).values({
+    adminId: data.adminId,
+    operationType: data.operationType,
+    entityType: data.entityType,
+    affectedIds: JSON.stringify(data.affectedIds),
+    previousState: JSON.stringify(data.previousState),
+    newState: JSON.stringify(data.newState),
+    canUndo: 1,
+  });
+
+  return result.insertId;
+}
+
+export async function getLatestUndoableOperation(adminId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const [result] = await db
+    .select()
+    .from(operationHistory)
+    .where(and(eq(operationHistory.adminId, adminId), eq(operationHistory.canUndo, 1), isNull(operationHistory.undoneAt)))
+    .orderBy(desc(operationHistory.createdAt))
+    .limit(1);
+
+  return result || null;
+}
+
+export async function undoOperation(operationId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // Get the operation
+  const [operation] = await db
+    .select()
+    .from(operationHistory)
+    .where(eq(operationHistory.id, operationId))
+    .limit(1);
+
+  if (!operation) throw new Error("Operation not found");
+  if (operation.undoneAt) throw new Error("Operation already undone");
+  if (!operation.canUndo) throw new Error("Operation cannot be undone");
+
+  const affectedIds: number[] = JSON.parse(operation.affectedIds);
+  const previousState: Record<string, any> = JSON.parse(operation.previousState);
+
+  // Restore previous state based on entity type
+  if (operation.entityType === "account") {
+    for (const id of affectedIds) {
+      const prevData = previousState[id];
+      if (prevData) {
+        await db
+          .update(accounts)
+          .set({
+            riskLevel: prevData.riskLevel,
+            status: prevData.status,
+            updatedAt: new Date(),
+          })
+          .where(eq(accounts.id, id));
+      }
+    }
+  }
+
+  // Mark operation as undone
+  await db
+    .update(operationHistory)
+    .set({ undoneAt: new Date() })
+    .where(eq(operationHistory.id, operationId));
+
+  return true;
+}
+
+export async function getOperationHistory(adminId: number, limit: number = 10) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const results = await db
+    .select()
+    .from(operationHistory)
+    .where(eq(operationHistory.adminId, adminId))
+    .orderBy(desc(operationHistory.createdAt))
+    .limit(limit);
+
+  return results.map((op) => ({
+    ...op,
+    affectedIds: JSON.parse(op.affectedIds),
+    previousState: JSON.parse(op.previousState),
+    newState: JSON.parse(op.newState),
+  }));
 }
