@@ -17,8 +17,8 @@ pub mod mpc_protocol {
 }
 
 use mpc_protocol::{
-    mpc_protocol_server::{MPCProtocol, MPCProtocolServer},
-    mpc_protocol_client::MPCProtocolClient,
+    mpc_protocol_server::{MpcProtocol, MpcProtocolServer},
+    mpc_protocol_client::MpcProtocolClient,
     *,
 };
 
@@ -55,7 +55,7 @@ impl MPCProtocolService {
 }
 
 #[tonic::async_trait]
-impl MPCProtocol for MPCProtocolService {
+impl MpcProtocol for MPCProtocolService {
     async fn negotiate_version(
         &self,
         request: Request<VersionRequest>,
@@ -161,7 +161,7 @@ impl MPCNetworkClient {
     }
 
     /// 连接到对等节点
-    async fn connect_to_peer(&self, peer_addr: &str) -> Result<MPCProtocolClient<tonic::transport::Channel>> {
+    async fn connect_to_peer(&self, peer_addr: &str) -> Result<MpcProtocolClient<tonic::transport::Channel>> {
         let timeout_duration = Duration::from_secs(self.config.connection_timeout_secs);
         
         let channel = timeout(
@@ -174,7 +174,7 @@ impl MPCNetworkClient {
         .context("连接超时")?
         .context("无法连接到对等节点")?;
         
-        Ok(MPCProtocolClient::new(channel))
+        Ok(MpcProtocolClient::new(channel))
     }
 
     /// 协商协议版本
@@ -359,7 +359,7 @@ impl MPCNetworkServer {
         tracing::info!("MPC 节点 {} 启动，监听地址: {}", self.config.node_id, addr);
         
         Server::builder()
-            .add_service(MPCProtocolServer::new(self.service))
+            .add_service(MpcProtocolServer::new(self.service))
             .serve(addr)
             .await
             .context("服务器运行失败")?;

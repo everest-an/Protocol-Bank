@@ -5,7 +5,7 @@
 
 use anyhow::{Context, Result};
 use curv::elliptic::curves::{secp256_k1::Secp256k1, Point, Scalar};
-use multi_party_ecdsa::protocols::two_party::lindell_2017::*;
+use multi_party_ecdsa::protocols::two_party_ecdsa::lindell_2017::{party_one, party_two};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::collections::HashMap;
