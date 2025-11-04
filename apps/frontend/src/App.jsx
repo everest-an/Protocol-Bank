@@ -52,10 +52,28 @@ function AppContent() {
   // Global mock data for consistent data across all components
   const [globalMockData, setGlobalMockData] = useState(null)
   
+  // Global real data from blockchain
+  const [realSuppliers, setRealSuppliers] = useState([])
+  const [realPayments, setRealPayments] = useState([])
+  const [realStats, setRealStats] = useState({
+    totalPayments: 0,
+    totalAmount: '0',
+    supplierCount: 0,
+    averagePayment: '0'
+  })
+  const [testMode, setTestMode] = useState(true)
+  
   // Initialize global mock data once
   useEffect(() => {
     setGlobalMockData(generateFullMockData())
   }, [])
+  
+  // Callback to update real data from FlowPaymentVisualization
+  const handleDataUpdate = (data) => {
+    if (data.suppliers) setRealSuppliers(data.suppliers)
+    if (data.payments) setRealPayments(data.payments)
+    if (data.stats) setRealStats(data.stats)
+  }
 
   // Open login modal
   const openLoginModal = () => {
@@ -293,15 +311,21 @@ function AppContent() {
 
         {activeTab === 'payments' && (
           <ErrorBoundary>
-            <FlowPaymentVisualization sharedMockData={globalMockData} />
+            <FlowPaymentVisualization 
+              sharedMockData={globalMockData}
+              onDataUpdate={handleDataUpdate}
+              externalTestMode={testMode}
+              onTestModeChange={setTestMode}
+            />
           </ErrorBoundary>
         )}
         {activeTab === 'analytics' && (
           <ErrorBoundary>
             <UnifiedAnalytics 
-              suppliers={[]}
-              payments={[]}
-              testMode={true}
+              suppliers={testMode ? [] : realSuppliers}
+              payments={testMode ? [] : realPayments}
+              stats={testMode ? null : realStats}
+              testMode={testMode}
               mockData={globalMockData}
             />
           </ErrorBoundary>

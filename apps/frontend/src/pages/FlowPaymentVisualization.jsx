@@ -15,7 +15,12 @@ import { useExchangeRates } from '../hooks/useExchangeRates';
 import { formatWithConversion } from '../utils/currencyFormatter';
 import { useTranslation } from 'react-i18next';
 
-export default function FlowPaymentVisualization({ sharedMockData = null }) {
+export default function FlowPaymentVisualization({ 
+  sharedMockData = null,
+  onDataUpdate = null,
+  externalTestMode = null,
+  onTestModeChange = null
+}) {
   const { t } = useTranslation();
   const {
     account,
@@ -52,7 +57,11 @@ export default function FlowPaymentVisualization({ sharedMockData = null }) {
   });
   const [loading, setLoading] = useState(false);
   // Removed real-time notifications - payments now only show in the table below
-  const [testMode, setTestMode] = useState(true); // Auto-enable test mode
+  const [internalTestMode, setInternalTestMode] = useState(true); // Auto-enable test mode
+  
+  // Use external testMode if provided, otherwise use internal
+  const testMode = externalTestMode !== null ? externalTestMode : internalTestMode;
+  const setTestMode = onTestModeChange || setInternalTestMode;
   const [mockData, setMockData] = useState(null);
   const [supplierCount, setSupplierCount] = useState(12);
   const [demoCase, setDemoCase] = useState('two-tier'); // simple, two-tier, three-tier, complex
@@ -153,14 +162,27 @@ export default function FlowPaymentVisualization({ sharedMockData = null }) {
         getStatistics(),
       ]);
 
-      setSuppliers(suppliersData || []);
-      setPayments(paymentsData || []);
-      setStats(statsData || {
+      const newSuppliers = suppliersData || [];
+      const newPayments = paymentsData || [];
+      const newStats = statsData || {
         totalPayments: 0,
         totalAmount: '0',
         supplierCount: 0,
         averagePayment: '0',
-      });
+      };
+      
+      setSuppliers(newSuppliers);
+      setPayments(newPayments);
+      setStats(newStats);
+      
+      // Notify parent component of data update
+      if (onDataUpdate) {
+        onDataUpdate({
+          suppliers: newSuppliers,
+          payments: newPayments,
+          stats: newStats
+        });
+      }
     } catch (error) {
       // console.error('Failed to load data:', error);
       console.error('Failed to load data:', error);

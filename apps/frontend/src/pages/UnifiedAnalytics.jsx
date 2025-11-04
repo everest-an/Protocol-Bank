@@ -8,7 +8,7 @@ import { Card, CardContent } from '@/components/ui/card.jsx';
 import { Button } from '@/components/ui/button.jsx';
 import { generateAnalyticsPDF } from '../utils/pdfExport.js';
 
-export default function UnifiedAnalytics({ suppliers = [], payments = [], testMode = false, mockData = null }) {
+export default function UnifiedAnalytics({ suppliers = [], payments = [], stats = null, testMode = false, mockData = null }) {
   const [activeTab, setActiveTab] = useState('overview'); // overview, suppliers, reports
   const [timeRange, setTimeRange] = useState('month');
   const [analytics, setAnalytics] = useState(null);
