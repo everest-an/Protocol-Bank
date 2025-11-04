@@ -34,7 +34,7 @@ export default function DropdownMenu({ label, items, activeItem, onItemClick, is
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-gray-900 rounded-lg shadow-lg border border-gray-200 dark:border-gray-600 py-2 z-50">
+        <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-gray-900 rounded-lg shadow-lg border border-gray-200 dark:border-gray-600 py-2 z-[200]">
           {items.map((item) => (
             <button
               key={item.id}

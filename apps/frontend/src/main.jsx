@@ -4,6 +4,7 @@ import './index.css'
 import './styles/mobile.css' // Mobile responsive styles
 import './styles/mobile-fixes.css' // Additional mobile fixes
 import './fixes.css' // Global fixes for font overlap and z-index issues
+import './styles/navbar-fixes.css' // Navbar layout and font fixes
 import App from './App.jsx'
 import { ThemeProvider } from './contexts/ThemeContext.jsx'
 import './i18n/config' // Initialize i18n

@@ -25,17 +25,10 @@ import {
 import './App.css'
 import protocolBankLogo from './assets/new-protocol-bank-logo.png'
 import FlowPaymentVisualization from './pages/FlowPaymentVisualization.jsx'
-import FlowPaymentStakePage from './pages/FlowPaymentStakePage.jsx'
 import SuppliersPage from './pages/SuppliersPage.jsx'
-import BatchPayment from './pages/BatchPayment.jsx'
-import ScheduledPayment from './pages/ScheduledPaymentV2.jsx'
+import Automation from './pages/Automation.jsx'
 import DataAnalytics from './pages/DataAnalyticsV3.jsx'
-import AnalyticsV2 from './pages/AnalyticsV2.jsx'
-import FinancialAnalytics from './pages/FinancialAnalytics.jsx'
 
-import AgentMarket from './pages/AgentMarket.jsx'
-import DeFiPage from './pages/DeFiPage.jsx'
-import BusinessPage from './pages/BusinessPage.jsx'
 import LoginModal from './components/LoginModal.jsx'
 import ThemeToggle from './components/ThemeToggle.jsx'
 import LanguageSelector from './components/LanguageSelector.jsx'
@@ -159,11 +152,11 @@ function AppContent() {
         setLanguage={() => {}}
       />
 
-      <header className="border-b border-gray-100 dark:border-gray-700 sticky top-0 z-50 bg-white dark:bg-black transition-colors duration-200">
+      <header className="border-b border-gray-100 dark:border-gray-700 sticky top-0 z-[100] bg-white dark:bg-black transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex justify-between items-center h-16">
             {/* 左侧：汉堡菜单 + Logo */}
-            <div className="flex items-center space-x-4 min-w-fit">
+            <div className="flex items-center space-x-4 flex-shrink-0">
               {/* 移动端汉堡菜单按钮 */}
               <button
                 onClick={() => setShowMobileNav(true)}
@@ -179,19 +172,13 @@ function AppContent() {
             </div>
 
             {/* 中间：导航菜单 */}
-            <nav className="hidden md:flex items-center space-x-10 flex-1 justify-center ml-12">
-                <DropdownMenu
-                  label="Payments"
-                  items={[
-                    { id: 'payments', label: 'Flow Payment', icon: Waves, description: 'Real-time payment streams' },
-                    { id: 'stake', label: 'Flow Payment (Stake)', icon: Lock, description: 'Escrow-based payments with VC/LP monitoring' },
-                    { id: 'batch', label: 'Batch Payment', icon: Send, description: 'Multiple payments at once' },
-                    { id: 'schedule', label: 'Scheduled Payment', icon: Calendar, description: 'Recurring payments' }
-                  ]}
-                  activeItem={activeTab}
-                  onItemClick={setActiveTab}
-                  isActive={activeTab === 'payments' || activeTab === 'stake' || activeTab === 'batch' || activeTab === 'schedule'}
-                />
+            <nav className="hidden md:flex items-center space-x-6 lg:space-x-10 flex-1 justify-center ml-4 lg:ml-12 min-w-0">
+                <button 
+                  onClick={() => setActiveTab('payments')}
+                  className={`text-sm font-medium whitespace-nowrap ${activeTab === 'payments' ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'}`}
+                >
+                  Payments
+                </button>
                 <button 
                   onClick={() => setActiveTab('suppliers')}
                   className={`text-sm font-medium ${activeTab === 'suppliers' ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'}`}
@@ -206,22 +193,22 @@ function AppContent() {
                   Analytics
                 </button>
                 <button
-                  onClick={() => setActiveTab('agent-market')}
-                  className={`text-sm font-medium ${activeTab === 'agent-market' ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'}`}
+                  onClick={() => setActiveTab('automation')}
+                  className={`text-sm font-medium whitespace-nowrap ${activeTab === 'automation' ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'}`}
                 >
-                  Agent Market
+                  Automation
                 </button>
             </nav>
 
             {/* 右侧：搜索、通知、设置、钱包 */}
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2 lg:space-x-3 flex-shrink-0">
               {/* 搜索框 - 桌面端显示 */}
               <div className="relative hidden lg:block">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <input 
                   type="text" 
                   placeholder="Search transactions..." 
-                  className="pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-900 border-0 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-200 dark:focus:ring-gray-700 text-sm w-56 transition-colors"
+                  className="pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-900 border-0 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-200 dark:focus:ring-gray-700 text-sm w-48 xl:w-56 transition-colors"
                 />
               </div>
               
@@ -352,19 +339,8 @@ function AppContent() {
             <FlowPaymentVisualization />
           </ErrorBoundary>
         )}
-        {activeTab === 'stake' && (
-          <ErrorBoundary>
-            <FlowPaymentStakePage walletAddress={walletAddress} />
-          </ErrorBoundary>
-        )}
-        {activeTab === 'batch' && <BatchPayment />}
-        {activeTab === 'schedule' && <ScheduledPayment />}
         {activeTab === 'suppliers' && <SuppliersPage />}
-        {activeTab === 'financial' && (
-          <ErrorBoundary>
-            <FinancialAnalytics />
-          </ErrorBoundary>
-        )}
+
         {activeTab === 'analytics' && (
           <ErrorBoundary>
             <DataAnalytics 
@@ -375,9 +351,9 @@ function AppContent() {
             />
           </ErrorBoundary>
         )}
-        {activeTab === 'agent-market' && (
+        {activeTab === 'automation' && (
           <ErrorBoundary>
-            <AgentMarket />
+            <Automation />
           </ErrorBoundary>
         )}
       </main>

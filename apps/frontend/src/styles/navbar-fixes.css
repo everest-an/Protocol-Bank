@@ -1,0 +1,118 @@
+/* 导航栏布局和字体显示修复 */
+
+/* 确保导航栏始终在最上层 */
+header {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 100 !important;
+  background-color: white;
+  transition: all 0.2s ease;
+}
+
+.dark header {
+  background-color: #0a0a0a;
+}
+
+/* 导航按钮文本保护 */
+header nav button {
+  white-space: nowrap !important;
+  overflow: visible !important;
+  flex-shrink: 0;
+  line-height: 1.5 !important;
+  padding: 0.25rem 0.5rem;
+}
+
+/* 下拉菜单层级 */
+.dropdown-menu,
+[class*="dropdown"] {
+  z-index: 200 !important;
+}
+
+/* 防止导航栏内容溢出 */
+header .flex {
+  min-width: 0;
+}
+
+/* 确保Logo区域不被压缩 */
+header img[alt="Protocol Bank"] {
+  flex-shrink: 0 !important;
+  min-width: 32px;
+}
+
+/* 搜索框响应式调整 */
+@media (max-width: 1280px) {
+  header input[placeholder*="Search"] {
+    width: 12rem !important;
+  }
+}
+
+@media (max-width: 1024px) {
+  header input[placeholder*="Search"] {
+    width: 10rem !important;
+  }
+}
+
+/* 导航菜单间距优化 */
+@media (min-width: 768px) and (max-width: 1024px) {
+  header nav {
+    gap: 1rem !important;
+  }
+  
+  header nav > * {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
+
+/* 右侧工具栏按钮间距 */
+header .flex.items-center.space-x-3,
+header .flex.items-center.space-x-2 {
+  gap: 0.5rem;
+}
+
+@media (min-width: 1024px) {
+  header .flex.items-center.space-x-3 {
+    gap: 0.75rem;
+  }
+}
+
+/* 修复按钮内边距 */
+header button {
+  padding: 0.25rem 0.5rem;
+  line-height: 1.5;
+}
+
+/* 确保文本可见性 */
+header * {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 防止文本被裁剪 */
+header nav,
+header nav > * {
+  overflow: visible !important;
+}
+
+/* 修复深色模式对比度 */
+.dark header button {
+  color: #ededed;
+}
+
+.dark header button:hover {
+  color: #ffffff;
+}
+
+/* 移动端汉堡菜单 */
+@media (max-width: 768px) {
+  header nav {
+    display: none !important;
+  }
+}
+
+/* 确保下拉菜单内容可见 */
+.dropdown-menu > *,
+[class*="dropdown"] > * {
+  z-index: inherit;
+  position: relative;
+}
