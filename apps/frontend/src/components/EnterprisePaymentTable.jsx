@@ -6,6 +6,8 @@ export default function EnterprisePaymentTable({ payments = [], selectedCurrency
   const [sortField, setSortField] = useState('timestamp');
   const [sortDirection, setSortDirection] = useState('desc');
   const [filterCategory, setFilterCategory] = useState('all');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
   const handleSort = (field) => {
     if (sortField === field) {
@@ -35,9 +37,25 @@ export default function EnterprisePaymentTable({ payments = [], selectedCurrency
     }
   });
 
-  const filteredPayments = filterCategory === 'all'
+  let filteredPayments = filterCategory === 'all'
     ? sortedPayments
     : sortedPayments.filter(p => p.category === filterCategory);
+
+  // Date filtering
+  if (startDate) {
+    filteredPayments = filteredPayments.filter(p => {
+      const paymentDate = new Date(p.timestamp);
+      return paymentDate >= new Date(startDate);
+    });
+  }
+  if (endDate) {
+    filteredPayments = filteredPayments.filter(p => {
+      const paymentDate = new Date(p.timestamp);
+      const endDateTime = new Date(endDate);
+      endDateTime.setHours(23, 59, 59, 999); // Include the entire end date
+      return paymentDate <= endDateTime;
+    });
+  }
 
   const categories = ['all', ...new Set(payments.map(p => p.category).filter(Boolean))];
 
@@ -57,36 +75,71 @@ export default function EnterprisePaymentTable({ payments = [], selectedCurrency
   return (
     <div className="bg-white dark:bg-black border border-gray-100 dark:border-gray-700 rounded-lg overflow-hidden">
       {/* 表头 */}
-      <div className="p-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
-        <div>
-          <h3 className="text-lg font-light text-gray-900 dark:text-white">
-            Payment Transactions
-          </h3>
-          <p className="text-sm text-gray-500 dark:text-gray-300 mt-1">
-            {filteredPayments.length} transactions
-          </p>
+      <div className="p-4 border-b border-gray-100 dark:border-gray-700">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="text-lg font-light text-gray-900 dark:text-white">
+              Payment Transactions
+            </h3>
+            <p className="text-sm text-gray-500 dark:text-gray-300 mt-1">
+              {filteredPayments.length} transactions
+            </p>
+          </div>
+
+          {/* Category Filter */}
+          <div className="flex items-center gap-2">
+            {categories.map(cat => (
+              <button
+                key={cat}
+                onClick={() => setFilterCategory(cat)}
+                className={`px-3 py-1 text-xs rounded-full transition-colors ${
+                  filterCategory === cat
+                    ? 'bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900'
+                    : 'bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                }`}
+              >
+                {cat === 'all' ? 'All' : cat}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Category Filter */}
-        <div className="flex items-center gap-2">
-          {categories.map(cat => (
+        {/* Date Filter */}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-gray-600 dark:text-gray-400">From:</label>
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="px-3 py-1.5 text-sm bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-gray-600 dark:text-gray-400">To:</label>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="px-3 py-1.5 text-sm bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          {(startDate || endDate) && (
             <button
-              key={cat}
-              onClick={() => setFilterCategory(cat)}
-              className={`px-3 py-1 text-xs rounded-full transition-colors ${
-                filterCategory === cat
-                  ? 'bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900'
-                  : 'bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
-              }`}
+              onClick={() => {
+                setStartDate('');
+                setEndDate('');
+              }}
+              className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
             >
-              {cat === 'all' ? 'All' : cat}
+              Clear Dates
             </button>
-          ))}
+          )}
         </div>
       </div>
 
       {/* 表格 */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto max-h-[600px] overflow-y-auto">
         <table className="w-full">
           <thead className="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-100 dark:border-gray-700">
             <tr>

@@ -7,7 +7,8 @@ export default function EnterprisePaymentNetworkV2({
   payments = [], 
   testMode = false, 
   mockData = null,
-  demoCase = 'simple' // simple, two-tier, three-tier, complex
+  demoCase = 'simple', // simple, two-tier, three-tier, complex
+  account = null // User's wallet address
 }) {
   const canvasRef = useRef(null);
   const [selectedNode, setSelectedNode] = useState(null);
@@ -274,9 +275,61 @@ export default function EnterprisePaymentNetworkV2({
       nodesData = demoData.nodes;
       linksData = demoData.links;
     } else {
-      // Use real data (simplified for now)
-      nodesData = [{ id: 'company', label: 'Your Company', type: 'company', size: 40, color: '#6366f1', level: 0 }];
+      // Use real data from blockchain
+      nodesData = [];
       linksData = [];
+      
+      // Center node: User's wallet
+      if (account) {
+        nodesData.push({
+          id: account,
+          label: 'My Wallet',
+          address: account,
+          type: 'headquarters',
+          size: 40,
+          color: '#6366f1',
+          level: 0
+        });
+        
+        // Supplier nodes
+        suppliers.forEach(supplier => {
+          nodesData.push({
+            id: supplier.address,
+            label: supplier.name || `Supplier ${supplier.address.slice(0, 6)}`,
+            address: supplier.address,
+            type: 'supplier',
+            size: 15,
+            color: '#10b981',
+            level: 1,
+            category: supplier.category
+          });
+        });
+        
+        // Payment links
+        payments.forEach(payment => {
+          const recipient = payment.recipient || payment.to;
+          if (recipient) {
+            linksData.push({
+              source: account,
+              target: recipient,
+              amount: parseFloat(payment.amount || 0),
+              width: Math.max(1, Math.log(parseFloat(payment.amount || 1) + 1) * 0.5),
+              txHash: payment.txHash,
+              timestamp: payment.timestamp
+            });
+          }
+        });
+      } else {
+        // Fallback if no account
+        nodesData.push({ 
+          id: 'company', 
+          label: 'Connect Wallet', 
+          type: 'company', 
+          size: 40, 
+          color: '#6366f1', 
+          level: 0 
+        });
+      }
     }
 
     // Initialize particles

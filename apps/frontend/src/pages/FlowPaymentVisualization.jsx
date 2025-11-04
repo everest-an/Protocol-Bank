@@ -15,7 +15,7 @@ import { useExchangeRates } from '../hooks/useExchangeRates';
 import { formatWithConversion } from '../utils/currencyFormatter';
 import { useTranslation } from 'react-i18next';
 
-export default function FlowPaymentVisualization() {
+export default function FlowPaymentVisualization({ sharedMockData = null }) {
   const { t } = useTranslation();
   const {
     account,
@@ -77,12 +77,13 @@ export default function FlowPaymentVisualization() {
   // 生成测试数据
   useEffect(() => {
     if (testMode) {
-      const data = generateFullMockData(supplierCount, 20); // 12 个供应商，20 笔支付
+      // Use shared mock data if available, otherwise generate new data
+      const data = sharedMockData || generateFullMockData(supplierCount, 20); // 12 个供应商，20 笔支付
       setMockData(data);
     } else {
       setMockData(null);
     }
-  }, [testMode, supplierCount]);
+  }, [testMode, supplierCount, sharedMockData]);
 
   // 测试模式下动态生成新的支付交易
   useEffect(() => {
@@ -366,6 +367,7 @@ export default function FlowPaymentVisualization() {
           testMode={testMode}
           mockData={mockData}
           demoCase={demoCase}
+          account={account}
         />
 
         {/* 测试模式提示 */}

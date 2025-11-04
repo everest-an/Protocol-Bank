@@ -48,6 +48,14 @@ function AppContent() {
   const [userInfo, setUserInfo] = useState(null)
   const [showSendModal, setShowSendModal] = useState(false)
   const [showMobileNav, setShowMobileNav] = useState(false)
+  
+  // Global mock data for consistent data across all components
+  const [globalMockData, setGlobalMockData] = useState(null)
+  
+  // Initialize global mock data once
+  useEffect(() => {
+    setGlobalMockData(generateFullMockData())
+  }, [])
 
   // Open login modal
   const openLoginModal = () => {
@@ -285,7 +293,7 @@ function AppContent() {
 
         {activeTab === 'payments' && (
           <ErrorBoundary>
-            <FlowPaymentVisualization />
+            <FlowPaymentVisualization sharedMockData={globalMockData} />
           </ErrorBoundary>
         )}
         {activeTab === 'analytics' && (
@@ -294,7 +302,7 @@ function AppContent() {
               suppliers={[]}
               payments={[]}
               testMode={true}
-              mockData={generateFullMockData()}
+              mockData={globalMockData}
             />
           </ErrorBoundary>
         )}
