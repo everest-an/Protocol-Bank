@@ -34,7 +34,13 @@ require('./src/workers/scheduledPaymentWorker');
 const PORT = process.env.PORT || 3001;
 
 // 中间件
-app.use(cors());
+app.use(cors({
+  origin: [
+    'https://protocolbanks.com',
+    'https://www.protocolbanks.com'
+  ],
+  credentials: true,
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
