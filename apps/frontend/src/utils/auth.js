@@ -39,15 +39,18 @@ const authUtils = {
     }
   },
 
-  // Login existing user
-  async login(email, password) {
+  // Login existing user (supports email or username)
+  async login(emailOrUsername, password) {
     try {
       const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ 
+          username: emailOrUsername,  // Backend accepts both email and username via 'username' field
+          password 
+        }),
       });
 
       const result = await response.json();
