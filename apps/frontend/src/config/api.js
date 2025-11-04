@@ -1,7 +1,7 @@
 // API Configuration for Protocol Bank Backend
 export const API_CONFIG = {
   // 生产环境后端API地址（需要部署后更新）
-  BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001',
+  BASE_URL: import.meta.env.VITE_API_BASE_URL || 'https://protocolbanks.com',
   
   // API版本
   API_VERSION: 'v1',
@@ -10,7 +10,7 @@ export const API_CONFIG = {
   TIMEOUT: 30000,
   
   // WebSocket配置
-  WS_URL: import.meta.env.VITE_WS_URL || 'ws://localhost:3001',
+  WS_URL: import.meta.env.VITE_WS_URL || 'wss://protocolbanks.com',
 };
 
 // API端点

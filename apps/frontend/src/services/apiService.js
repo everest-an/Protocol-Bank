@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { API_CONFIG } from '../config/api';
+import authUtils from '../utils/auth';
 
 // 创建axios实例
 const apiClient = axios.create({
@@ -13,11 +14,11 @@ const apiClient = axios.create({
 // 请求拦截器
 apiClient.interceptors.request.use(
   (config) => {
-    // 可以在这里添加认证token
-    // const token = localStorage.getItem('token');
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
+    // 添加认证token
+    const token = authUtils.getToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   (error) => {
@@ -34,6 +35,14 @@ apiClient.interceptors.response.use(
     // 统一错误处理
     const errorMessage = error.response?.data?.message || error.message || 'An error occurred';
     console.error('API Error:', errorMessage);
+    
+    // 如果是401未授权错误,清除token并重定向到登录
+    if (error.response?.status === 401) {
+      authUtils.logout();
+      // 可以触发登录modal或重定向
+      window.dispatchEvent(new CustomEvent('auth:unauthorized'));
+    }
+    
     return Promise.reject(error);
   }
 );
