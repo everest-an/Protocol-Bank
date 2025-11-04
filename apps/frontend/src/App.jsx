@@ -153,10 +153,10 @@ function AppContent() {
       />
 
       <header className="border-b border-gray-100 dark:border-gray-700 sticky top-0 z-[100] bg-white dark:bg-black transition-colors duration-200">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex justify-between items-center h-16">
+        <div className="max-w-7xl mx-auto px-4 lg:px-6">
+          <div className="flex justify-between items-center h-16 gap-4">
             {/* 左侧：汉堡菜单 + Logo */}
-            <div className="flex items-center space-x-4 flex-shrink-0">
+            <div className="flex items-center space-x-2 md:space-x-4 flex-shrink-0 min-w-[180px] md:min-w-[220px]">
               {/* 移动端汉堡菜单按钮 */}
               <button
                 onClick={() => setShowMobileNav(true)}
@@ -165,14 +165,14 @@ function AppContent() {
                 <Menu className="h-6 w-6 text-gray-600 dark:text-gray-400" />
               </button>
               
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2 md:space-x-3">
                 <img src={protocolBankLogo} alt="Protocol Bank" className="h-8 w-8 flex-shrink-0" />
-                <span className="text-lg font-normal text-gray-900 dark:text-white hidden sm:inline whitespace-nowrap">Protocol Bank</span>
+                <span className="text-base md:text-lg font-normal text-gray-900 dark:text-white whitespace-nowrap">Protocol Bank</span>
               </div>
             </div>
 
             {/* 中间：导航菜单 */}
-            <nav className="hidden md:flex items-center space-x-6 lg:space-x-10 flex-1 justify-center ml-4 lg:ml-12 min-w-0">
+            <nav className="hidden md:flex items-center space-x-4 lg:space-x-8 flex-1 justify-center min-w-0 max-w-[600px]">
                 <button 
                   onClick={() => setActiveTab('payments')}
                   className={`text-sm font-medium whitespace-nowrap ${activeTab === 'payments' ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'}`}
