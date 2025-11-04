@@ -1,159 +1,137 @@
-import { useState, useEffect, useCallback } from 'react'
-import { ethers } from 'ethers'
+import { useState, useEffect, useCallback } from 'react';
+import { ethers } from 'ethers';
 
-export function useWeb3Wallet() {
-  const [account, setAccount] = useState(null)
-  const [provider, setProvider] = useState(null)
-  const [signer, setSigner] = useState(null)
-  const [chainId, setChainId] = useState(null)
-  const [isConnecting, setIsConnecting] = useState(false)
-  const [error, setError] = useState(null)
+export const useWeb3Wallet = () => {
+  const [account, setAccount] = useState(null);
+  const [provider, setProvider] = useState(null);
+  const [signer, setSigner] = useState(null);
+  const [chainId, setChainId] = useState(null);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [error, setError] = useState(null);
 
   // Check if MetaMask is installed
   const isMetaMaskInstalled = () => {
-    return typeof window !== 'undefined' && typeof window.ethereum !== 'undefined'
-  }
+    return typeof window !== 'undefined' && typeof window.ethereum !== 'undefined';
+  };
 
   // Connect wallet
-  const connect = useCallback(async () => {
+  const connectWallet = useCallback(async () => {
     if (!isMetaMaskInstalled()) {
-      setError('Please install MetaMask!')
-      return
+      setError('Please install MetaMask to use crypto payments');
+      return false;
     }
+
+    setIsConnecting(true);
+    setError(null);
 
     try {
-      setIsConnecting(true)
-      setError(null)
-
       // Request account access
       const accounts = await window.ethereum.request({
-        method: 'eth_requestAccounts'
-      })
+        method: 'eth_requestAccounts',
+      });
 
       // Create provider and signer
-      const web3Provider = new ethers.BrowserProvider(window.ethereum)
-      const web3Signer = await web3Provider.getSigner()
-      const network = await web3Provider.getNetwork()
+      const web3Provider = new ethers.BrowserProvider(window.ethereum);
+      const web3Signer = await web3Provider.getSigner();
+      const network = await web3Provider.getNetwork();
 
-      setAccount(accounts[0])
-      setProvider(web3Provider)
-      setSigner(web3Signer)
-      setChainId(Number(network.chainId))
+      setAccount(accounts[0]);
+      setProvider(web3Provider);
+      setSigner(web3Signer);
+      setChainId(Number(network.chainId));
 
-      // console.log('Wallet connected:', accounts[0])
-      // console.log('Chain ID:', Number(network.chainId))
+      // Save to localStorage
+      localStorage.setItem('walletConnected', 'true');
+
+      setIsConnecting(false);
+      return true;
     } catch (err) {
-      // console.error('Error connecting wallet:', err)
-      setError(err.message)
-    } finally {
-      setIsConnecting(false)
+      console.error('Error connecting wallet:', err);
+      setError(err.message || 'Failed to connect wallet');
+      setIsConnecting(false);
+      return false;
     }
-  }, [])
+  }, []);
 
   // Disconnect wallet
-  const disconnect = useCallback(() => {
-    setAccount(null)
-    setProvider(null)
-    setSigner(null)
-    setChainId(null)
-    setError(null)
-  }, [])
+  const disconnectWallet = useCallback(() => {
+    setAccount(null);
+    setProvider(null);
+    setSigner(null);
+    setChainId(null);
+    localStorage.removeItem('walletConnected');
+  }, []);
 
-  // Switch to Sepolia network
-  const switchToSepolia = useCallback(async () => {
+  // Switch network
+  const switchNetwork = useCallback(async (targetChainId) => {
     if (!isMetaMaskInstalled()) {
-      setError('Please install MetaMask!')
-      return
+      setError('MetaMask is not installed');
+      return false;
     }
 
     try {
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
-        params: [{ chainId: '0xaa36a7' }], // Sepolia chainId
-      })
+        params: [{ chainId: `0x${targetChainId.toString(16)}` }],
+      });
+      return true;
     } catch (err) {
-      // This error code indicates that the chain has not been added to MetaMask
-      if (err.code === 4902) {
-        try {
-          await window.ethereum.request({
-            method: 'wallet_addEthereumChain',
-            params: [
-              {
-                chainId: '0xaa36a7',
-                chainName: 'Sepolia Testnet',
-                nativeCurrency: {
-                  name: 'Sepolia ETH',
-                  symbol: 'ETH',
-                  decimals: 18
-                },
-                rpcUrls: ['https://sepolia.infura.io/v3/'],
-                blockExplorerUrls: ['https://sepolia.etherscan.io/']
-              }
-            ]
-          })
-        } catch (addError) {
-          // console.error('Error adding Sepolia network:', addError)
-          setError(addError.message)
-        }
-      } else {
-        // console.error('Error switching to Sepolia:', err)
-        setError(err.message)
-      }
+      console.error('Error switching network:', err);
+      setError(err.message || 'Failed to switch network');
+      return false;
     }
-  }, [])
+  }, []);
 
-  // Listen for account changes
+  // Get balance
+  const getBalance = useCallback(async (address) => {
+    if (!provider) return '0';
+    
+    try {
+      const balance = await provider.getBalance(address || account);
+      return ethers.formatEther(balance);
+    } catch (err) {
+      console.error('Error getting balance:', err);
+      return '0';
+    }
+  }, [provider, account]);
+
+  // Listen to account changes
   useEffect(() => {
-    if (!isMetaMaskInstalled()) return
+    if (!isMetaMaskInstalled()) return;
 
     const handleAccountsChanged = (accounts) => {
       if (accounts.length === 0) {
-        disconnect()
+        // User disconnected wallet
+        disconnectWallet();
       } else if (accounts[0] !== account) {
-        setAccount(accounts[0])
-        // Reconnect to update signer
-        connect()
+        // User switched account
+        setAccount(accounts[0]);
       }
-    }
+    };
 
     const handleChainChanged = (chainIdHex) => {
-      const newChainId = parseInt(chainIdHex, 16)
-      setChainId(newChainId)
-      // Reload the page as recommended by MetaMask
-      window.location.reload()
-    }
+      // Reload page on chain change (recommended by MetaMask)
+      window.location.reload();
+    };
 
-    window.ethereum.on('accountsChanged', handleAccountsChanged)
-    window.ethereum.on('chainChanged', handleChainChanged)
+    window.ethereum.on('accountsChanged', handleAccountsChanged);
+    window.ethereum.on('chainChanged', handleChainChanged);
 
     return () => {
       if (window.ethereum.removeListener) {
-        window.ethereum.removeListener('accountsChanged', handleAccountsChanged)
-        window.ethereum.removeListener('chainChanged', handleChainChanged)
+        window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+        window.ethereum.removeListener('chainChanged', handleChainChanged);
       }
-    }
-  }, [account, connect, disconnect])
+    };
+  }, [account, disconnectWallet]);
 
-  // Auto-connect if previously connected
+  // Auto-connect on mount if previously connected
   useEffect(() => {
-    const checkConnection = async () => {
-      if (!isMetaMaskInstalled()) return
-
-      try {
-        const accounts = await window.ethereum.request({
-          method: 'eth_accounts'
-        })
-
-        if (accounts.length > 0) {
-          await connect()
-        }
-      } catch (err) {
-        // console.error('Error checking connection:', err)
-      }
+    const wasConnected = localStorage.getItem('walletConnected');
+    if (wasConnected === 'true' && isMetaMaskInstalled()) {
+      connectWallet();
     }
-
-    checkConnection()
-  }, [])
+  }, [connectWallet]);
 
   return {
     account,
@@ -164,10 +142,9 @@ export function useWeb3Wallet() {
     error,
     isConnected: !!account,
     isMetaMaskInstalled: isMetaMaskInstalled(),
-    isSepolia: chainId === 11155111,
-    connect,
-    disconnect,
-    switchToSepolia
-  }
-}
-
+    connectWallet,
+    disconnectWallet,
+    switchNetwork,
+    getBalance,
+  };
+};
