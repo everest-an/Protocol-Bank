@@ -36,6 +36,9 @@ import ErrorBoundary from './components/ErrorBoundary.jsx'
 import DropdownMenu from './components/DropdownMenu.jsx'
 import { generateFullMockData } from './utils/mockData.js'
 import { Web3Provider, useWeb3 } from './contexts/Web3Context.jsx'
+import UserMenu from './components/UserMenu.jsx'
+import authUtils from './utils/auth'
+
 import SendTransactionModal from './components/SendTransactionModal.jsx'
 import MobileNav from './components/MobileNav.jsx'
 import { Menu } from 'lucide-react'
@@ -74,6 +77,23 @@ function AppContent() {
     if (data.payments) setRealPayments(data.payments)
     if (data.stats) setRealStats(data.stats)
   }
+  
+  // Check if user is logged in on component mount
+  useEffect(() => {
+    const currentUser = authUtils.getCurrentUser();
+    if (currentUser) {
+      setUserInfo(currentUser);
+    }
+  }, []);
+  
+  // Handle logout
+  const handleLogout = () => {
+    authUtils.logout();
+    setUserInfo(null);
+    // Refresh page to reset state
+    window.location.reload();
+  };
+
 
   // Open login modal
   const openLoginModal = () => {
@@ -296,6 +316,8 @@ function AppContent() {
                     </div>
                   </div>
                 </div>
+              ) : userInfo ? (
+                <UserMenu onLogout={handleLogout} />
               ) : (
                 <Button 
                   onClick={openLoginModal}
