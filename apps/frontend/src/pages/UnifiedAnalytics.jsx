@@ -146,7 +146,7 @@ export default function UnifiedAnalytics({ suppliers = [], payments = [], stats 
   // Filter suppliers for Suppliers tab
   const filteredSuppliers = analytics.allSuppliers.filter(supplier => {
     const matchesSearch = supplier.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         supplier.address.toLowerCase().includes(searchTerm.toLowerCase());
+                         (supplier.address && supplier.address.toLowerCase().includes(searchTerm.toLowerCase()));
     const matchesCategory = selectedCategory === 'all' || supplier.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
@@ -477,7 +477,7 @@ function SuppliersTab({ suppliers, searchTerm, setSearchTerm, selectedCategory, 
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600 dark:text-gray-400">Address</span>
                   <span className="font-mono text-xs text-gray-500 dark:text-gray-400">
-                    {supplier.address.slice(0, 6)}...{supplier.address.slice(-4)}
+                    {supplier.address ? `${supplier.address.slice(0, 6)}...${supplier.address.slice(-4)}` : supplier.id ? `${supplier.id.slice(0, 6)}...${supplier.id.slice(-4)}` : 'N/A'}
                   </span>
                 </div>
               </div>
