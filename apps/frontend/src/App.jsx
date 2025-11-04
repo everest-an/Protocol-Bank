@@ -194,39 +194,6 @@ function AppContent() {
 
             {/* 右侧：通知、设置、钱包 */}
             <div className="flex items-center space-x-1 md:space-x-2 flex-shrink-0">
-              {/* 通知图标 */}
-              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                <Bell className="h-5 w-5" />
-              </Button>
-              
-              {/* 更多菜单 */}
-              <div className="relative group">
-                <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
-                  </svg>
-                </Button>
-                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-900 rounded-lg shadow-lg border border-gray-100 dark:border-gray-800 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                  <button
-                    onClick={() => window.open('https://discord.gg/AbmGXYjr3U', '_blank')}
-                    className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center space-x-2 rounded-t-lg"
-                  >
-                    <MessageCircle className="h-4 w-4" />
-                    <span>Join Discord</span>
-                  </button>
-                  <button
-                    onClick={() => window.open('https://github.com/everest-an/Protocol-Bank/blob/main/docs/protocol_bank_complete_whitepaper.md', '_blank')}
-                    className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center space-x-2 rounded-b-lg"
-                  >
-                    <FileText className="h-4 w-4" />
-                    <span>Whitepaper</span>
-                  </button>
-                </div>
-              </div>
-              
-              {/* 语言选择 */}
-              <LanguageSelector />
-              
               {/* 主题切换 */}
               <ThemeToggle />
               
@@ -351,16 +318,162 @@ function AppContent() {
         onClose={() => setShowSendModal(false)}
       />
 
-      {/* Footer with Global Network link */}
-      <footer className="border-t border-gray-100 dark:border-gray-800 mt-12">
-        <div className="max-w-7xl mx-auto px-6 py-6">
-          <div className="flex justify-center">
-            <button
-              onClick={() => setActiveTab('network')}
-              className="text-sm text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
-            >
-              Global Network
-            </button>
+      {/* Footer */}
+      <footer className="border-t border-gray-100 dark:border-gray-800 mt-16 bg-gray-50 dark:bg-gray-900/50">
+        <div className="max-w-7xl mx-auto px-6 py-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+            {/* Product */}
+            <div>
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Product</h3>
+              <ul className="space-y-3">
+                <li>
+                  <a href="#features" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+                    Features
+                  </a>
+                </li>
+                <li>
+                  <a href="#pricing" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+                    Pricing
+                  </a>
+                </li>
+                <li>
+                  <button
+                    onClick={() => setActiveTab('network')}
+                    className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    Global Network
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            {/* Resources */}
+            <div>
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Resources</h3>
+              <ul className="space-y-3">
+                <li>
+                  <a 
+                    href="https://github.com/everest-an/Protocol-Bank/blob/main/docs/protocol_bank_complete_whitepaper.md" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    Documentation
+                  </a>
+                </li>
+                <li>
+                  <a 
+                    href="https://github.com/everest-an/Protocol-Bank/blob/main/README.md" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    API
+                  </a>
+                </li>
+                <li>
+                  <a 
+                    href="https://github.com/everest-an/Protocol-Bank" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    GitHub
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Community */}
+            <div>
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Community</h3>
+              <ul className="space-y-3">
+                <li>
+                  <a 
+                    href="https://discord.gg/AbmGXYjr3U" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    Discord
+                  </a>
+                </li>
+                <li>
+                  <a 
+                    href="https://twitter.com" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    Twitter
+                  </a>
+                </li>
+                <li>
+                  <a 
+                    href="https://t.me" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    Telegram
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Support */}
+            <div>
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Support</h3>
+              <ul className="space-y-3">
+                <li>
+                  <a 
+                    href="mailto:support@protocolbanks.com" 
+                    className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    Contact Us
+                  </a>
+                </li>
+                <li>
+                  <a 
+                    href="#help" 
+                    className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    Help Center
+                  </a>
+                </li>
+                <li>
+                  <a 
+                    href="#privacy" 
+                    className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    Privacy Policy
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Bottom Bar */}
+          <div className="pt-8 border-t border-gray-200 dark:border-gray-800">
+            <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+              <div className="flex items-center space-x-2">
+                <img src={protocolBankLogo} alt="Protocol Bank" className="h-6 w-6" />
+                <span className="text-sm text-gray-500 dark:text-gray-400">
+                  © 2025 Protocol Bank. All rights reserved.
+                </span>
+              </div>
+              <div className="flex items-center space-x-6">
+                <a href="#terms" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+                  Terms of Service
+                </a>
+                <a href="#privacy" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+                  Privacy
+                </a>
+                <a href="#cookies" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+                  Cookies
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </footer>
