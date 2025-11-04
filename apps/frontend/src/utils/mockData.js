@@ -59,6 +59,7 @@ export function generateFullMockData(supplierCount = 12, paymentCount = 20) {
     const supplier = SUPPLIER_NAMES[i % SUPPLIER_NAMES.length];
     suppliers.push({
       id: generateAddress(),
+      address: generateAddress(), // 添加address字段用于显示
       name: `${supplier.name}${i >= SUPPLIER_NAMES.length ? ` ${i - SUPPLIER_NAMES.length + 2}` : ''}`,
       brand: supplier.brand,
       category: supplier.category,
