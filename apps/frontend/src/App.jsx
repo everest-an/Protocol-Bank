@@ -25,9 +25,8 @@ import {
 import './App.css'
 import protocolBankLogo from './assets/new-protocol-bank-logo.png'
 import FlowPaymentVisualization from './pages/FlowPaymentVisualization.jsx'
-import SuppliersPage from './pages/SuppliersPage.jsx'
 import Automation from './pages/Automation.jsx'
-import DataAnalytics from './pages/DataAnalyticsV3.jsx'
+import UnifiedAnalytics from './pages/UnifiedAnalytics.jsx'
 
 import LoginModal from './components/LoginModal.jsx'
 import ThemeToggle from './components/ThemeToggle.jsx'
@@ -179,13 +178,6 @@ function AppContent() {
                 >
                   Payments
                 </button>
-                <button 
-                  onClick={() => setActiveTab('suppliers')}
-                  className={`text-sm font-medium ${activeTab === 'suppliers' ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'}`}
-                >
-                  Suppliers
-                </button>
-
                 <button
                   onClick={() => setActiveTab('analytics')}
                   className={`text-sm font-medium ${activeTab === 'analytics' ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'}`}
@@ -329,11 +321,9 @@ function AppContent() {
             <FlowPaymentVisualization />
           </ErrorBoundary>
         )}
-        {activeTab === 'suppliers' && <SuppliersPage />}
-
         {activeTab === 'analytics' && (
           <ErrorBoundary>
-            <DataAnalytics 
+            <UnifiedAnalytics 
               suppliers={[]}
               payments={[]}
               testMode={true}
