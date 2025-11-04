@@ -13,6 +13,7 @@ const fireflyRoutes = require('./src/routes/fireflyRoutes');
 const amlRoutes = require('./src/routes/amlRoutes');
 const kycRoutes = require('./src/routes/kycRoutes');
 const notificationRoutes = require('./src/routes/notificationRoutes');
+const authRoutes = require('./src/routes/authRoutes');
 const notificationService = require('./src/services/notificationService');
 
 const app = express();
@@ -56,6 +57,7 @@ app.get('/health', (req, res) => {
 });
 
 // API 路由
+app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/account', accountRoutes);
 app.use('/api/v1/transaction', transactionRoutes);
 app.use('/api/v1/batch-payment', batchPaymentRoutes);
