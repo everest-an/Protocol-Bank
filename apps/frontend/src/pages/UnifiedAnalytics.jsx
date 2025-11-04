@@ -14,10 +14,26 @@ export default function UnifiedAnalytics({ suppliers = [], payments = [], stats 
   const [analytics, setAnalytics] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
   // Use test data or real data
   const dataSuppliers = testMode && mockData ? mockData.suppliers : suppliers;
-  const dataPayments = testMode && mockData ? mockData.payments : payments;
+  let dataPayments = testMode && mockData ? mockData.payments : payments;
+  
+  // Apply date filtering
+  if (startDate || endDate) {
+    dataPayments = dataPayments.filter(payment => {
+      const paymentDate = new Date(payment.timestamp);
+      if (startDate && paymentDate < new Date(startDate)) return false;
+      if (endDate) {
+        const endDateTime = new Date(endDate);
+        endDateTime.setHours(23, 59, 59, 999);
+        if (paymentDate > endDateTime) return false;
+      }
+      return true;
+    });
+  }
 
   useEffect(() => {
     if (dataSuppliers.length === 0 || dataPayments.length === 0) return;
@@ -158,15 +174,35 @@ export default function UnifiedAnalytics({ suppliers = [], payments = [], stats 
               Exit Test Mode
             </Button>
           )}
-          <select
-            value={timeRange}
-            onChange={(e) => setTimeRange(e.target.value)}
-            className="px-4 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="month">Last Month</option>
-            <option value="quarter">Last Quarter</option>
-            <option value="year">Last Year</option>
-          </select>
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-gray-500" />
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              placeholder="From"
+              className="px-3 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <span className="text-gray-500">-</span>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              placeholder="To"
+              className="px-3 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {(startDate || endDate) && (
+              <button
+                onClick={() => {
+                  setStartDate('');
+                  setEndDate('');
+                }}
+                className="px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+              >
+                Clear
+              </button>
+            )}
+          </div>
           <Button
             onClick={exportToCSV}
             variant="outline"
@@ -500,33 +536,101 @@ function ReportsTab({ analytics, categoryArray, monthlyArray }) {
         </CardContent>
       </Card>
 
-      {/* Monthly Analysis */}
+      {/* Cash Flow Trend */}
       <Card className="border border-gray-200 dark:border-gray-700">
         <CardContent className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Monthly Analysis</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Monthly Cash Flow Trend</h3>
+          <div className="h-64 flex items-end justify-between gap-2">
+            {monthlyArray.map((month, index) => {
+              const maxAmount = Math.max(...monthlyArray.map(m => m.amount));
+              const height = maxAmount > 0 ? (month.amount / maxAmount) * 100 : 0;
+              const prevAmount = index > 0 ? monthlyArray[index - 1].amount : month.amount;
+              const trend = month.amount > prevAmount ? 'up' : month.amount < prevAmount ? 'down' : 'stable';
+              
+              return (
+                <div key={month.month} className="flex-1 flex flex-col items-center group">
+                  <div className="relative w-full">
+                    <div
+                      className={`w-full rounded-t-lg transition-all duration-300 group-hover:opacity-80 ${
+                        trend === 'up' ? 'bg-green-500' : trend === 'down' ? 'bg-red-500' : 'bg-blue-500'
+                      }`}
+                      style={{ height: `${height}%`, minHeight: '4px' }}
+                    >
+                      <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs px-2 py-1 rounded whitespace-nowrap">
+                        Ξ {month.amount.toFixed(2)}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-xs text-gray-600 dark:text-gray-400 mt-2 transform -rotate-45 origin-top-left">
+                    {month.month.slice(5)}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="mt-6 flex items-center justify-center gap-6 text-sm">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-green-500 rounded"></div>
+              <span className="text-gray-600 dark:text-gray-400">Increase</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-red-500 rounded"></div>
+              <span className="text-gray-600 dark:text-gray-400">Decrease</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-blue-500 rounded"></div>
+              <span className="text-gray-600 dark:text-gray-400">Stable</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Monthly Analysis Table */}
+      <Card className="border border-gray-200 dark:border-gray-700">
+        <CardContent className="p-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Detailed Monthly Analysis</h3>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-200 dark:border-gray-700">
                   <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Month</th>
-                  <th className="text-right py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Amount</th>
+                  <th className="text-right py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Total Spent</th>
                   <th className="text-right py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Payments</th>
-                  <th className="text-right py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Avg</th>
+                  <th className="text-right py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Avg Payment</th>
+                  <th className="text-right py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Change</th>
                 </tr>
               </thead>
               <tbody>
-                {monthlyArray.map((month) => (
-                  <tr key={month.month} className="border-b border-gray-100 dark:border-gray-800">
-                    <td className="py-3 px-4 text-sm text-gray-900 dark:text-white">{month.month}</td>
-                    <td className="py-3 px-4 text-sm text-right font-semibold text-gray-900 dark:text-white">
-                      Ξ {month.amount.toFixed(4)}
-                    </td>
-                    <td className="py-3 px-4 text-sm text-right text-gray-600 dark:text-gray-400">{month.count}</td>
-                    <td className="py-3 px-4 text-sm text-right text-gray-600 dark:text-gray-400">
-                      Ξ {(month.amount / month.count).toFixed(4)}
-                    </td>
-                  </tr>
-                ))}
+                {monthlyArray.map((month, index) => {
+                  const prevAmount = index > 0 ? monthlyArray[index - 1].amount : 0;
+                  const change = prevAmount > 0 ? ((month.amount - prevAmount) / prevAmount) * 100 : 0;
+                  const isIncrease = change > 0;
+                  
+                  return (
+                    <tr key={month.month} className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                      <td className="py-3 px-4 text-sm text-gray-900 dark:text-white font-medium">{month.month}</td>
+                      <td className="py-3 px-4 text-sm text-right font-semibold text-gray-900 dark:text-white">
+                        Ξ {month.amount.toFixed(4)}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-right text-gray-600 dark:text-gray-400">{month.count}</td>
+                      <td className="py-3 px-4 text-sm text-right text-gray-600 dark:text-gray-400">
+                        Ξ {(month.amount / month.count).toFixed(4)}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-right">
+                        {index > 0 ? (
+                          <span className={`flex items-center justify-end gap-1 ${
+                            isIncrease ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
+                          }`}>
+                            {isIncrease ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+                            {Math.abs(change).toFixed(1)}%
+                          </span>
+                        ) : (
+                          <span className="text-gray-400">-</span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
