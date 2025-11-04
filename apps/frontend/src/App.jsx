@@ -65,7 +65,7 @@ function AppContent() {
     supplierCount: 0,
     averagePayment: '0'
   })
-  const [testMode, setTestMode] = useState(true)
+  const [testMode, setTestMode] = useState(false)
   
   // Initialize global mock data once
   useEffect(() => {

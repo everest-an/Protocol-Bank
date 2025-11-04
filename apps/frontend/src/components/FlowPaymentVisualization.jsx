@@ -196,8 +196,18 @@ export default function FlowPaymentVisualization({
   const loadBackendData = async () => {
     const user = authUtils.getCurrentUser();
     if (!user) {
-      console.log('No user logged in, using test mode');
-      setTestMode(true);
+      console.log('No user logged in, showing empty state');
+      setPaymentData({
+        nodes: [],
+        links: [],
+        transactions: [],
+        stats: {
+          totalPayments: 0,
+          totalAmount: 0,
+          suppliersCount: 0,
+          avgPayment: 0
+        }
+      });
       return;
     }
 
@@ -279,11 +289,11 @@ export default function FlowPaymentVisualization({
         });
       } else {
         console.error('Failed to load backend data:', historyResponse, statsResponse);
-        setTestMode(true); // Fallback to test mode
+        // Show empty state instead of test mode
       }
     } catch (error) {
       console.error('Error loading backend data:', error);
-      setTestMode(true); // Fallback to test mode
+      // Show empty state instead of test mode
     } finally {
       setLoading(false);
     }
