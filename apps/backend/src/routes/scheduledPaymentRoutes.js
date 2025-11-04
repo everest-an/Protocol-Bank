@@ -9,33 +9,33 @@ const scheduledPaymentController = require('../controllers/scheduledPaymentContr
 router.post('/create', scheduledPaymentController.createScheduledPayment);
 
 /**
- * @route GET /api/v1/scheduled-payment/:schedule_id
- * @desc 获取定时支付详情
- */
-router.get('/:schedule_id', scheduledPaymentController.getScheduledPayment);
-
-/**
  * @route GET /api/v1/scheduled-payment/list/:account_id
- * @desc 获取账户的定时支付列表
+ * @desc 获取账户的定时支付列表 (must be before /:scheduled_payment_id)
  */
 router.get('/list/:account_id', scheduledPaymentController.getScheduledPaymentsList);
 
 /**
- * @route PUT /api/v1/scheduled-payment/:schedule_id/pause
+ * @route GET /api/v1/scheduled-payment/:scheduled_payment_id
+ * @desc 获取定时支付详情
+ */
+router.get('/:scheduled_payment_id', scheduledPaymentController.getScheduledPayment);
+
+/**
+ * @route POST /api/v1/scheduled-payment/:scheduled_payment_id/pause
  * @desc 暂停定时支付
  */
-router.put('/:schedule_id/pause', scheduledPaymentController.pauseScheduledPayment);
+router.post('/:scheduled_payment_id/pause', scheduledPaymentController.pauseScheduledPayment);
 
 /**
- * @route PUT /api/v1/scheduled-payment/:schedule_id/resume
+ * @route POST /api/v1/scheduled-payment/:scheduled_payment_id/resume
  * @desc 恢复定时支付
  */
-router.put('/:schedule_id/resume', scheduledPaymentController.resumeScheduledPayment);
+router.post('/:scheduled_payment_id/resume', scheduledPaymentController.resumeScheduledPayment);
 
 /**
- * @route DELETE /api/v1/scheduled-payment/:schedule_id
+ * @route POST /api/v1/scheduled-payment/:scheduled_payment_id/cancel
  * @desc 取消定时支付
  */
-router.delete('/:schedule_id', scheduledPaymentController.cancelScheduledPayment);
+router.post('/:scheduled_payment_id/cancel', scheduledPaymentController.cancelScheduledPayment);
 
 module.exports = router;
