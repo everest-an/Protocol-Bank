@@ -13,6 +13,7 @@ const fireflyRoutes = require('./src/routes/fireflyRoutes');
 const amlRoutes = require('./src/routes/amlRoutes');
 const kycRoutes = require('./src/routes/kycRoutes');
 const notificationRoutes = require('./src/routes/notificationRoutes');
+const streamPaymentRoutes = require('./src/routes/streamPaymentRoutes');
 const authRoutes = require('./src/routes/authRoutes');
 const notificationService = require('./src/services/notificationService');
 
@@ -31,6 +32,7 @@ notificationService.setSocketIO(io);
 // 启动工作器
 require('./src/workers/paymentWorker');
 require('./src/workers/scheduledPaymentWorker');
+require('./src/workers/streamPaymentWorker');
 
 const PORT = process.env.PORT || 3001;
 
@@ -62,6 +64,7 @@ app.use('/api/v1/account', accountRoutes);
 app.use('/api/v1/transaction', transactionRoutes);
 app.use('/api/v1/batch-payment', batchPaymentRoutes);
 app.use('/api/v1/scheduled-payment', scheduledPaymentRoutes);
+app.use('/api/v1/stream-payment', streamPaymentRoutes);
 app.use('/api/v1/firefly', fireflyRoutes);
 app.use('/api/v1/aml', amlRoutes);
 app.use('/api/v1/kyc', kycRoutes);

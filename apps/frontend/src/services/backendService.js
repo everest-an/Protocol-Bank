@@ -179,10 +179,65 @@ export const notificationService = {
   },
 };
 
+// Stream Payment Service
+export const streamPaymentService = {
+  // 创建流支付
+  create: async (data) => {
+    return apiCall('/stream-payment/create', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+  
+  // 获取流支付详情
+  get: async (streamId) => {
+    return apiCall(`/stream-payment/${streamId}`);
+  },
+  
+  // 获取流支付列表
+  getList: async (accountId, type = 'all') => {
+    return apiCall(`/stream-payment/list/${accountId}?type=${type}`);
+  },
+  
+  // 暂停流支付
+  pause: async (streamId) => {
+    return apiCall(`/stream-payment/${streamId}/pause`, {
+      method: 'POST',
+    });
+  },
+  
+  // 恢复流支付
+  resume: async (streamId) => {
+    return apiCall(`/stream-payment/${streamId}/resume`, {
+      method: 'POST',
+    });
+  },
+  
+  // 取消流支付
+  cancel: async (streamId) => {
+    return apiCall(`/stream-payment/${streamId}/cancel`, {
+      method: 'POST',
+    });
+  },
+  
+  // 获取可提取金额
+  getAvailable: async (streamId) => {
+    return apiCall(`/stream-payment/${streamId}/available`);
+  },
+  
+  // 提取资金
+  withdraw: async (streamId) => {
+    return apiCall(`/stream-payment/${streamId}/withdraw`, {
+      method: 'POST',
+    });
+  },
+};
+
 export default {
   transactionService,
   batchPaymentService,
   scheduledPaymentService,
   accountService,
   notificationService,
+  streamPaymentService,
 };

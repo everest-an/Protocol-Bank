@@ -27,6 +27,7 @@ import protocolBankLogo from './assets/new-protocol-bank-logo.png'
 import FlowPaymentVisualization from './pages/FlowPaymentVisualization.jsx'
 import Automation from './pages/Automation.jsx'
 import UnifiedAnalytics from './pages/UnifiedAnalytics.jsx'
+import StreamPaymentPage from './pages/StreamPaymentPage.jsx'
 
 import SimpleLoginModal from './components/SimpleLoginModal.jsx'
 import ThemeToggle from './components/ThemeToggle.jsx'
@@ -241,6 +242,12 @@ function AppContent() {
                 >
                   Automation
                 </button>
+                <button
+                  onClick={() => setActiveTab('stream-payment')}
+                  className={`text-sm font-medium whitespace-nowrap ${activeTab === 'stream-payment' ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'}`}
+                >
+                  Stream Payment
+                </button>
             </nav>
 
             {/* 右侧：通知、设置、钱包 */}
@@ -360,6 +367,11 @@ function AppContent() {
         {activeTab === 'automation' && (
           <ErrorBoundary>
             <Automation />
+          </ErrorBoundary>
+        )}
+        {activeTab === 'stream-payment' && (
+          <ErrorBoundary>
+            <StreamPaymentPage />
           </ErrorBoundary>
         )}
       </main>
