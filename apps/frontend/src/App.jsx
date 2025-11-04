@@ -200,18 +200,8 @@ function AppContent() {
                 </button>
             </nav>
 
-            {/* 右侧：搜索、通知、设置、钱包 */}
-            <div className="flex items-center space-x-2 lg:space-x-3 flex-shrink-0">
-              {/* 搜索框 - 桌面端显示 */}
-              <div className="relative hidden lg:block">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <input 
-                  type="text" 
-                  placeholder="Search transactions..." 
-                  className="pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-900 border-0 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-200 dark:focus:ring-gray-700 text-sm w-48 xl:w-56 transition-colors"
-                />
-              </div>
-              
+            {/* 右侧：通知、设置、钱包 */}
+            <div className="flex items-center space-x-1 md:space-x-2 flex-shrink-0">
               {/* 通知图标 */}
               <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                 <Bell className="h-5 w-5" />
