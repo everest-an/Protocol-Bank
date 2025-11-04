@@ -28,7 +28,7 @@ import FlowPaymentVisualization from './pages/FlowPaymentVisualization.jsx'
 import Automation from './pages/Automation.jsx'
 import UnifiedAnalytics from './pages/UnifiedAnalytics.jsx'
 
-import LoginModal from './components/LoginModal.jsx'
+import SimpleLoginModal from './components/SimpleLoginModal.jsx'
 import ThemeToggle from './components/ThemeToggle.jsx'
 import LanguageSelector from './components/LanguageSelector.jsx'
 import MobileMenu from './components/MobileMenu.jsx'
@@ -79,13 +79,18 @@ function AppContent() {
   const openLoginModal = () => {
     setShowLoginModal(true)
   }
-
   // Handle successful login
   const handleLoginSuccess = (loginData) => {
-    setWalletAddress(loginData.address)
+    // For backend auth, loginData contains user info and token
+    if (loginData.address) {
+      // Wallet login
+      setWalletAddress(loginData.address)
+    }
     setUserInfo(loginData)
     
     // Store in localStorage
+    localStorage.setItem('protocolbank_user', JSON.stringify(loginData))
+    
     localStorage.setItem('protocolbank_user', JSON.stringify(loginData))
     
     // Show welcome message for new wallets
@@ -338,7 +343,7 @@ function AppContent() {
       </main>
 
       {/* Login Modal */}
-      <LoginModal 
+      <SimpleLoginModal 
         isOpen={showLoginModal}
         onClose={() => setShowLoginModal(false)}
         onLoginSuccess={handleLoginSuccess}
