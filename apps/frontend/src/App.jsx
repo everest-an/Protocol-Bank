@@ -227,31 +227,51 @@ function AppContent() {
             <nav className="hidden md:flex items-center space-x-4 lg:space-x-8 flex-1 justify-center min-w-0 max-w-[600px]">
                 <button 
                   onClick={() => setActiveTab('home')}
-                  className={`text-sm font-medium whitespace-nowrap ${activeTab === 'home' ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'}`}
+                  className={`text-sm font-medium whitespace-nowrap pb-1 border-b-2 transition-all duration-200 ${
+                    activeTab === 'home' 
+                      ? 'text-blue-600 dark:text-blue-400 border-blue-600 dark:border-blue-400' 
+                      : 'text-gray-500 dark:text-gray-400 border-transparent hover:text-gray-900 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-gray-600'
+                  }`}
                 >
                   Home
                 </button>
                 <button 
                   onClick={() => setActiveTab('payments')}
-                  className={`text-sm font-medium whitespace-nowrap ${activeTab === 'payments' ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'}`}
+                  className={`text-sm font-medium whitespace-nowrap pb-1 border-b-2 transition-all duration-200 ${
+                    activeTab === 'payments' 
+                      ? 'text-blue-600 dark:text-blue-400 border-blue-600 dark:border-blue-400' 
+                      : 'text-gray-500 dark:text-gray-400 border-transparent hover:text-gray-900 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-gray-600'
+                  }`}
                 >
                   Payments
                 </button>
                 <button
                   onClick={() => setActiveTab('analytics')}
-                  className={`text-sm font-medium ${activeTab === 'analytics' ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'}`}
+                  className={`text-sm font-medium whitespace-nowrap pb-1 border-b-2 transition-all duration-200 ${
+                    activeTab === 'analytics' 
+                      ? 'text-blue-600 dark:text-blue-400 border-blue-600 dark:border-blue-400' 
+                      : 'text-gray-500 dark:text-gray-400 border-transparent hover:text-gray-900 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-gray-600'
+                  }`}
                 >
                   Analytics
                 </button>
                 <button
                   onClick={() => setActiveTab('automation')}
-                  className={`text-sm font-medium whitespace-nowrap ${activeTab === 'automation' ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'}`}
+                  className={`text-sm font-medium whitespace-nowrap pb-1 border-b-2 transition-all duration-200 ${
+                    activeTab === 'automation' 
+                      ? 'text-blue-600 dark:text-blue-400 border-blue-600 dark:border-blue-400' 
+                      : 'text-gray-500 dark:text-gray-400 border-transparent hover:text-gray-900 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-gray-600'
+                  }`}
                 >
                   Automation
                 </button>
                 <button
                   onClick={() => setActiveTab('stream-payment')}
-                  className={`text-sm font-medium whitespace-nowrap ${activeTab === 'stream-payment' ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'}`}
+                  className={`text-sm font-medium whitespace-nowrap pb-1 border-b-2 transition-all duration-200 ${
+                    activeTab === 'stream-payment' 
+                      ? 'text-blue-600 dark:text-blue-400 border-blue-600 dark:border-blue-400' 
+                      : 'text-gray-500 dark:text-gray-400 border-transparent hover:text-gray-900 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-gray-600'
+                  }`}
                 >
                   Stream Payment
                 </button>
