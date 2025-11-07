@@ -29,6 +29,7 @@ import Automation from './pages/Automation.jsx'
 import UnifiedAnalytics from './pages/UnifiedAnalytics.jsx'
 import StreamPaymentPage from './pages/StreamPaymentPage.jsx'
 import LandingPage from './pages/LandingPage.jsx'
+import ClearingHousePage from './pages/ClearingHousePage.jsx'
 
 import SimpleLoginModal from './components/SimpleLoginModal.jsx'
 import ThemeToggle from './components/ThemeToggle.jsx'
@@ -275,6 +276,16 @@ function AppContent() {
                 >
                   Stream Payment
                 </button>
+                <button
+                  onClick={() => setActiveTab('clearing-house')}
+                  className={`text-sm font-medium whitespace-nowrap pb-1 border-b-2 transition-all duration-200 ${
+                    activeTab === 'clearing-house' 
+                      ? 'text-blue-600 dark:text-blue-400 border-blue-600 dark:border-blue-400' 
+                      : 'text-gray-500 dark:text-gray-400 border-transparent hover:text-gray-900 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-gray-600'
+                  }`}
+                >
+                  ClearingHouse
+                </button>
             </nav>
 
             {/* 右侧：通知、设置、钱包 */}
@@ -413,6 +424,11 @@ function AppContent() {
         {activeTab === 'stream-payment' && (
           <ErrorBoundary>
             <StreamPaymentPage />
+          </ErrorBoundary>
+        )}
+        {activeTab === 'clearing-house' && (
+          <ErrorBoundary>
+            <ClearingHousePage />
           </ErrorBoundary>
         )}
       </main>
