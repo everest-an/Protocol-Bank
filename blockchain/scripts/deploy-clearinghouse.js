@@ -6,7 +6,8 @@ async function main() {
   // 获取部署者账户
   const [deployer] = await hre.ethers.getSigners();
   console.log("部署者地址:", deployer.address);
-  console.log("部署者余额:", hre.ethers.utils.formatEther(await deployer.getBalance()), "ETH\n");
+  const balance = await deployer.provider.getBalance(deployer.address);
+  console.log("部署者余额:", hre.ethers.formatEther(balance), "ETH\n");
 
   // 配置参数
   const COLLATERAL_TOKEN_ADDRESS = process.env.USDC_ADDRESS || "0x..."; // USDC地址
@@ -25,13 +26,18 @@ async function main() {
     NETTING_ENGINE_ADDRESS
   );
 
-  await clearingHouse.deployed();
-  console.log("✅ ClearingHouse 已部署到:", clearingHouse.address);
+  await clearingHouse.waitForDeployment();
+  const clearingHouseAddress = await clearingHouse.getAddress();
+  console.log("✅ ClearingHouse 已部署到:", clearingHouseAddress);
   console.log("");
 
   // 等待几个区块确认
   console.log("等待区块确认...");
-  await clearingHouse.deployTransaction.wait(5);
+  // Ethers v6: deploymentTransaction() returns the transaction
+  const deployTx = clearingHouse.deploymentTransaction();
+  if (deployTx) {
+    await deployTx.wait(5);
+  }
   console.log("✅ 已确认\n");
 
   // 验证合约 (在Etherscan上)
@@ -39,7 +45,7 @@ async function main() {
     console.log("正在验证合约...");
     try {
       await hre.run("verify:verify", {
-        address: clearingHouse.address,
+        address: clearingHouseAddress,
         constructorArguments: [COLLATERAL_TOKEN_ADDRESS, NETTING_ENGINE_ADDRESS],
       });
       console.log("✅ 合约验证成功\n");
@@ -52,16 +58,16 @@ async function main() {
   console.log("=".repeat(60));
   console.log("部署完成!");
   console.log("=".repeat(60));
-  console.log("ClearingHouse 地址:", clearingHouse.address);
+  console.log("ClearingHouse 地址:", clearingHouseAddress);
   console.log("网络:", hre.network.name);
-  console.log("区块链浏览器:", getExplorerUrl(hre.network.name, clearingHouse.address));
+  console.log("区块链浏览器:", getExplorerUrl(hre.network.name, clearingHouseAddress));
   console.log("=".repeat(60));
 
   // 保存部署信息到文件
   const fs = require("fs");
   const deploymentInfo = {
     network: hre.network.name,
-    clearingHouse: clearingHouse.address,
+    clearingHouse: clearingHouseAddress,
     collateralToken: COLLATERAL_TOKEN_ADDRESS,
     nettingEngine: NETTING_ENGINE_ADDRESS,
     deployer: deployer.address,
