@@ -60,15 +60,15 @@ export default function NetworkPaymentPage() {
       {/* 统计卡片 */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
-          <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">活跃流支付</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Active Streams</div>
           <div className="text-3xl font-semibold text-gray-900 dark:text-gray-100">{stats.active}</div>
         </div>
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
-          <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">总Payment Amount</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Total Payment Amount</div>
           <div className="text-3xl font-semibold text-gray-900 dark:text-gray-100">${(stats.totalAmount / 1000).toFixed(1)}k</div>
         </div>
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
-          <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Recipient数量</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Total Recipients</div>
           <div className="text-3xl font-semibold text-gray-900 dark:text-gray-100">{stats.totalRecipients}</div>
         </div>
       </div>
@@ -80,7 +80,7 @@ export default function NetworkPaymentPage() {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <input
               type="text"
-              placeholder="搜索Recipient..."
+              placeholder="Search recipients..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm w-64 dark:text-gray-100"
@@ -89,7 +89,7 @@ export default function NetworkPaymentPage() {
         </div>
         <Button className="bg-blue-600 hover:bg-blue-700 text-white">
           <Plus className="h-4 w-4 mr-2" />
-          添加Recipient
+          Add Recipient
         </Button>
       </div>
 
