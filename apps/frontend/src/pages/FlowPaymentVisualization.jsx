@@ -8,6 +8,7 @@ import { formatWithConversion } from '../utils/currencyFormatter';
 import { useTranslation } from 'react-i18next';
 import { transactionService } from '../services/backendService';
 import authUtils from '../utils/auth';
+import StreamPaymentDemo from '../components/StreamPaymentDemo';
 
 export default function FlowPaymentVisualization() {
   const { t } = useTranslation();
@@ -35,8 +36,32 @@ export default function FlowPaymentVisualization() {
       const user = authUtils.getCurrentUser();
       
       if (!user || !user.account_id) {
-        console.log('[FlowPaymentVisualization] No user logged in');
-        setError('Please login to view your payment data');
+        console.log('[FlowPaymentVisualization] No user logged in, using demo mode');
+        // Use demo data for non-logged-in users
+        const demoPayments = [
+          { id: 1, from: 'Headquarters', to: 'Subsidiary 1', amount: 50000, currency: 'ETH', status: 'completed', category: 'Payroll', timestamp: Date.now() - 3600000, txHash: '0xabc123', direction: 'outgoing' },
+          { id: 2, from: 'Headquarters', to: 'Subsidiary 2', amount: 35000, currency: 'ETH', status: 'completed', category: 'Payroll', timestamp: Date.now() - 7200000, txHash: '0xdef456', direction: 'outgoing' },
+          { id: 3, from: 'Subsidiary 1', to: 'Supplier A', amount: 12000, currency: 'ETH', status: 'completed', category: 'Procurement', timestamp: Date.now() - 10800000, txHash: '0xghi789', direction: 'outgoing' },
+          { id: 4, from: 'Subsidiary 2', to: 'Supplier B', amount: 8500, currency: 'ETH', status: 'pending', category: 'Procurement', timestamp: Date.now() - 14400000, txHash: '0xjkl012', direction: 'outgoing' },
+          { id: 5, from: 'Headquarters', to: 'Subsidiary 1', amount: 25000, currency: 'ETH', status: 'completed', category: 'Operations', timestamp: Date.now() - 18000000, txHash: '0xmno345', direction: 'outgoing' }
+        ];
+        
+        const demoSuppliers = [
+          { id: 'sub1', name: 'Subsidiary 1', address: '0x1234...5678', category: 'Subsidiary', totalAmount: 75000, paymentCount: 2 },
+          { id: 'sub2', name: 'Subsidiary 2', address: '0x2345...6789', category: 'Subsidiary', totalAmount: 35000, paymentCount: 1 },
+          { id: 'supA', name: 'Supplier A', address: '0x3456...7890', category: 'Supplier', totalAmount: 12000, paymentCount: 1 },
+          { id: 'supB', name: 'Supplier B', address: '0x4567...8901', category: 'Supplier', totalAmount: 8500, paymentCount: 1 }
+        ];
+        
+        setPayments(demoPayments);
+        setSuppliers(demoSuppliers);
+        setStats({
+          totalPayments: demoPayments.length,
+          totalAmount: '130500.0000',
+          supplierCount: demoSuppliers.length,
+          averagePayment: '26100.0000'
+        });
+        
         setLoading(false);
         return;
       }
@@ -160,6 +185,18 @@ export default function FlowPaymentVisualization() {
           </div>
         </div>
 
+        {/* Demo Mode Banner */}
+        {!authUtils.getCurrentUser() && (
+          <div className="mb-6">
+            <StreamPaymentDemo />
+            <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+              <p className="text-blue-800 dark:text-blue-200 text-center">
+                👋 You're viewing demo data. <button onClick={() => window.location.hash = '#/home'} className="underline font-semibold">Login</button> to see your real payment data.
+              </p>
+            </div>
+          </div>
+        )}
+        
         {/* Error Message */}
         {error && (
           <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
