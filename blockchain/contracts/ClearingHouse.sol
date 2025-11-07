@@ -4,8 +4,9 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
 
 /**
  * @title ClearingHouse
@@ -92,7 +93,7 @@ contract ClearingHouse is Ownable, ReentrancyGuard {
      * @param _collateralToken 抵押品代币地址 (如 USDC)
      * @param _nettingEngine 净额引擎地址
      */
-    constructor(address _collateralToken, address _nettingEngine) {
+    constructor(address _collateralToken, address _nettingEngine) Ownable(msg.sender) {
         require(_collateralToken != address(0), "ClearingHouse: invalid collateral token");
         require(_nettingEngine != address(0), "ClearingHouse: invalid netting engine");
 
@@ -225,7 +226,7 @@ contract ClearingHouse is Ownable, ReentrancyGuard {
 
         // 验证签名
         bytes32 messageHash = keccak256(abi.encodePacked(_batchId, _windowEnd, positionsHash));
-        bytes32 ethSignedMessageHash = messageHash.toEthSignedMessageHash();
+        bytes32 ethSignedMessageHash = MessageHashUtils.toEthSignedMessageHash(messageHash);
         address signer = ethSignedMessageHash.recover(_signature);
         require(signer == nettingEngine, "ClearingHouse: invalid signature");
 
@@ -265,9 +266,9 @@ contract ClearingHouse is Ownable, ReentrancyGuard {
                 participant.collateral += uint256(pos.amount);
             } else if (pos.amount < 0) {
                 // 应付: 减少抵押品
-                uint256 payable = uint256(-pos.amount);
-                require(participant.collateral >= payable, "ClearingHouse: insufficient collateral");
-                participant.collateral -= payable;
+                uint256 payableAmount = uint256(-pos.amount);
+                require(participant.collateral >= payableAmount, "ClearingHouse: insufficient collateral");
+                participant.collateral -= payableAmount;
             }
 
             participant.totalSettled += uint256(pos.amount > 0 ? pos.amount : -pos.amount);
