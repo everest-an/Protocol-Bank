@@ -15,6 +15,7 @@ const kycRoutes = require('./src/routes/kycRoutes');
 const notificationRoutes = require('./src/routes/notificationRoutes');
 const streamPaymentRoutes = require('./src/routes/streamPaymentRoutes');
 const authRoutes = require('./src/routes/authRoutes');
+const nettingEngineRoutes = require('./src/routes/nettingEngineRoutes');
 const notificationService = require('./src/services/notificationService');
 
 const app = express();
@@ -33,6 +34,7 @@ notificationService.setSocketIO(io);
 require('./src/workers/paymentWorker');
 require('./src/workers/scheduledPaymentWorker');
 require('./src/workers/streamPaymentWorker');
+require('./src/workers/settlementWorker');
 
 const PORT = process.env.PORT || 3001;
 
@@ -69,6 +71,7 @@ app.use('/api/v1/firefly', fireflyRoutes);
 app.use('/api/v1/aml', amlRoutes);
 app.use('/api/v1/kyc', kycRoutes);
 app.use('/api/v1/notifications', notificationRoutes);
+app.use('/api/v1/netting-engine', nettingEngineRoutes);
 
 // 404 处理
 app.use((req, res) => {
