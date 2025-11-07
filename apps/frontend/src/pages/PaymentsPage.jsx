@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { Button } from '@/components/ui/button.jsx'
 import { Card, CardContent } from '@/components/ui/card.jsx'
 import { Send, ArrowDownLeft, Clock, CheckCircle, XCircle, DollarSign, Euro, PoundSterling, Waves } from 'lucide-react'
 import StreamPaymentPage from './StreamPaymentPage.jsx'
 import NetworkPaymentPage from './NetworkPaymentPage.jsx'
+import StreamPaymentDemo from '../components/StreamPaymentDemo.jsx'
 
 export default function PaymentsPage() {
   const [activeTab, setActiveTab] = useState('regular') // 'regular' or 'stream'
@@ -55,6 +56,9 @@ export default function PaymentsPage() {
 
   return (
     <div className="space-y-6">
+      {/* Stream Payment Demo */}
+      <StreamPaymentDemo />
+      
       {/* Tab Navigation */}
       <div className="border-b border-gray-200">
         <nav className="flex space-x-8">
@@ -68,7 +72,7 @@ export default function PaymentsPage() {
           >
             <div className="flex items-center space-x-2">
               <Send className="h-4 w-4" />
-              <span>常规支付</span>
+              <span>Regular Payment</span>
             </div>
           </button>
           <button
@@ -81,7 +85,7 @@ export default function PaymentsPage() {
           >
             <div className="flex items-center space-x-2">
               <Waves className="h-4 w-4" />
-              <span>流支付</span>
+              <span>Stream Payment</span>
             </div>
           </button>
           <button
@@ -94,7 +98,7 @@ export default function PaymentsPage() {
           >
             <div className="flex items-center space-x-2">
               <Waves className="h-4 w-4" />
-              <span>网络支付</span>
+              <span>Network Payment</span>
             </div>
           </button>
         </nav>
