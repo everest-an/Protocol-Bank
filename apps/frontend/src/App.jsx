@@ -28,6 +28,7 @@ import FlowPaymentVisualization from './pages/FlowPaymentVisualization.jsx'
 import Automation from './pages/Automation.jsx'
 import UnifiedAnalytics from './pages/UnifiedAnalytics.jsx'
 import StreamPaymentPage from './pages/StreamPaymentPage.jsx'
+import LandingPage from './pages/LandingPage.jsx'
 
 import SimpleLoginModal from './components/SimpleLoginModal.jsx'
 import ThemeToggle from './components/ThemeToggle.jsx'
@@ -47,7 +48,7 @@ import { Menu } from 'lucide-react'
 function AppContent() {
   const { account, balance, isConnecting, connectWallet, disconnectWallet, isConnected } = useWeb3()
   const [balanceVisible, setBalanceVisible] = useState(true)
-  const [activeTab, setActiveTab] = useState('payments')
+  const [activeTab, setActiveTab] = useState('home')
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [userInfo, setUserInfo] = useState(null)
   const [showSendModal, setShowSendModal] = useState(false)
@@ -225,6 +226,12 @@ function AppContent() {
             {/* 中间：导航菜单 */}
             <nav className="hidden md:flex items-center space-x-4 lg:space-x-8 flex-1 justify-center min-w-0 max-w-[600px]">
                 <button 
+                  onClick={() => setActiveTab('home')}
+                  className={`text-sm font-medium whitespace-nowrap ${activeTab === 'home' ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'}`}
+                >
+                  Home
+                </button>
+                <button 
                   onClick={() => setActiveTab('payments')}
                   className={`text-sm font-medium whitespace-nowrap ${activeTab === 'payments' ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'}`}
                 >
@@ -343,6 +350,20 @@ function AppContent() {
       <main className="max-w-7xl mx-auto px-6 py-8">
         {/* Tab Content */}
 
+        {activeTab === 'home' && (
+          <ErrorBoundary>
+            {userInfo || isConnected ? (
+              <FlowPaymentVisualization 
+                sharedMockData={globalMockData}
+                onDataUpdate={handleDataUpdate}
+                externalTestMode={testMode}
+                onTestModeChange={setTestMode}
+              />
+            ) : (
+              <LandingPage onGetStarted={openLoginModal} />
+            )}
+          </ErrorBoundary>
+        )}
         {activeTab === 'payments' && (
           <ErrorBoundary>
             <FlowPaymentVisualization 
