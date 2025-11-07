@@ -445,7 +445,7 @@ function AppContent() {
               <ul className="space-y-3">
                 <li>
                   <a 
-                    href="https://github.com/everest-an/Protocol-Bank/blob/main/docs/protocol_bank_complete_whitepaper.md" 
+                    href="https://github.com/everest-an/Protocol-Bank/blob/main/docs/design/protocol_bank_complete_whitepaper.md" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
@@ -455,7 +455,7 @@ function AppContent() {
                 </li>
                 <li>
                   <a 
-                    href="https://github.com/everest-an/Protocol-Bank/blob/main/README.md" 
+                    href="https://github.com/everest-an/Protocol-Bank/blob/main/docs/api/BACKEND_API_SUMMARY.md" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"

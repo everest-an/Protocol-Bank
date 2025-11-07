@@ -35,6 +35,7 @@ export default function LandingPage({ onGetStarted }) {
           <Button 
             variant="outline"
             className="px-8 py-6 text-lg rounded-xl border-2"
+            onClick={() => window.open('https://github.com/everest-an/Protocol-Bank/blob/main/docs/design/protocol_bank_complete_whitepaper.md', '_blank')}
           >
             Read Whitepaper
           </Button>
