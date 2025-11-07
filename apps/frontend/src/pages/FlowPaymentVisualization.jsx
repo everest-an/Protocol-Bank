@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { transactionService } from '../services/backendService';
 import authUtils from '../utils/auth';
 import StreamPaymentDemo from '../components/StreamPaymentDemo';
+import { generateFullMockData } from '../utils/mockData';
 
 export default function FlowPaymentVisualization() {
   const { t } = useTranslation();
@@ -25,6 +26,7 @@ export default function FlowPaymentVisualization() {
   const [selectedCurrency, setSelectedCurrency] = useState('ETH');
   const { rates, loading: ratesLoading, lastUpdated, refreshRates } = useExchangeRates();
   const [error, setError] = useState(null);
+  const [testMode, setTestMode] = useState(false);
 
   // 加载后端数据
   const loadBackendData = async () => {
@@ -36,35 +38,40 @@ export default function FlowPaymentVisualization() {
       const user = authUtils.getCurrentUser();
       
       if (!user || !user.account_id) {
-        console.log('[FlowPaymentVisualization] No user logged in, using demo mode');
-        // Use demo data for non-logged-in users
-        const demoPayments = [
-          { id: 1, from: 'Headquarters', to: 'Subsidiary 1', amount: 50000, currency: 'ETH', status: 'completed', category: 'Payroll', timestamp: Date.now() - 3600000, txHash: '0xabc123', direction: 'outgoing' },
-          { id: 2, from: 'Headquarters', to: 'Subsidiary 2', amount: 35000, currency: 'ETH', status: 'completed', category: 'Payroll', timestamp: Date.now() - 7200000, txHash: '0xdef456', direction: 'outgoing' },
-          { id: 3, from: 'Subsidiary 1', to: 'Supplier A', amount: 12000, currency: 'ETH', status: 'completed', category: 'Procurement', timestamp: Date.now() - 10800000, txHash: '0xghi789', direction: 'outgoing' },
-          { id: 4, from: 'Subsidiary 2', to: 'Supplier B', amount: 8500, currency: 'ETH', status: 'pending', category: 'Procurement', timestamp: Date.now() - 14400000, txHash: '0xjkl012', direction: 'outgoing' },
-          { id: 5, from: 'Headquarters', to: 'Subsidiary 1', amount: 25000, currency: 'ETH', status: 'completed', category: 'Operations', timestamp: Date.now() - 18000000, txHash: '0xmno345', direction: 'outgoing' }
-        ];
+        console.log('[FlowPaymentVisualization] No user logged in, enabling test mode with rich demo data');
+        // Enable test mode and use rich mock data
+        setTestMode(true);
+        const mockData = generateFullMockData(12, 27); // 12 suppliers, 27 payments
         
-        const demoSuppliers = [
-          { id: 'sub1', name: 'Subsidiary 1', address: '0x1234...5678', category: 'Subsidiary', totalAmount: 75000, paymentCount: 2 },
-          { id: 'sub2', name: 'Subsidiary 2', address: '0x2345...6789', category: 'Subsidiary', totalAmount: 35000, paymentCount: 1 },
-          { id: 'supA', name: 'Supplier A', address: '0x3456...7890', category: 'Supplier', totalAmount: 12000, paymentCount: 1 },
-          { id: 'supB', name: 'Supplier B', address: '0x4567...8901', category: 'Supplier', totalAmount: 8500, paymentCount: 1 }
-        ];
+        // Convert mock data to component format
+        const paymentsData = mockData.payments.map(p => ({
+          id: p.id,
+          from: p.from,
+          to: p.supplierName,
+          amount: p.amount * 1000, // Convert to display format
+          currency: 'ETH',
+          status: p.status.toLowerCase(),
+          category: p.category,
+          timestamp: p.timestamp.getTime(),
+          txHash: p.txHash,
+          direction: 'outgoing'
+        }));
         
-        setPayments(demoPayments);
-        setSuppliers(demoSuppliers);
+        setPayments(paymentsData);
+        setSuppliers(mockData.suppliers);
         setStats({
-          totalPayments: demoPayments.length,
-          totalAmount: '130500.0000',
-          supplierCount: demoSuppliers.length,
-          averagePayment: '26100.0000'
+          totalPayments: mockData.stats.totalPayments,
+          totalAmount: (mockData.stats.totalAmount * 1000).toFixed(4),
+          supplierCount: mockData.stats.supplierCount,
+          averagePayment: (mockData.stats.averagePayment * 1000).toFixed(4)
         });
         
         setLoading(false);
         return;
       }
+      
+      // User is logged in, disable test mode
+      setTestMode(false);
 
       console.log('[FlowPaymentVisualization] Fetching data for account:', user.account_id);
       
@@ -185,14 +192,21 @@ export default function FlowPaymentVisualization() {
           </div>
         </div>
 
-        {/* Demo Mode Banner */}
+        {/* Stream Payment Demo */}
         {!authUtils.getCurrentUser() && (
           <div className="mb-6">
             <StreamPaymentDemo />
-            <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-              <p className="text-blue-800 dark:text-blue-200 text-center">
-                👋 You're viewing demo data. <button onClick={() => window.location.hash = '#/home'} className="underline font-semibold">Login</button> to see your real payment data.
-              </p>
+          </div>
+        )}
+        
+        {/* Test Mode Banner */}
+        {testMode && (
+          <div className="mb-6 p-4 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg">
+            <div className="flex items-center justify-center gap-2 text-purple-800 dark:text-purple-200">
+              <span className="text-lg">🧪</span>
+              <span className="font-semibold">Test Mode Enabled</span>
+              <span className="text-sm">-</span>
+              <span className="text-sm">Currently displaying mock data with {stats.supplierCount} suppliers and {stats.totalPayments} payment records for demonstration purposes</span>
             </div>
           </div>
         )}
