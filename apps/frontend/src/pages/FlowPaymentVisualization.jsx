@@ -310,6 +310,9 @@ export default function FlowPaymentVisualization() {
               stats={stats}
               selectedCurrency={selectedCurrency}
               rates={rates}
+              testMode={testMode}
+              demoCase="complex"
+              mockData={mockData}
             />
           </div>
         )}
