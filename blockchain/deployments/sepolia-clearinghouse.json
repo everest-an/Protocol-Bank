@@ -1,0 +1,8 @@
+{
+  "network": "sepolia",
+  "clearingHouse": "0xEf646FfBEd6Ee705F2A2A4fF835bD3Ae70950984",
+  "collateralToken": "0xcAf961A9670b16a5308032368C9223b1C35542e1",
+  "nettingEngine": "0x66794fC75C351ad9677cB00B2043868C11dfcadA",
+  "deployer": "0x66794fC75C351ad9677cB00B2043868C11dfcadA",
+  "timestamp": "2025-11-07T23:58:00.975Z"
+}

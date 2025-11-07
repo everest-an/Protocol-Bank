@@ -1,0 +1,9 @@
+{
+  "network": "sepolia",
+  "chainId": "11155111",
+  "contractName": "MockERC20",
+  "address": "0xcAf961A9670b16a5308032368C9223b1C35542e1",
+  "deployer": "0x66794fC75C351ad9677cB00B2043868C11dfcadA",
+  "deploymentTime": "2025-11-07T23:53:49.852Z",
+  "initialSupply": "1000000000000"
+}
