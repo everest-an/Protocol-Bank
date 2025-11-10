@@ -44,23 +44,13 @@ export default function PaymentsPage() {
     }
   }
 
-  // If stream tab is active, show StreamPaymentPage
-  if (activeTab === 'stream') {
-    return <StreamPaymentPage />
-  }
-
-  // If network tab is active, show NetworkPaymentPage
-  if (activeTab === 'network') {
-    return <NetworkPaymentPage />
-  }
-
   return (
     <div className="space-y-6">
       {/* Stream Payment Demo */}
       <StreamPaymentDemo />
       
       {/* Tab Navigation */}
-      <div className="border-b border-gray-200">
+      <div className="border-b border-gray-200 dark:border-gray-700">
         <nav className="flex space-x-8">
           <button
             onClick={() => setActiveTab('regular')}
@@ -104,12 +94,15 @@ export default function PaymentsPage() {
         </nav>
       </div>
 
-      <div>
-        <h2 className="text-2xl font-normal text-gray-900 mb-2">Cross-Border Payments</h2>
-        <p className="text-sm text-gray-500">Send and receive payments globally with real-time settlement</p>
-      </div>
+      {/* Tab Content */}
+      {activeTab === 'regular' && (
+        <>
+          <div>
+            <h2 className="text-2xl font-normal text-gray-900 dark:text-white mb-2">Cross-Border Payments</h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Send and receive payments globally with real-time settlement</p>
+          </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Send Payment Form */}
         <div className="lg:col-span-2">
           <Card className="border border-gray-200">
@@ -253,6 +246,18 @@ export default function PaymentsPage() {
           </div>
         </CardContent>
       </Card>
+        </>
+      )}
+
+      {/* Stream Payment Tab */}
+      {activeTab === 'stream' && (
+        <StreamPaymentPage />
+      )}
+
+      {/* Network Payment Tab */}
+      {activeTab === 'network' && (
+        <NetworkPaymentPage />
+      )}
     </div>
   )
 }
