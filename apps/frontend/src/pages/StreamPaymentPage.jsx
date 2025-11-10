@@ -349,13 +349,10 @@ function CreateStreamModal({ isOpen, onClose, paymentType, signer, account, onSu
       if (paymentType === 'fiat') {
         // Create via backend API
         const response = await streamPaymentService.create({
-          sender_account_id: user.account_id,
-          recipient_address: formData.recipient,
-          total_amount: parseFloat(formData.amount),
+          to_account_id: formData.recipient,
+          amount: parseFloat(formData.amount),
           currency: formData.currency,
-          start_time: new Date().toISOString(),
-          end_time: new Date(Date.now() + parseInt(formData.duration) * 1000).toISOString(),
-          frequency: parseInt(formData.frequency),
+          duration: parseInt(formData.duration),
           stream_name: formData.streamName
         });
         
