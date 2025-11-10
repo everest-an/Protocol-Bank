@@ -87,12 +87,12 @@ export default function EnterprisePaymentTable({ payments = [], selectedCurrency
           </div>
 
           {/* Category Filter */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap max-h-[80px] overflow-y-auto">
             {categories.map(cat => (
               <button
                 key={cat}
                 onClick={() => setFilterCategory(cat)}
-                className={`px-3 py-1 text-xs rounded-full transition-colors ${
+                className={`px-3 py-1 text-xs rounded-full transition-colors whitespace-nowrap flex-shrink-0 ${
                   filterCategory === cat
                     ? 'bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900'
                     : 'bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'

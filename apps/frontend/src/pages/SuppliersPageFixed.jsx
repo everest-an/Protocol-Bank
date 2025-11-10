@@ -142,14 +142,14 @@ export default function SuppliersPage() {
                 className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
               />
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap max-h-[80px] overflow-y-auto">
               {categories.map(cat => (
                 <Button
                   key={cat}
                   variant={selectedCategory === cat ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setSelectedCategory(cat)}
-                  className="capitalize"
+                  className="capitalize whitespace-nowrap flex-shrink-0"
                 >
                   {cat}
                 </Button>
