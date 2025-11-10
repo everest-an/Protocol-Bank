@@ -5,6 +5,7 @@ import contractService, { createContractService } from '../services/contractServ
 import { useWeb3Wallet } from '../hooks/useWeb3Wallet';
 import authUtils from '../utils/auth';
 import BatchStreamModal from '../components/BatchStreamModal.jsx';
+import StreamPaymentDashboard from '../components/StreamPaymentDashboard.jsx';
 
 export default function StreamPaymentPage() {
   const [paymentType, setPaymentType] = useState('fiat'); // 'fiat' or 'crypto'
@@ -181,10 +182,21 @@ export default function StreamPaymentPage() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {streams.map(stream => (
-              <StreamCard key={stream.stream_id} stream={stream} paymentType={paymentType} onUpdate={loadStreams} />
-            ))}
+          <div className="space-y-6">
+            {/* Dashboard */}
+            <StreamPaymentDashboard streams={streams} paymentType={paymentType} />
+            
+            {/* Stream Cards */}
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                Active Streams
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {streams.map(stream => (
+                  <StreamCard key={stream.stream_id} stream={stream} paymentType={paymentType} onUpdate={loadStreams} />
+                ))}
+              </div>
+            </div>
           </div>
         )}
         
