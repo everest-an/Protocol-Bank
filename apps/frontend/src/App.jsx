@@ -276,7 +276,8 @@ function AppContent() {
                 >
                   Stream Payment
                 </button>
-                <button
+                {/* ClearingHouse - Only for bank admin interface */}
+                {/* <button
                   onClick={() => setActiveTab('clearing-house')}
                   className={`text-sm font-medium whitespace-nowrap pb-1 border-b-2 transition-all duration-200 ${
                     activeTab === 'clearing-house' 
@@ -285,7 +286,7 @@ function AppContent() {
                   }`}
                 >
                   ClearingHouse
-                </button>
+                </button> */}
             </nav>
 
             {/* 右侧：通知、设置、钱包 */}
