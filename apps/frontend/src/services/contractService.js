@@ -2,11 +2,11 @@ import { ethers } from 'ethers';
 import StreamPaymentABI from './StreamPaymentABI.json';
 
 // Contract addresses (Sepolia testnet)
-// Updated: 2025-11-10 - Redeployed with correct ABI
+// Updated: 2025-11-10 - Redeployed with batch creation功能
 export const CONTRACTS = {
-  STREAM_PAYMENT: '0xCF8c9b270E3B9Fa845284954fCce28C011c86e77',
-  MOCK_USDC: '0x9Fb08a9e4Ca2048Cb9561a2ED2fA1ee022d20cB1',
-  MOCK_DAI: '0x3d2F0c98Fc944be428CA9B0FF04E0cd526A142c9',
+  STREAM_PAYMENT: '0x2f0C38472f85dC542807Cb42506c0E2753619d8c',
+  MOCK_USDC: '0xD4a303070CFcA084229Ca810618D71242f5da642',
+  MOCK_DAI: '0xFFe1F0f101f502F906c531486a3A09e025204F77',
 };
 
 // Network configuration
@@ -222,6 +222,70 @@ class StreamPaymentContractService {
       return {
         success: false,
         error: error.message || 'Failed to cancel stream',
+      };
+    }
+  }
+
+  /**
+   * Create multiple streams in batch
+   */
+  async createStreamBatch(batchParams) {
+    try {
+      // Group by token to calculate total approval needed
+      const tokenAmounts = {};
+      for (const param of batchParams) {
+        if (!tokenAmounts[param.token]) {
+          tokenAmounts[param.token] = 0n;
+        }
+        tokenAmounts[param.token] += BigInt(param.totalAmount);
+      }
+
+      // Approve tokens
+      const owner = await this.signer.getAddress();
+      for (const [token, totalAmount] of Object.entries(tokenAmounts)) {
+        const tokenContract = new ethers.Contract(token, ERC20_ABI, this.signer);
+        const allowance = await tokenContract.allowance(owner, CONTRACTS.STREAM_PAYMENT);
+
+        if (allowance < totalAmount) {
+          console.log(`Approving ${totalAmount} tokens for ${token}...`);
+          const approveTx = await tokenContract.approve(
+            CONTRACTS.STREAM_PAYMENT,
+            totalAmount
+          );
+          await approveTx.wait();
+          console.log('Tokens approved');
+        }
+      }
+
+      // Create batch stream
+      console.log(`Creating batch of ${batchParams.length} streams...`);
+      const tx = await this.contract.createStreamBatch(batchParams);
+      const receipt = await tx.wait();
+
+      // Extract stream IDs from events
+      const streamIds = [];
+      for (const log of receipt.logs) {
+        try {
+          const parsed = this.contract.interface.parseLog(log);
+          if (parsed && parsed.name === 'StreamCreated') {
+            streamIds.push(Number(parsed.args.streamId));
+          }
+        } catch (e) {
+          // Skip logs that don't match
+        }
+      }
+
+      return {
+        success: true,
+        streamIds,
+        txHash: receipt.hash,
+        gasUsed: receipt.gasUsed.toString(),
+      };
+    } catch (error) {
+      console.error('Error creating batch streams:', error);
+      return {
+        success: false,
+        error: error.message || 'Failed to create batch streams',
       };
     }
   }

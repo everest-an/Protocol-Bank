@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, RefreshCw, Clock, Pause, Play, X, Send, DollarSign } from 'lucide-react';
 import { streamPaymentService } from '../services/backendService';
-import contractService from '../services/contractService';
+import contractService, { createContractService } from '../services/contractService';
 import { useWeb3Wallet } from '../hooks/useWeb3Wallet';
 import authUtils from '../utils/auth';
+import BatchStreamModal from '../components/BatchStreamModal.jsx';
 
 export default function StreamPaymentPage() {
   const [paymentType, setPaymentType] = useState('fiat'); // 'fiat' or 'crypto'
   const [streams, setStreams] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showBatchModal, setShowBatchModal] = useState(false);
   
   // Web3 wallet state
   const { account, signer, isConnected, connect, disconnect } = useWeb3Wallet();
@@ -63,13 +65,24 @@ export default function StreamPaymentPage() {
                 Automated continuous payment streams
               </p>
             </div>
-            <button
-              onClick={() => setShowCreateModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-            >
-              <Plus className="w-4 h-4" />
-              Create Stream
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowCreateModal(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              >
+                <Plus className="w-4 h-4" />
+                Create Stream
+              </button>
+              {paymentType === 'crypto' && (
+                <button
+                  onClick={() => setShowBatchModal(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  <Plus className="w-4 h-4" />
+                  Batch Create
+                </button>
+              )}
+            </div>
           </div>
         </div>
         
@@ -185,6 +198,21 @@ export default function StreamPaymentPage() {
             account={account}
             onSuccess={() => {
               setShowCreateModal(false);
+              loadStreams();
+            }}
+          />
+        )}
+        
+        {/* Batch Create Stream Modal */}
+        {showBatchModal && (
+          <BatchStreamModal
+            isOpen={showBatchModal}
+            onClose={() => setShowBatchModal(false)}
+            paymentType={paymentType}
+            account={account}
+            signer={signer}
+            onSuccess={() => {
+              setShowBatchModal(false);
               loadStreams();
             }}
           />

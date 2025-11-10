@@ -369,6 +369,52 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "recipient",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "totalAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "duration",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "streamName",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct StreamPayment.StreamParams[]",
+        "name": "params",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "createStreamBatch",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "streamIds",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "feeRecipient",
     "outputs": [

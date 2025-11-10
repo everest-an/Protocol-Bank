@@ -356,6 +356,103 @@ contract StreamPayment is IStreamPayment, ReentrancyGuard, Ownable, Pausable {
         return _streamIdCounter;
     }
 
+    /**
+     * @dev Struct to hold parameters for batch stream creation
+     */
+    struct StreamParams {
+        address recipient;
+        address token;
+        uint256 totalAmount;
+        uint256 duration;
+        string streamName;
+    }
+
+    /**
+     * @dev Create multiple streaming payments in a single transaction
+     * @param params Array of StreamParams containing parameters for each stream
+     * @return streamIds Array of unique identifiers for the created streams
+     * @notice Requires approval for the contract to transfer all tokens
+     * @notice Saves gas by batching multiple stream creations
+     * @notice If any stream creation fails, the entire transaction reverts
+     */
+    function createStreamBatch(
+        StreamParams[] calldata params
+    ) external nonReentrant whenNotPaused returns (uint256[] memory streamIds) {
+        require(params.length > 0, "Empty batch");
+        require(params.length <= 100, "Batch too large");
+        
+        streamIds = new uint256[](params.length);
+        
+        for (uint256 i = 0; i < params.length; ) {
+            StreamParams calldata param = params[i];
+            
+            // Validate parameters
+            require(param.recipient != address(0), "Invalid recipient");
+            require(param.recipient != msg.sender, "Cannot stream to self");
+            require(param.token != address(0), "Invalid token");
+            require(param.totalAmount > 0, "Amount must be positive");
+            require(param.duration >= MIN_DURATION, "Duration too short");
+            require(bytes(param.streamName).length <= MAX_NAME_LENGTH, "Stream name too long");
+            
+            // Calculate rate
+            uint256 ratePerSecond = (param.totalAmount * PRECISION) / param.duration;
+            require(ratePerSecond > 0, "Rate too low");
+            
+            // Transfer tokens
+            IERC20(param.token).safeTransferFrom(msg.sender, address(this), param.totalAmount);
+            
+            // Create stream ID
+            uint256 streamId;
+            unchecked {
+                streamId = _streamIdCounter++;
+            }
+            streamIds[i] = streamId;
+            
+            // Create stream
+            uint256 startTime = block.timestamp;
+            uint256 endTime = startTime + param.duration;
+            
+            _streams[streamId] = Stream({
+                sender: msg.sender,
+                recipient: param.recipient,
+                token: param.token,
+                totalAmount: param.totalAmount,
+                amountStreamed: 0,
+                amountWithdrawn: 0,
+                ratePerSecond: ratePerSecond,
+                startTime: startTime,
+                endTime: endTime,
+                lastWithdrawTime: startTime,
+                pauseTime: 0,
+                status: StreamStatus.ACTIVE,
+                streamName: param.streamName
+            });
+            
+            // Update mappings
+            _streamsBySender[msg.sender].push(streamId);
+            _streamsByRecipient[param.recipient].push(streamId);
+            
+            // Emit event
+            emit StreamCreated(
+                streamId,
+                msg.sender,
+                param.recipient,
+                param.token,
+                param.totalAmount,
+                ratePerSecond,
+                startTime,
+                endTime,
+                param.streamName
+            );
+            
+            unchecked {
+                ++i;
+            }
+        }
+        
+        return streamIds;
+    }
+
     // QSP-9: Emergency pause functionality
     /**
      * @dev Pause all contract operations (only owner)
