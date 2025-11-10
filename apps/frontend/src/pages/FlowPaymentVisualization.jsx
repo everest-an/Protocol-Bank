@@ -266,9 +266,8 @@ export default function FlowPaymentVisualization() {
               <DollarSign className="w-5 h-5 text-green-500" />
             </div>
             <div className="text-2xl font-bold text-gray-900 dark:text-white">
-              {selectedCurrency === 'ETH' ? 'Ξ' : '$'} {formatWithConversion(
+              {formatWithConversion(
                 stats.totalAmount,
-                'ETH',
                 selectedCurrency,
                 rates
               )}
@@ -291,9 +290,8 @@ export default function FlowPaymentVisualization() {
               <Send className="w-5 h-5 text-orange-500" />
             </div>
             <div className="text-2xl font-bold text-gray-900 dark:text-white">
-              {selectedCurrency === 'ETH' ? 'Ξ' : '$'} {formatWithConversion(
+              {formatWithConversion(
                 stats.averagePayment,
-                'ETH',
                 selectedCurrency,
                 rates
               )}

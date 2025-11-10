@@ -361,7 +361,12 @@ export default function PaymentFlowBuilder({ onDeploy, editingFlow, onCancelEdit
                   className="w-full text-left px-3 py-2 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors"
                 >
                   <div className="text-sm font-medium text-purple-900 dark:text-purple-100">{template.name}</div>
-                  <div className="text-xs text-purple-600 dark:text-purple-400 mt-1">{template.description}</div>
+                  <div 
+                    className="text-xs text-purple-600 dark:text-purple-400 mt-1 line-clamp-2"
+                    title={template.description}
+                  >
+                    {template.description}
+                  </div>
                 </button>
               ))}
             </div>
