@@ -1,5 +1,18 @@
 import React, { useMemo } from 'react';
 import { TrendingUp, DollarSign, Users, ArrowUpRight } from 'lucide-react';
+import {
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer
+} from 'recharts';
 
 export default function StreamPaymentDashboard({ streams, paymentType }) {
   // Calculate statistics from streams
@@ -82,6 +95,64 @@ export default function StreamPaymentDashboard({ streams, paymentType }) {
     }
   ];
 
+  // Prepare data for Amount Trend Chart
+  const trendData = useMemo(() => {
+    if (!streams || streams.length === 0) return [];
+    
+    // Group by date
+    const dateMap = new Map();
+    
+    streams.forEach(stream => {
+      const createdAt = stream.created_at || stream.start_time || Date.now();
+      const date = new Date(createdAt).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric'
+      });
+      
+      const amount = parseFloat(stream.total_amount || stream.totalAmount || 0);
+      
+      if (dateMap.has(date)) {
+        dateMap.set(date, dateMap.get(date) + amount);
+      } else {
+        dateMap.set(date, amount);
+      }
+    });
+    
+    // Convert to array and sort by date
+    return Array.from(dateMap.entries())
+      .map(([date, amount]) => ({ date, amount }))
+      .slice(-7); // Last 7 days
+  }, [streams]);
+  
+  // Prepare data for Recipient Distribution Chart
+  const distributionData = useMemo(() => {
+    if (!streams || streams.length === 0) return [];
+    
+    // Group by recipient
+    const recipientMap = new Map();
+    
+    streams.forEach(stream => {
+      const recipient = stream.recipient_address || stream.recipient || 'Unknown';
+      const shortAddr = `${recipient.substring(0, 6)}...${recipient.substring(recipient.length - 4)}`;
+      const amount = parseFloat(stream.total_amount || stream.totalAmount || 0);
+      
+      if (recipientMap.has(shortAddr)) {
+        recipientMap.set(shortAddr, recipientMap.get(shortAddr) + amount);
+      } else {
+        recipientMap.set(shortAddr, amount);
+      }
+    });
+    
+    // Convert to array and sort by amount
+    return Array.from(recipientMap.entries())
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 5); // Top 5 recipients
+  }, [streams]);
+  
+  // Colors for pie chart
+  const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+
   return (
     <div className="space-y-6">
       {/* Statistics Cards */}
@@ -108,6 +179,108 @@ export default function StreamPaymentDashboard({ streams, paymentType }) {
           );
         })}
       </div>
+
+      {/* Charts Section */}
+      {streams && streams.length > 0 && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Amount Trend Chart */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Amount Trend
+            </h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+              Stream payment amounts over time
+            </p>
+            {trendData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={trendData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.1} />
+                  <XAxis 
+                    dataKey="date" 
+                    stroke="#9ca3af"
+                    style={{ fontSize: '12px' }}
+                  />
+                  <YAxis 
+                    stroke="#9ca3af"
+                    style={{ fontSize: '12px' }}
+                  />
+                  <Tooltip 
+                    contentStyle={{
+                      backgroundColor: '#1f2937',
+                      border: 'none',
+                      borderRadius: '8px',
+                      color: '#fff'
+                    }}
+                    formatter={(value) => [`≡ ${formatCurrency(value)}`, 'Amount']}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="amount" 
+                    stroke="#3b82f6" 
+                    strokeWidth={2}
+                    dot={{ fill: '#3b82f6', r: 4 }}
+                    activeDot={{ r: 6 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-[300px] flex items-center justify-center text-gray-400">
+                No data available
+              </div>
+            )}
+          </div>
+
+          {/* Recipient Distribution Chart */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Top Recipients
+            </h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+              Distribution by payment amount
+            </p>
+            {distributionData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={distributionData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {distributionData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    contentStyle={{
+                      backgroundColor: '#1f2937',
+                      border: 'none',
+                      borderRadius: '8px',
+                      color: '#fff'
+                    }}
+                    formatter={(value) => [`≡ ${formatCurrency(value)}`, 'Amount']}
+                  />
+                  <Legend 
+                    verticalAlign="bottom" 
+                    height={36}
+                    formatter={(value) => (
+                      <span style={{ color: '#9ca3af', fontSize: '12px' }}>{value}</span>
+                    )}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-[300px] flex items-center justify-center text-gray-400">
+                No data available
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Stream Transactions Table */}
       {streams && streams.length > 0 && (
