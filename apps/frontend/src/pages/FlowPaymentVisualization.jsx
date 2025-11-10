@@ -41,7 +41,7 @@ export default function FlowPaymentVisualization() {
         id: p.id,
         from: p.from,
         to: p.supplierName,
-        amount: p.amount * 1000, // Convert to display format
+        amount: p.amount, // Keep original ETH amount
         currency: 'ETH',
         status: p.status.toLowerCase(),
         category: p.category,
@@ -54,9 +54,9 @@ export default function FlowPaymentVisualization() {
       setSuppliers(data.suppliers);
       setStats({
         totalPayments: data.stats.totalPayments,
-        totalAmount: (data.stats.totalAmount * 1000).toFixed(4),
+        totalAmount: data.stats.totalAmount,
         supplierCount: data.stats.supplierCount,
-        averagePayment: (data.stats.averagePayment * 1000).toFixed(4)
+        averagePayment: data.stats.averagePayment
       });
     }
   }, [testMode, supplierCount]);
@@ -267,7 +267,7 @@ export default function FlowPaymentVisualization() {
             </div>
             <div className="text-2xl font-bold text-gray-900 dark:text-white">
               {formatWithConversion(
-                stats.totalAmount,
+                parseFloat(stats.totalAmount || 0),
                 selectedCurrency,
                 rates
               )}
@@ -291,7 +291,7 @@ export default function FlowPaymentVisualization() {
             </div>
             <div className="text-2xl font-bold text-gray-900 dark:text-white">
               {formatWithConversion(
-                stats.averagePayment,
+                parseFloat(stats.averagePayment || 0),
                 selectedCurrency,
                 rates
               )}
