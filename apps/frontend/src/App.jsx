@@ -28,6 +28,7 @@ import FlowPaymentVisualization from './pages/FlowPaymentVisualization.jsx'
 import Automation from './pages/Automation.jsx'
 import UnifiedAnalytics from './pages/UnifiedAnalytics.jsx'
 import StreamPaymentPage from './pages/StreamPaymentPage.jsx'
+import PaymentsPage from './pages/PaymentsPage.jsx'
 import LandingPage from './pages/LandingPage.jsx'
 import ClearingHousePage from './pages/ClearingHousePage.jsx'
 
@@ -389,12 +390,7 @@ function AppContent() {
         )}
         {activeTab === 'payments' && (
           <ErrorBoundary>
-            <FlowPaymentVisualization 
-              sharedMockData={globalMockData}
-              onDataUpdate={handleDataUpdate}
-              externalTestMode={testMode}
-              onTestModeChange={setTestMode}
-            />
+            <PaymentsPage />
           </ErrorBoundary>
         )}
         {activeTab === 'analytics' && (
