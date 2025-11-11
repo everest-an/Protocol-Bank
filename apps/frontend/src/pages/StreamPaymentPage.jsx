@@ -7,6 +7,7 @@ import { useWeb3Wallet } from '../hooks/useWeb3Wallet';
 import authUtils from '../utils/auth';
 import BatchStreamModal from '../components/BatchStreamModal.jsx';
 import StreamPaymentDashboard from '../components/StreamPaymentDashboard.jsx';
+import CreateStreamPaymentForm from '../components/CreateStreamPaymentForm.jsx';
 
 export default function StreamPaymentPage() {
   const [paymentType, setPaymentType] = useState('fiat'); // 'fiat' or 'crypto'
@@ -251,6 +252,18 @@ export default function StreamPaymentPage() {
             onSuccess={loadStreams}
           />
         )}
+
+        {/* Create Stream Payment Form */}
+        <CreateStreamPaymentForm
+          isOpen={showCreateModal}
+          onClose={() => setShowCreateModal(false)}
+          onSuccess={(data) => {
+            console.log('Stream created:', data);
+            loadStreams();
+          }}
+          account={account}
+          provider={signer?.provider}
+        />
       </div>
     </div>
   );
