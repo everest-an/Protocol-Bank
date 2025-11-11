@@ -293,15 +293,24 @@ export default function EnterprisePaymentNetworkV2({
         
         // Supplier nodes
         suppliers.forEach(supplier => {
+          // Determine color based on status
+          let nodeColor = '#10b981'; // Default green (success)
+          if (supplier.status === 'failed') {
+            nodeColor = '#ef4444'; // Red for failed
+          } else if (supplier.status === 'stopped' || supplier.status === 'paused') {
+            nodeColor = '#9ca3af'; // Gray for stopped
+          }
+          
           nodesData.push({
             id: supplier.address,
             label: supplier.name || `Supplier ${supplier.address.slice(0, 6)}`,
             address: supplier.address,
             type: 'supplier',
             size: 15,
-            color: '#10b981',
+            color: nodeColor,
             level: 1,
-            category: supplier.category
+            category: supplier.category,
+            status: supplier.status
           });
         });
         
@@ -386,7 +395,7 @@ export default function EnterprisePaymentNetworkV2({
         ctx.globalAlpha = 1;
       });
 
-      // Draw animated particles on links
+      // Draw animated particles on links (orange dots representing transactions)
       particlesRef.current.forEach((particle) => {
         const link = linksData[particle.linkIndex];
         if (!link) return;
@@ -402,9 +411,9 @@ export default function EnterprisePaymentNetworkV2({
         const x = source.x + (target.x - source.x) * particle.progress;
         const y = source.y + (target.y - source.y) * particle.progress;
 
-        // Draw particle
-        ctx.fillStyle = isDarkMode ? '#fbbf24' : '#f59e0b';
-        ctx.globalAlpha = 0.8;
+        // Draw particle as orange dot (representing each transaction)
+        ctx.fillStyle = '#fb923c'; // Orange color for transaction particles
+        ctx.globalAlpha = 0.9;
         ctx.beginPath();
         ctx.arc(x, y, particle.size * zoom, 0, Math.PI * 2);
         ctx.fill();

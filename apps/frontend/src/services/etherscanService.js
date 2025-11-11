@@ -280,6 +280,112 @@ export const getGasPrice = async (chainId = 1) => {
   }
 };
 
+/**
+ * Get payment streams from transactions
+ * Filters and processes transactions to identify stream payments
+ * @param {string} address - User's wallet address
+ * @param {number} chainId - Chain ID
+ * @returns {Promise<Object>} Processed stream payment data
+ */
+export const getStreamPaymentData = async (address, chainId = 11155111) => {
+  try {
+    // Fetch both normal and token transactions
+    const [normalTxs, tokenTxs] = await Promise.all([
+      getTransactionHistory(address, chainId, { offset: 100 }),
+      getTokenTransfers(address, chainId, { offset: 100 })
+    ]);
+
+    // Combine and process transactions
+    const allTransactions = [...normalTxs, ...tokenTxs];
+    
+    // Group by recipient to identify suppliers
+    const recipientMap = new Map();
+    const payments = [];
+
+    allTransactions.forEach(tx => {
+      // Only process outgoing transactions (user is sender)
+      if (tx.from.toLowerCase() === address.toLowerCase()) {
+        const recipient = tx.to.toLowerCase();
+        
+        // Add to recipient map
+        if (!recipientMap.has(recipient)) {
+          recipientMap.set(recipient, {
+            address: tx.to,
+            totalAmount: 0,
+            transactionCount: 0,
+            lastTransaction: tx.timestamp,
+            status: tx.status === 'failed' ? 'failed' : 'success'
+          });
+        }
+
+        const recipientData = recipientMap.get(recipient);
+        const amount = parseFloat(tx.value) || 0;
+        recipientData.totalAmount += amount;
+        recipientData.transactionCount += 1;
+        recipientData.lastTransaction = Math.max(recipientData.lastTransaction, tx.timestamp);
+        
+        // Update status (if any transaction failed, mark as failed)
+        if (tx.status === 'failed') {
+          recipientData.status = 'failed';
+        }
+
+        // Add to payments array
+        payments.push({
+          id: tx.hash,
+          from: tx.from,
+          to: tx.to,
+          amount: amount,
+          status: tx.status,
+          timestamp: tx.timestamp * 1000, // Convert to milliseconds
+          tokenSymbol: tx.tokenSymbol || 'ETH',
+          hash: tx.hash
+        });
+      }
+    });
+
+    // Convert recipient map to suppliers array
+    const suppliers = Array.from(recipientMap.entries()).map(([address, data]) => ({
+      id: address,
+      address: data.address,
+      name: `Supplier ${address.substring(0, 6)}...${address.substring(address.length - 4)}`,
+      totalAmount: data.totalAmount,
+      transactionCount: data.transactionCount,
+      lastTransaction: data.lastTransaction,
+      status: data.status
+    }));
+
+    // Calculate statistics
+    const stats = {
+      totalPayments: payments.length,
+      totalAmount: payments.reduce((sum, p) => sum + p.amount, 0),
+      suppliers: suppliers.length,
+      averagePayment: payments.length > 0 ? payments.reduce((sum, p) => sum + p.amount, 0) / payments.length : 0,
+      successRate: payments.length > 0 ? (payments.filter(p => p.status === 'success').length / payments.length) * 100 : 0
+    };
+
+    return {
+      suppliers,
+      payments,
+      stats,
+      lastUpdate: Date.now()
+    };
+  } catch (error) {
+    console.error('Error processing stream payment data:', error);
+    return {
+      suppliers: [],
+      payments: [],
+      stats: {
+        totalPayments: 0,
+        totalAmount: 0,
+        suppliers: 0,
+        averagePayment: 0,
+        successRate: 0
+      },
+      lastUpdate: Date.now()
+    };
+  }
+};
+
 export default {
   getTransactionHistory,
   getInternalTransactions,
@@ -287,4 +393,5 @@ export default {
   getBalance,
   getTransactionReceipt,
   getGasPrice,
+  getStreamPaymentData,
 };

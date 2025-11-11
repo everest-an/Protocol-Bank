@@ -15,7 +15,7 @@ import {
   ResponsiveContainer
 } from 'recharts';
 
-export default function StreamPaymentDashboard({ streams, paymentType }) {
+export default function StreamPaymentDashboard({ streams, paymentType, account, etherscanData }) {
   // Calculate statistics from streams
   const stats = useMemo(() => {
     if (!streams || streams.length === 0) {
@@ -190,21 +190,26 @@ export default function StreamPaymentDashboard({ streams, paymentType }) {
           Interactive visualization of stream payment relationships
         </p>
         <EnterprisePaymentNetworkV2
-          suppliers={streams.map(s => ({
+          suppliers={etherscanData?.suppliers || streams.map(s => ({
             id: s.recipient_address || s.recipient,
+            address: s.recipient_address || s.recipient,
             name: s.stream_name || `Stream ${s.id}`,
-            amount: parseFloat(s.total_amount || s.totalAmount || 0)
+            amount: parseFloat(s.total_amount || s.totalAmount || 0),
+            status: s.status || 'success',
+            transactionCount: s.transaction_count || 1
           }))}
-          payments={streams.map(s => ({
-            id: s.id,
-            from: 'My Account',
+          payments={etherscanData?.payments || streams.map(s => ({
+            id: s.id || s.stream_id,
+            from: account || 'My Account',
             to: s.recipient_address || s.recipient,
             amount: parseFloat(s.total_amount || s.totalAmount || 0),
-            status: s.status,
-            timestamp: new Date(s.created_at || Date.now()).getTime()
+            status: s.status || 'success',
+            timestamp: new Date(s.created_at || Date.now()).getTime(),
+            hash: s.hash || s.tx_hash
           }))}
           testMode={!streams || streams.length === 0}
           demoCase="simple"
+          account={account}
         />
       </div>
 
