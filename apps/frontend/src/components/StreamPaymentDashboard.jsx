@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { TrendingUp, DollarSign, Users, ArrowUpRight } from 'lucide-react';
+import EnterprisePaymentNetworkV2 from './EnterprisePaymentNetworkV2';
 import {
   LineChart,
   Line,
@@ -178,6 +179,33 @@ export default function StreamPaymentDashboard({ streams, paymentType }) {
             </div>
           );
         })}
+      </div>
+
+      {/* Payment Network Graph */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          Payment Network
+        </h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+          Interactive visualization of stream payment relationships
+        </p>
+        <EnterprisePaymentNetworkV2
+          suppliers={streams.map(s => ({
+            id: s.recipient_address || s.recipient,
+            name: s.stream_name || `Stream ${s.id}`,
+            amount: parseFloat(s.total_amount || s.totalAmount || 0)
+          }))}
+          payments={streams.map(s => ({
+            id: s.id,
+            from: 'My Account',
+            to: s.recipient_address || s.recipient,
+            amount: parseFloat(s.total_amount || s.totalAmount || 0),
+            status: s.status,
+            timestamp: new Date(s.created_at || Date.now()).getTime()
+          }))}
+          testMode={!streams || streams.length === 0}
+          demoCase="simple"
+        />
       </div>
 
       {/* Charts Section */}
