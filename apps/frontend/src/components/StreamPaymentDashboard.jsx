@@ -69,8 +69,16 @@ export default function StreamPaymentDashboard({ streams, paymentType, account, 
       });
     }
 
+    // Category filter
+    if (categoryFilter !== 'all') {
+      filtered = filtered.filter(stream => {
+        const category = stream.category || 'Other';
+        return category === categoryFilter;
+      });
+    }
+
     return filtered;
-  }, [streams, searchTerm, dateFrom, dateTo, statusFilter]);
+  }, [streams, searchTerm, dateFrom, dateTo, statusFilter, categoryFilter]);
 
   // Paginated streams
   const paginatedStreams = useMemo(() => {
@@ -404,7 +412,7 @@ export default function StreamPaymentDashboard({ streams, paymentType, account, 
 
             {/* Filters */}
             {showFilters && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
                 {/* Search */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -472,8 +480,30 @@ export default function StreamPaymentDashboard({ streams, paymentType, account, 
                   </select>
                 </div>
 
+                {/* Category Filter */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Category
+                  </label>
+                  <select
+                    value={categoryFilter}
+                    onChange={(e) => setCategoryFilter(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="all">All Categories</option>
+                    <option value="AI Services">AI Services</option>
+                    <option value="Marketing">Marketing</option>
+                    <option value="Logistics">Logistics</option>
+                    <option value="Raw Materials">Raw Materials</option>
+                    <option value="Software">Software</option>
+                    <option value="Consulting">Consulting</option>
+                    <option value="Security Services">Security Services</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+
                 {/* Clear Filters */}
-                <div className="md:col-span-2 lg:col-span-4 flex justify-end">
+                <div className="md:col-span-2 lg:col-span-5 flex justify-end">
                   <button
                     onClick={() => {
                       setSearchTerm('');

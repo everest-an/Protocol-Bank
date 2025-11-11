@@ -22,7 +22,8 @@ export default function CreateStreamPaymentForm({ isOpen, onClose, onSuccess, ac
     token: 'USDC',
     amount: '',
     startTime: '',
-    endTime: ''
+    endTime: '',
+    category: 'Other'
   });
 
   // Validation state
@@ -403,8 +404,8 @@ export default function CreateStreamPaymentForm({ isOpen, onClose, onSuccess, ac
             )}
           </div>
 
-          {/* Token and Amount */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Token, Amount, and Category */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Token Selection */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -453,6 +454,28 @@ export default function CreateStreamPaymentForm({ isOpen, onClose, onSuccess, ac
                   {errors.amount}
                 </p>
               )}
+            </div>
+
+            {/* Category */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Category *
+              </label>
+              <select
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+              >
+                <option value="AI Services">AI Services</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Logistics">Logistics</option>
+                <option value="Raw Materials">Raw Materials</option>
+                <option value="Software">Software</option>
+                <option value="Consulting">Consulting</option>
+                <option value="Security Services">Security Services</option>
+                <option value="Other">Other</option>
+              </select>
             </div>
           </div>
 
