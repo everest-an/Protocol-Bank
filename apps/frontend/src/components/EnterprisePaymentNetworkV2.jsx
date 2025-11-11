@@ -15,6 +15,10 @@ export default function EnterprisePaymentNetworkV2({
   const [hoveredNode, setHoveredNode] = useState(null);
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [draggedNode, setDraggedNode] = useState(null);
+  const [isPanning, setIsPanning] = useState(false);
+  const [lastMousePos, setLastMousePos] = useState({ x: 0, y: 0 });
   const simulationRef = useRef(null);
   const animationRef = useRef(null);
   const particlesRef = useRef([]);
@@ -462,6 +466,128 @@ export default function EnterprisePaymentNetworkV2({
     };
   }, [testMode, demoCase, zoom, pan, isDarkMode]);
 
+  // Helper function to get node at mouse position
+  const getNodeAtPosition = (x, y, nodesData) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return null;
+
+    // Transform mouse coordinates to canvas space
+    const canvasX = (x - pan.x) / zoom;
+    const canvasY = (y - pan.y) / zoom;
+
+    // Find node at position
+    for (let i = nodesData.length - 1; i >= 0; i--) {
+      const node = nodesData[i];
+      const dx = canvasX - node.x;
+      const dy = canvasY - node.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      
+      if (distance < node.size) {
+        return node;
+      }
+    }
+    return null;
+  };
+
+  // Mouse event handlers
+  const handleMouseDown = (e) => {
+    const canvas = canvasRef.current;
+    if (!canvas || !simulationRef.current) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const nodesData = simulationRef.current.nodes();
+    const node = getNodeAtPosition(x, y, nodesData);
+
+    if (node) {
+      // Start dragging node
+      setIsDragging(true);
+      setDraggedNode(node);
+      node.fx = node.x;
+      node.fy = node.y;
+      simulationRef.current.alphaTarget(0.3).restart();
+    } else {
+      // Start panning
+      setIsPanning(true);
+      setLastMousePos({ x: e.clientX, y: e.clientY });
+    }
+  };
+
+  const handleMouseMove = (e) => {
+    const canvas = canvasRef.current;
+    if (!canvas || !simulationRef.current) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    if (isDragging && draggedNode) {
+      // Drag node
+      const canvasX = (x - pan.x) / zoom;
+      const canvasY = (y - pan.y) / zoom;
+      draggedNode.fx = canvasX;
+      draggedNode.fy = canvasY;
+      simulationRef.current.alpha(0.3).restart();
+    } else if (isPanning) {
+      // Pan canvas
+      const dx = e.clientX - lastMousePos.x;
+      const dy = e.clientY - lastMousePos.y;
+      setPan(prev => ({ x: prev.x + dx, y: prev.y + dy }));
+      setLastMousePos({ x: e.clientX, y: e.clientY });
+    } else {
+      // Update hovered node
+      const nodesData = simulationRef.current.nodes();
+      const node = getNodeAtPosition(x, y, nodesData);
+      setHoveredNode(node);
+      
+      // Update cursor
+      canvas.style.cursor = node ? 'pointer' : 'move';
+    }
+  };
+
+  const handleMouseUp = (e) => {
+    if (isDragging && draggedNode) {
+      // Stop dragging
+      draggedNode.fx = null;
+      draggedNode.fy = null;
+      simulationRef.current.alphaTarget(0);
+      setIsDragging(false);
+      setDraggedNode(null);
+    } else if (isPanning) {
+      // Stop panning
+      setIsPanning(false);
+    }
+  };
+
+  const handleClick = (e) => {
+    const canvas = canvasRef.current;
+    if (!canvas || !simulationRef.current) return;
+
+    // Don't trigger click if we were dragging
+    if (isDragging) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const nodesData = simulationRef.current.nodes();
+    const node = getNodeAtPosition(x, y, nodesData);
+
+    if (node) {
+      setSelectedNode(node);
+    } else {
+      setSelectedNode(null);
+    }
+  };
+
+  const handleWheel = (e) => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? 0.9 : 1.1;
+    setZoom(prev => Math.max(0.1, Math.min(4, prev * delta)));
+  };
+
   // Zoom controls
   const handleZoomIn = () => setZoom(prev => Math.min(prev * 1.2, 4));
   const handleZoomOut = () => setZoom(prev => Math.max(prev / 1.2, 0.1));
@@ -476,6 +602,12 @@ export default function EnterprisePaymentNetworkV2({
         ref={canvasRef}
         className="w-full h-full cursor-move"
         style={{ background: isDarkMode ? '#0a0e27' : '#ffffff' }}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+        onClick={handleClick}
+        onWheel={handleWheel}
       />
 
       {/* Zoom Controls */}
@@ -513,9 +645,117 @@ export default function EnterprisePaymentNetworkV2({
       {/* Controls Hint */}
       <div className="absolute top-4 left-4 px-4 py-2 bg-white/90 dark:bg-gray-800/90 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg">
         <p className="text-xs text-gray-600 dark:text-gray-400">
-          💡 Drag to pan • Scroll to zoom • Click nodes for details
+          💡 Drag nodes to move • Drag canvas to pan • Scroll to zoom • Click nodes for details
         </p>
       </div>
+
+      {/* Node Details Modal */}
+      {selectedNode && (
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 p-6 min-w-[400px] max-w-[500px]">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Node Details
+              </h3>
+              <button
+                onClick={() => setSelectedNode(null)}
+                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="space-y-4">
+              {/* Node Type */}
+              <div className="flex items-center gap-3">
+                <div 
+                  className="w-8 h-8 rounded-full" 
+                  style={{ backgroundColor: selectedNode.color }}
+                />
+                <div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Type</p>
+                  <p className="font-medium text-gray-900 dark:text-white capitalize">
+                    {selectedNode.type}
+                  </p>
+                </div>
+              </div>
+
+              {/* Label */}
+              <div>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Name</p>
+                <p className="font-medium text-gray-900 dark:text-white">
+                  {selectedNode.label}
+                </p>
+              </div>
+
+              {/* Address */}
+              {selectedNode.address && (
+                <div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Address</p>
+                  <p className="font-mono text-sm text-gray-900 dark:text-white break-all">
+                    {selectedNode.address}
+                  </p>
+                </div>
+              )}
+
+              {/* Category */}
+              {selectedNode.category && (
+                <div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Category</p>
+                  <p className="font-medium text-gray-900 dark:text-white">
+                    {selectedNode.category}
+                  </p>
+                </div>
+              )}
+
+              {/* Status */}
+              {selectedNode.status && (
+                <div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Status</p>
+                  <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
+                    selectedNode.status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                    selectedNode.status === 'paused' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
+                    selectedNode.status === 'stopped' ? 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200' :
+                    'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                  }`}>
+                    {selectedNode.status}
+                  </span>
+                </div>
+              )}
+
+              {/* Level */}
+              <div>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Level</p>
+                <p className="font-medium text-gray-900 dark:text-white">
+                  {selectedNode.level === 0 ? 'Headquarters' : 
+                   selectedNode.level === 1 ? 'Direct Connection' : 
+                   `Level ${selectedNode.level}`}
+                </p>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <button
+                onClick={() => setSelectedNode(null)}
+                className="w-full px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors font-medium"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Overlay when modal is open */}
+      {selectedNode && (
+        <div 
+          className="absolute inset-0 bg-black/50 z-40"
+          onClick={() => setSelectedNode(null)}
+        />
+      )}
     </div>
   );
 }
