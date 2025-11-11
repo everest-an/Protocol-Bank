@@ -14,6 +14,9 @@ const amlRoutes = require('./src/routes/amlRoutes');
 const kycRoutes = require('./src/routes/kycRoutes');
 const notificationRoutes = require('./src/routes/notificationRoutes');
 const streamPaymentRoutes = require('./src/routes/streamPaymentRoutes');
+const supplierRoutes = require('./src/routes/supplierRoutes');
+const automationRoutes = require('./src/routes/automationRoutes');
+const analyticsRoutes = require('./src/routes/analyticsRoutes');
 const authRoutes = require('./src/routes/authRoutes');
 const nettingEngineRoutes = require('./src/routes/nettingEngineRoutes');
 const notificationService = require('./src/services/notificationService');
@@ -72,6 +75,9 @@ app.use('/api/v1/aml', amlRoutes);
 app.use('/api/v1/kyc', kycRoutes);
 app.use('/api/v1/notifications', notificationRoutes);
 app.use('/api/v1/netting-engine', nettingEngineRoutes);
+app.use('/api/v1/suppliers', supplierRoutes);
+app.use('/api/v1/automation', automationRoutes);
+app.use('/api/v1/analytics', analyticsRoutes);
 
 // 404 处理
 app.use((req, res) => {
