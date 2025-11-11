@@ -5,7 +5,7 @@ import contractService, { createContractService } from '../services/contractServ
 import etherscanService from '../services/etherscanService';
 import { useWeb3Wallet } from '../hooks/useWeb3Wallet';
 import authUtils from '../utils/auth';
-import BatchStreamModal from '../components/BatchStreamModal.jsx';
+import BatchCreateStreamModal from '../components/BatchCreateStreamModal.jsx';
 import StreamPaymentDashboard from '../components/StreamPaymentDashboard.jsx';
 import CreateStreamPaymentForm from '../components/CreateStreamPaymentForm.jsx';
 
@@ -245,13 +245,17 @@ export default function StreamPaymentPage() {
           </div>
         )}
         
-        {/* Batch Stream Modal */}
-        {showBatchModal && (
-          <BatchStreamModal
-            onClose={() => setShowBatchModal(false)}
-            onSuccess={loadStreams}
-          />
-        )}
+        {/* Batch Create Stream Modal */}
+        <BatchCreateStreamModal
+          isOpen={showBatchModal}
+          onClose={() => setShowBatchModal(false)}
+          onSuccess={() => {
+            console.log('Batch streams created');
+            loadStreams();
+          }}
+          account={account}
+          provider={signer?.provider}
+        />
 
         {/* Create Stream Payment Form */}
         <CreateStreamPaymentForm
