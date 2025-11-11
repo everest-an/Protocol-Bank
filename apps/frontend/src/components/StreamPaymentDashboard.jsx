@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { TrendingUp, DollarSign, Users, ArrowUpRight } from 'lucide-react';
+import { TrendingUp, DollarSign, Users, ArrowUpRight, Filter, Search, Calendar, ExternalLink, Play, Pause, Square, X } from 'lucide-react';
 import EnterprisePaymentNetworkV2 from './EnterprisePaymentNetworkV2';
 import { streamPaymentService } from '../services/backendService';
 import contractService from '../services/contractService';
@@ -18,6 +18,69 @@ import {
 } from 'recharts';
 
 export default function StreamPaymentDashboard({ streams, paymentType, account, etherscanData, onUpdate }) {
+  // Filter states
+  const [searchTerm, setSearchTerm] = useState('');
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  const [showFilters, setShowFilters] = useState(false);
+
+  // Filter and paginate streams
+  const filteredStreams = useMemo(() => {
+    if (!streams) return [];
+
+    let filtered = [...streams];
+
+    // Search filter
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      filtered = filtered.filter(stream => {
+        const name = (stream.name || '').toLowerCase();
+        const recipient = (stream.recipient_address || stream.recipient || '').toLowerCase();
+        return name.includes(term) || recipient.includes(term);
+      });
+    }
+
+    // Date range filter
+    if (dateFrom) {
+      const fromDate = new Date(dateFrom).getTime();
+      filtered = filtered.filter(stream => {
+        const streamDate = new Date(stream.created_at || stream.start_time).getTime();
+        return streamDate >= fromDate;
+      });
+    }
+
+    if (dateTo) {
+      const toDate = new Date(dateTo).getTime();
+      filtered = filtered.filter(stream => {
+        const streamDate = new Date(stream.created_at || stream.start_time).getTime();
+        return streamDate <= toDate;
+      });
+    }
+
+    // Status filter
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(stream => {
+        const status = (stream.status || 'active').toLowerCase();
+        return status === statusFilter.toLowerCase();
+      });
+    }
+
+    return filtered;
+  }, [streams, searchTerm, dateFrom, dateTo, statusFilter]);
+
+  // Paginated streams
+  const paginatedStreams = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredStreams.slice(startIndex, endIndex);
+  }, [filteredStreams, currentPage, itemsPerPage]);
+
+  const totalPages = Math.ceil(filteredStreams.length / itemsPerPage);
+
   // Calculate statistics from streams
   const stats = useMemo(() => {
     if (!streams || streams.length === 0) {
@@ -321,12 +384,112 @@ export default function StreamPaymentDashboard({ streams, paymentType, account, 
       {streams && streams.length > 0 && (
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
           <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Stream Transactions
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-              {streams.length} transaction{streams.length !== 1 ? 's' : ''}
-            </p>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Stream Transactions
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  {filteredStreams.length} of {streams.length} transaction{streams.length !== 1 ? 's' : ''}
+                </p>
+              </div>
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+              >
+                <Filter className="w-4 h-4" />
+                {showFilters ? 'Hide Filters' : 'Show Filters'}
+              </button>
+            </div>
+
+            {/* Filters */}
+            {showFilters && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
+                {/* Search */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Search
+                  </label>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <input
+                      type="text"
+                      placeholder="Search by name or address..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+
+                {/* Date From */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    From Date
+                  </label>
+                  <div className="relative">
+                    <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <input
+                      type="date"
+                      value={dateFrom}
+                      onChange={(e) => setDateFrom(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+
+                {/* Date To */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    To Date
+                  </label>
+                  <div className="relative">
+                    <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <input
+                      type="date"
+                      value={dateTo}
+                      onChange={(e) => setDateTo(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+
+                {/* Status Filter */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Status
+                  </label>
+                  <select
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="all">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="paused">Paused</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                </div>
+
+                {/* Clear Filters */}
+                <div className="md:col-span-2 lg:col-span-4 flex justify-end">
+                  <button
+                    onClick={() => {
+                      setSearchTerm('');
+                      setDateFrom('');
+                      setDateTo('');
+                      setStatusFilter('all');
+                      setCategoryFilter('all');
+                      setCurrentPage(1);
+                    }}
+                    className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    Clear All Filters
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
           
           <div className="overflow-x-auto">
@@ -349,12 +512,15 @@ export default function StreamPaymentDashboard({ streams, paymentType, account, 
                     Status
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    TX Hash
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                {streams.slice(0, 10).map((stream, index) => {
+                {paginatedStreams.map((stream, index) => {
                   const recipient = stream.recipient_address || stream.recipient || 'Unknown';
                   const amount = stream.total_amount || stream.totalAmount || 0;
                   const currency = stream.currency || 'ETH';
@@ -401,6 +567,21 @@ export default function StreamPaymentDashboard({ streams, paymentType, account, 
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
+                        {stream.transaction_hash || stream.tx_hash ? (
+                          <a
+                            href={`https://etherscan.io/tx/${stream.transaction_hash || stream.tx_hash}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 text-sm"
+                          >
+                            {`${(stream.transaction_hash || stream.tx_hash).substring(0, 6)}...${(stream.transaction_hash || stream.tx_hash).substring((stream.transaction_hash || stream.tx_hash).length - 4)}`}
+                            <ExternalLink className="w-3 h-3" />
+                          </a>
+                        ) : (
+                          <span className="text-gray-400 text-sm">-</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
                         <StreamActions 
                           stream={stream} 
                           paymentType={paymentType} 
@@ -414,11 +595,43 @@ export default function StreamPaymentDashboard({ streams, paymentType, account, 
             </table>
           </div>
           
-          {streams.length > 10 && (
-            <div className="px-6 py-4 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-200 dark:border-gray-700">
-              <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
-                Showing 10 of {streams.length} transactions
-              </p>
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="px-6 py-4 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredStreams.length)} of {filteredStreams.length} transactions
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  Previous
+                </button>
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`px-3 py-1 rounded-lg text-sm transition-colors ${
+                        page === currentPage
+                          ? 'bg-blue-600 text-white'
+                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  Next
+                </button>
+              </div>
             </div>
           )}
         </div>
