@@ -208,6 +208,7 @@ export default function StreamPaymentPage() {
               paymentType={paymentType}
               account={account}
               etherscanData={etherscanData}
+              onUpdate={loadStreams}
             />
           
           {/* Stream Cards or Empty State */}

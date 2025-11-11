@@ -1,6 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { TrendingUp, DollarSign, Users, ArrowUpRight } from 'lucide-react';
 import EnterprisePaymentNetworkV2 from './EnterprisePaymentNetworkV2';
+import { streamPaymentService } from '../services/backendService';
+import contractService from '../services/contractService';
 import {
   LineChart,
   Line,
@@ -15,7 +17,7 @@ import {
   ResponsiveContainer
 } from 'recharts';
 
-export default function StreamPaymentDashboard({ streams, paymentType, account, etherscanData }) {
+export default function StreamPaymentDashboard({ streams, paymentType, account, etherscanData, onUpdate }) {
   // Calculate statistics from streams
   const stats = useMemo(() => {
     if (!streams || streams.length === 0) {
@@ -346,6 +348,9 @@ export default function StreamPaymentDashboard({ streams, paymentType, account, 
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Status
                   </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -395,6 +400,13 @@ export default function StreamPaymentDashboard({ streams, paymentType, account, 
                           {status.toLowerCase()}
                         </span>
                       </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <StreamActions 
+                          stream={stream} 
+                          paymentType={paymentType} 
+                          onUpdate={onUpdate}
+                        />
+                      </td>
                     </tr>
                   );
                 })}
@@ -410,6 +422,143 @@ export default function StreamPaymentDashboard({ streams, paymentType, account, 
             </div>
           )}
         </div>
+      )}
+    </div>
+  );
+}
+
+// StreamActions Component - Action buttons for each stream
+function StreamActions({ stream, paymentType, onUpdate }) {
+  const [loading, setLoading] = useState(false);
+  
+  const handlePause = async () => {
+    setLoading(true);
+    try {
+      if (paymentType === 'fiat') {
+        await streamPaymentService.pause(stream.stream_id);
+      } else {
+        await contractService.pauseStream(stream.stream_id);
+      }
+      if (onUpdate) onUpdate();
+    } catch (error) {
+      console.error('Error pausing stream:', error);
+      alert('Failed to pause stream: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const handleResume = async () => {
+    setLoading(true);
+    try {
+      if (paymentType === 'fiat') {
+        await streamPaymentService.resume(stream.stream_id);
+      } else {
+        await contractService.resumeStream(stream.stream_id);
+      }
+      if (onUpdate) onUpdate();
+    } catch (error) {
+      console.error('Error resuming stream:', error);
+      alert('Failed to resume stream: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const handleStop = async () => {
+    if (!confirm('Are you sure you want to stop this stream? This will finalize the payment and the stream cannot be resumed.')) return;
+    
+    setLoading(true);
+    try {
+      if (paymentType === 'fiat') {
+        await streamPaymentService.stop(stream.stream_id);
+      } else {
+        await contractService.stopStream(stream.stream_id);
+      }
+      if (onUpdate) onUpdate();
+    } catch (error) {
+      console.error('Error stopping stream:', error);
+      alert('Failed to stop stream: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const handleCancel = async () => {
+    if (!confirm('Are you sure you want to cancel this stream?')) return;
+    
+    setLoading(true);
+    try {
+      if (paymentType === 'fiat') {
+        await streamPaymentService.cancel(stream.stream_id);
+      } else {
+        await contractService.cancelStream(stream.stream_id);
+      }
+      if (onUpdate) onUpdate();
+    } catch (error) {
+      console.error('Error canceling stream:', error);
+      alert('Failed to cancel stream: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const status = stream.status || 'active';
+  
+  return (
+    <div className="flex gap-1">
+      {status === 'active' && (
+        <button
+          onClick={handlePause}
+          disabled={loading}
+          className="p-1.5 text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 rounded transition-colors disabled:opacity-50"
+          title="Pause stream"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </button>
+      )}
+      {status === 'paused' && (
+        <button
+          onClick={handleResume}
+          disabled={loading}
+          className="p-1.5 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded transition-colors disabled:opacity-50"
+          title="Resume stream"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </button>
+      )}
+      {(status === 'active' || status === 'paused') && (
+        <>
+          <button
+            onClick={handleStop}
+            disabled={loading}
+            className="p-1.5 text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-900/20 rounded transition-colors disabled:opacity-50"
+            title="Stop stream (node will turn gray)"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
+            </svg>
+          </button>
+          <button
+            onClick={handleCancel}
+            disabled={loading}
+            className="p-1.5 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors disabled:opacity-50"
+            title="Cancel stream"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </>
+      )}
+      {loading && (
+        <span className="inline-block w-4 h-4 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin"></span>
       )}
     </div>
   );
