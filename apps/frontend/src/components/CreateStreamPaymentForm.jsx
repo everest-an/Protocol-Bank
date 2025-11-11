@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, AlertCircle, CheckCircle, Loader, DollarSign, Calendar, Clock, User } from 'lucide-react';
 import { ethers, isAddress } from 'ethers';
+import { createContractService, CONTRACTS } from '../services/contractService';
 
 /**
  * Create Stream Payment Form Component
@@ -18,7 +19,7 @@ export default function CreateStreamPaymentForm({ isOpen, onClose, onSuccess, ac
   const [formData, setFormData] = useState({
     streamName: '',
     recipientAddress: '',
-    token: 'ETH',
+    token: 'USDC',
     amount: '',
     startTime: '',
     endTime: ''
@@ -239,36 +240,78 @@ export default function CreateStreamPaymentForm({ isOpen, onClose, onSuccess, ac
       return;
     }
 
+    if (!provider || !account) {
+      alert('Please connect your wallet first');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      // TODO: Call smart contract or backend API to create stream payment
       console.log('Creating stream payment:', formData);
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Get signer from provider
+      const signer = await provider.getSigner();
+      const contractService = createContractService(signer);
 
-      // Success
-      if (onSuccess) {
-        onSuccess(formData);
+      // Get token address
+      let tokenAddress;
+      if (formData.token === 'USDC') {
+        tokenAddress = CONTRACTS.MOCK_USDC;
+      } else if (formData.token === 'DAI') {
+        tokenAddress = CONTRACTS.MOCK_DAI;
+      } else {
+        // For ETH, we need to use WETH or handle differently
+        alert('ETH streaming is not yet supported. Please use USDC or DAI.');
+        setIsSubmitting(false);
+        return;
       }
 
-      // Reset form
-      setFormData({
-        streamName: '',
-        recipientAddress: '',
-        token: 'ETH',
-        amount: '',
-        startTime: '',
-        endTime: ''
-      });
-      setErrors({});
-      setTouched({});
+      // Convert times to timestamps
+      const startTimestamp = Math.floor(new Date(formData.startTime).getTime() / 1000);
+      const endTimestamp = Math.floor(new Date(formData.endTime).getTime() / 1000);
+      const duration = endTimestamp - startTimestamp;
 
-      onClose();
+      // Create stream on blockchain
+      const result = await contractService.createStream(
+        formData.recipientAddress,
+        tokenAddress,
+        formData.amount,
+        duration,
+        formData.streamName
+      );
+
+      if (result.success) {
+        alert(`Stream created successfully!\nStream ID: ${result.streamId}\nTx Hash: ${result.txHash}`);
+        
+        // Success callback
+        if (onSuccess) {
+          onSuccess({
+            ...formData,
+            streamId: result.streamId,
+            txHash: result.txHash
+          });
+        }
+
+        // Reset form
+        setFormData({
+          streamName: '',
+          recipientAddress: '',
+          token: 'USDC',
+          amount: '',
+          startTime: '',
+          endTime: ''
+        });
+        setErrors({});
+        setTouched({});
+
+        onClose();
+      } else {
+        throw new Error(result.error || 'Failed to create stream');
+      }
     } catch (error) {
       console.error('Failed to create stream payment:', error);
-      alert('Failed to create stream payment: ' + error.message);
+      alert('Failed to create stream payment: ' + (error.message || error));
     } finally {
       setIsSubmitting(false);
     }

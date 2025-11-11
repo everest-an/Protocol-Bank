@@ -1,0 +1,20 @@
+[33m2ea8d61c[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m docs: Add Sprint 1 Day 1 progress update
+[33m200eddf8[m feat: Add Batch Create Stream Payment with CSV import
+[33mb2321fc7[m feat: Add Create Stream Payment Form with validation and gas estimation
+[33m7a7cb740[m feat: Add transaction list filtering and pagination
+[33m70a4c93b[m feat: Integrate X402 open payment protocol
+[33m0ad55ff3[m feat: Add Stop Stream Payment functionality with action buttons
+[33m7f02b625[m feat: Implement Etherscan integration and fix payment network visualization
+[33m6c8abcac[m docs: Add project management documents (PRD, Functional Spec, Technical Doc)
+[33mfc94ce08[m Add payment network visualization to Stream Payment Dashboard
+[33m28e03762[m Fix: Dashboard now always visible even with no streams
+[33m352c06ec[m Fix: Payments tab now renders PaymentsPage with Stream Payment tabs
+[33ma7a1df5f[m Fix: Merge Payment and Stream Payment tabs, keep navigation visible
+[33m56fb9c06[m Add visualization charts: Amount Trend and Recipient Distribution
+[33m0e97fed6[m Add Stream Payment Dashboard with statistics cards and transaction list
+[33m6aa34c94[m Add batch stream creation功能 + update contract addresses
+[33ma28cd32e[m Update StreamPayment contract address and ABI - redeploy with correct signature
+[33m855bcadd[m Hide ClearingHouse from main navigation - move to admin interface
+[33m5e49f93c[m Fix stream payment form validation - correct field mapping to backend API
+[33mef05bd2b[m Fix currency symbol duplication issue completely
+[33m7befc135[m Fix high-priority UI issues: Node Palette text truncation and currency symbol duplication

@@ -2,11 +2,11 @@ import { ethers } from 'ethers';
 import StreamPaymentABI from './StreamPaymentABI.json';
 
 // Contract addresses (Sepolia testnet)
-// Updated: 2025-11-10 - Redeployed with batch creation功能
+// Updated: 2025-11-12 - Latest deployment with StreamPayment
 export const CONTRACTS = {
-  STREAM_PAYMENT: '0x2f0C38472f85dC542807Cb42506c0E2753619d8c',
-  MOCK_USDC: '0xD4a303070CFcA084229Ca810618D71242f5da642',
-  MOCK_DAI: '0xFFe1F0f101f502F906c531486a3A09e025204F77',
+  STREAM_PAYMENT: '0x8871c707A8E1fb92666F6B2fD448C746fEBBA23d',
+  MOCK_USDC: '0xf6d01Aca4eC4DDde69c9f8119B607E10AD248cC7',
+  MOCK_DAI: '0x399F5902226705B23Ce22F10a8E676A2B1f782d0',
 };
 
 // Network configuration
