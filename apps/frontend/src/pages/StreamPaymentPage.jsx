@@ -165,28 +165,29 @@ export default function StreamPaymentPage() {
               Loading streams...
             </h3>
           </div>
-        ) : streams.length === 0 ? (
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-12 text-center shadow-sm">
-            <Clock className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-              No stream payments yet
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
-              Create your first stream payment to get started
-            </p>
-            <button
-              onClick={() => setShowCreateModal(true)}
-              className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-            >
-              Create your first stream
-            </button>
-          </div>
         ) : (
+          /* Dashboard - Always show */
           <div className="space-y-6">
-            {/* Dashboard */}
             <StreamPaymentDashboard streams={streams} paymentType={paymentType} />
-            
-            {/* Stream Cards */}
+          
+          {/* Stream Cards or Empty State */}
+          {streams.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 px-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+              <Clock className="w-16 h-16 text-gray-400 mb-4" />
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                No stream payments yet
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
+                Create your first stream payment to get started
+              </p>
+              <button
+                onClick={() => setShowCreateModal(true)}
+                className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              >
+                Create your first stream
+              </button>
+            </div>
+          ) : (
             <div>
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                 Active Streams
@@ -197,6 +198,7 @@ export default function StreamPaymentPage() {
                 ))}
               </div>
             </div>
+          )}
           </div>
         )}
         
