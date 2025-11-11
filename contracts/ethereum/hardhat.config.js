@@ -10,6 +10,7 @@ export default {
         enabled: true,
         runs: 200,
       },
+      viaIR: true, // Enable IR-based code generation to avoid "Stack too deep"
     },
   },
   networks: {
@@ -23,6 +24,19 @@ export default {
       url: process.env.SEPOLIA_RPC_URL || "https://rpc.sepolia.org",
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
       chainId: 11155111,
+    },
+    // Base Sepolia Testnet (for X402 integration)
+    baseSepolia: {
+      url: process.env.BASE_SEPOLIA_RPC_URL || "https://sepolia.base.org",
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      chainId: 84532,
+      gasPrice: 1000000000, // 1 gwei
+    },
+    // Base Mainnet (for production)
+    base: {
+      url: process.env.BASE_RPC_URL || "https://mainnet.base.org",
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      chainId: 8453,
     },
   },
   paths: {
