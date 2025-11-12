@@ -41,13 +41,25 @@ export default function CashFlowAnalytics() {
 
   // Generate mock data on mount
   useEffect(() => {
-    const data = generateFinancialMockData();
-    setMockData(data);
+    try {
+      console.log('Generating financial mock data...');
+      const data = generateFinancialMockData();
+      console.log('Mock data generated:', data ? 'success' : 'failed');
+      setMockData(data);
+    } catch (error) {
+      console.error('Error generating mock data:', error);
+    }
   }, []);
 
   // Calculate analytics when data or period changes
   useEffect(() => {
-    if (!mockData) return;
+    if (!mockData) {
+      console.log('No mock data available yet');
+      return;
+    }
+    
+    try {
+      console.log('Calculating analytics...');
     
     let filteredTransactions = mockData.transactions;
     
@@ -71,7 +83,11 @@ export default function CashFlowAnalytics() {
     }
     
     const calculatedAnalytics = calculateAnalytics(filteredTransactions, period);
+    console.log('Analytics calculated:', calculatedAnalytics ? 'success' : 'failed');
     setAnalytics(calculatedAnalytics);
+    } catch (error) {
+      console.error('Error calculating analytics:', error);
+    }
   }, [mockData, period, selectedDateRange]);
 
   // Export to CSV
