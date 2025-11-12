@@ -33,6 +33,11 @@ jobs:
         with:
           node-version: '22'
           
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+          
       - name: Install backend dependencies
         working-directory: ./backend
         run: npm ci
@@ -58,11 +63,11 @@ jobs:
           DB_NAME: protocol_bank_test
         run: npm test || echo "No tests configured yet"
         
-      - name: Install frontend dependencies
-        run: npm ci
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
         
       - name: Build frontend
-        run: npm run build
+        run: pnpm --filter frontend build
         
   build-and-push:
     needs: test
