@@ -1,13 +1,16 @@
 import React, { useState } from 'react'
 import { Button } from '@/components/ui/button.jsx'
 import { Card, CardContent } from '@/components/ui/card.jsx'
-import { Send, ArrowDownLeft, Clock, CheckCircle, XCircle, DollarSign, Euro, PoundSterling, Waves } from 'lucide-react'
+import { Send, ArrowDownLeft, Clock, CheckCircle, XCircle, DollarSign, Euro, PoundSterling, Waves, Layers } from 'lucide-react'
 import StreamPaymentPage from './StreamPaymentPage.jsx'
 import NetworkPaymentPage from './NetworkPaymentPage.jsx'
+import BatchPaymentPageV2 from './BatchPaymentPageV2.jsx'
 import StreamPaymentDemo from '../components/StreamPaymentDemo.jsx'
+import { useWeb3 } from '../contexts/Web3Context.jsx'
 
 export default function PaymentsPage() {
-  const [activeTab, setActiveTab] = useState('regular') // 'regular' or 'stream'
+  const { provider, account } = useWeb3()
+  const [activeTab, setActiveTab] = useState('regular') // 'regular', 'stream', 'network', or 'batch'
   const [selectedCurrency, setSelectedCurrency] = useState('USD')
   const [amount, setAmount] = useState('')
   const [recipient, setRecipient] = useState('')
@@ -89,6 +92,19 @@ export default function PaymentsPage() {
             <div className="flex items-center space-x-2">
               <Waves className="h-4 w-4" />
               <span>Network Payment</span>
+            </div>
+          </button>
+          <button
+            onClick={() => setActiveTab('batch')}
+            className={`pb-3 px-1 border-b-2 font-medium text-sm transition-colors ${
+              activeTab === 'batch'
+                ? 'border-gray-900 text-gray-900 dark:border-gray-100 dark:text-gray-100'
+                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300'
+            }`}
+          >
+            <div className="flex items-center space-x-2">
+              <Layers className="h-4 w-4" />
+              <span>Batch Payment</span>
             </div>
           </button>
         </nav>
@@ -257,6 +273,11 @@ export default function PaymentsPage() {
       {/* Network Payment Tab */}
       {activeTab === 'network' && (
         <NetworkPaymentPage />
+      )}
+
+      {/* Batch Payment Tab */}
+      {activeTab === 'batch' && (
+        <BatchPaymentPageV2 provider={provider} account={account} />
       )}
     </div>
   )

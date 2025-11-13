@@ -168,34 +168,62 @@ export default function BatchPaymentPageV2({ provider, account }) {
 
       if (useX402) {
         // Use X402 batch settlement
-        // TODO: Implement X402 batch settlement
-        alert('X402 batch settlement is not yet implemented. Using individual transactions.');
+        // TODO: Implement X402 batch settlement with EIP-3009 signatures
+        alert('X402 batch settlement is not yet implemented. Using optimized parallel transactions.');
       }
 
-      // Process payments individually for now
-      for (let i = 0; i < payments.length; i++) {
-        const payment = payments[i];
-        setProgress({ current: i + 1, total: payments.length });
+      // Process payments in parallel batches for better performance
+      const BATCH_SIZE = 5; // Process 5 transactions at a time
+      
+      for (let i = 0; i < payments.length; i += BATCH_SIZE) {
+        const batch = payments.slice(i, Math.min(i + BATCH_SIZE, payments.length));
+        
+        // Process batch in parallel
+        const batchPromises = batch.map(async (payment, batchIndex) => {
+          const currentIndex = i + batchIndex;
+          setProgress({ current: currentIndex + 1, total: payments.length });
+          
+          try {
+            // Send transaction
+            const tx = await signer.sendTransaction({
+              to: payment.to,
+              value: ethers.parseEther(payment.amount)
+            });
 
-        try {
-          // Send transaction
-          const tx = await signer.sendTransaction({
-            to: payment.to,
-            value: ethers.parseEther(payment.amount)
-          });
+            // Wait for confirmation
+            const receipt = await tx.wait();
 
-          await tx.wait();
+            return {
+              success: true,
+              payment: {
+                ...payment,
+                txHash: tx.hash,
+                blockNumber: receipt.blockNumber,
+                gasUsed: receipt.gasUsed.toString()
+              }
+            };
+          } catch (error) {
+            return {
+              success: false,
+              payment: {
+                ...payment,
+                error: error.message || 'Transaction failed'
+              }
+            };
+          }
+        });
 
-          successList.push({
-            ...payment,
-            txHash: tx.hash
-          });
-        } catch (error) {
-          failedList.push({
-            ...payment,
-            error: error.message
-          });
-        }
+        // Wait for all transactions in this batch to complete
+        const batchResults = await Promise.all(batchPromises);
+        
+        // Categorize results
+        batchResults.forEach(result => {
+          if (result.success) {
+            successList.push(result.payment);
+          } else {
+            failedList.push(result.payment);
+          }
+        });
       }
 
       setResults({ success: successList, failed: failedList });
