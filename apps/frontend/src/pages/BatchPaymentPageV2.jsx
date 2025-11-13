@@ -5,6 +5,13 @@ import { Upload, X, Plus, Send, Download, AlertCircle, Layers, TrendingDown, Zap
 import { useCurrency } from '../hooks/useCurrency';
 import { ethers, isAddress } from 'ethers';
 import { createContractService } from '../services/contractService';
+import {
+  prepareBatchAuthorizations,
+  executeBatchSettlement,
+  checkUSDCBalance,
+  requestTestUSDC,
+  X402_CONFIG
+} from '../services/x402Service';
 
 /**
  * Enhanced Batch Payment Page V2
@@ -167,13 +174,74 @@ export default function BatchPaymentPageV2({ provider, account }) {
       const failedList = [];
 
       if (useX402) {
-        // Use X402 batch settlement
-        // TODO: Implement X402 batch settlement with EIP-3009 signatures
-        alert('X402 batch settlement is not yet implemented. Using optimized parallel transactions.');
-      }
-
-      // Process payments in parallel batches for better performance
-      const BATCH_SIZE = 5; // Process 5 transactions at a time
+        // Use X402 batch settlement with EIP-3009
+        console.log('Using X402 batch settlement...');
+        
+        try {
+          // Check USDC balance
+          const totalAmount = payments.reduce((sum, p) => sum + parseFloat(p.amount), 0).toString();
+          const balanceCheck = await checkUSDCBalance(provider, account, totalAmount);
+          
+          if (!balanceCheck.hasEnough) {
+            const needFaucet = window.confirm(
+              `Insufficient USDC balance.\n\n` +
+              `Required: ${balanceCheck.required} USDC\n` +
+              `Current: ${balanceCheck.balance} USDC\n` +
+              `Shortfall: ${balanceCheck.shortfall} USDC\n\n` +
+              `Would you like to request test USDC from the faucet?`
+            );
+            
+            if (needFaucet) {
+              setProgress({ current: 0, total: payments.length });
+              const faucetResult = await requestTestUSDC(provider, '10000');
+              if (!faucetResult.success) {
+                throw new Error(`Faucet request failed: ${faucetResult.error}`);
+              }
+              alert(`Successfully received 10,000 test USDC!`);
+            } else {
+              throw new Error('Insufficient USDC balance');
+            }
+          }
+          
+          // Prepare batch authorizations (sign all payments)
+          setProgress({ current: 1, total: payments.length });
+          const signer = await provider.getSigner();
+          const authorizations = await prepareBatchAuthorizations(signer, payments);
+          
+          // Execute batch settlement (single transaction)
+          setProgress({ current: payments.length / 2, total: payments.length });
+          const result = await executeBatchSettlement(provider, authorizations);
+          
+          if (result.success) {
+            // All payments succeeded
+            successList.push(...payments.map((payment, index) => ({
+              ...payment,
+              txHash: result.txHash,
+              blockNumber: result.blockNumber,
+              gasUsed: result.gasUsed,
+              batchId: result.batchId,
+              index
+            })));
+          } else {
+            // Batch failed
+            failedList.push(...payments.map(payment => ({
+              ...payment,
+              error: result.error
+            })));
+          }
+          
+          setProgress({ current: payments.length, total: payments.length });
+        } catch (error) {
+          console.error('X402 batch settlement error:', error);
+          // Fall back to individual transactions or show error
+          failedList.push(...payments.map(payment => ({
+            ...payment,
+            error: error.message || 'X402 batch settlement failed'
+          })));
+        }
+      } else {
+        // Process payments in parallel batches for better performance
+        const BATCH_SIZE = 5; // Process 5 transactions at a time
       
       for (let i = 0; i < payments.length; i += BATCH_SIZE) {
         const batch = payments.slice(i, Math.min(i + BATCH_SIZE, payments.length));
@@ -225,6 +293,7 @@ export default function BatchPaymentPageV2({ provider, account }) {
           }
         });
       }
+      } // End of else block for non-X402 parallel processing
 
       setResults({ success: successList, failed: failedList });
       setShowResults(true);
