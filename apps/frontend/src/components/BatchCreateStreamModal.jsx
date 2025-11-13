@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { X, Upload, Download, AlertCircle, CheckCircle, Loader, FileText, Trash2 } from 'lucide-react';
-import { isAddress } from 'ethers';
+import { isAddress, ethers } from 'ethers';
+import { createContractService, getSupportedTokens } from '../services/contractService';
 
 /**
  * Batch Create Stream Payment Modal
@@ -264,6 +265,11 @@ export default function BatchCreateStreamModal({ isOpen, onClose, onSuccess, acc
       return;
     }
 
+    if (!provider || !account) {
+      alert('Please connect your wallet first');
+      return;
+    }
+
     setStep(3);
     setProgress(0);
 
@@ -271,39 +277,113 @@ export default function BatchCreateStreamModal({ isOpen, onClose, onSuccess, acc
     const failedList = [];
 
     try {
+      // Create contract service instance
+      const signer = await provider.getSigner();
+      const contractService = createContractService(signer);
+      
+      // Get supported tokens mapping
+      const supportedTokens = getSupportedTokens();
+      const tokenMap = {};
+      supportedTokens.forEach(token => {
+        tokenMap[token.symbol.toUpperCase()] = token;
+      });
+
+      // Prepare batch parameters for smart contract
+      const batchParams = [];
+      
       for (let i = 0; i < parsedData.length; i++) {
         const row = parsedData[i];
-
+        
         try {
-          // TODO: Call smart contract or backend API to create stream
-          console.log('Creating stream:', row);
-
-          // Simulate API call
-          await new Promise(resolve => setTimeout(resolve, 1000));
-
-          // Random success/failure for demo
-          if (Math.random() > 0.1) {
-            successList.push(row);
-          } else {
-            throw new Error('Transaction failed');
+          // Get token address and decimals
+          const tokenSymbol = row.token.toUpperCase();
+          const tokenInfo = tokenMap[tokenSymbol];
+          
+          if (!tokenInfo) {
+            throw new Error(`Unsupported token: ${tokenSymbol}`);
           }
+
+          // Parse amount with correct decimals
+          const parsedAmount = ethers.parseUnits(
+            row.amount.toString(),
+            tokenInfo.decimals
+          );
+
+          // Convert timestamps to Unix time
+          const startTime = Math.floor(new Date(row.startTime).getTime() / 1000);
+          const endTime = Math.floor(new Date(row.endTime).getTime() / 1000);
+
+          batchParams.push({
+            recipient: row.recipientAddress,
+            token: tokenInfo.address,
+            totalAmount: parsedAmount.toString(),
+            startTime,
+            endTime
+          });
+          
+          console.log(`Prepared stream ${i + 1}:`, {
+            name: row.streamName,
+            recipient: row.recipientAddress,
+            token: tokenSymbol,
+            amount: row.amount
+          });
         } catch (error) {
-          console.error(`Failed to create stream for row ${row.rowIndex}:`, error);
+          console.error(`Failed to prepare stream for row ${row.rowIndex}:`, error);
           failedList.push({
             row,
             error: error.message
           });
         }
-
-        // Update progress
-        setProgress(Math.round(((i + 1) / parsedData.length) * 100));
+        
+        // Update progress for preparation phase (0-20%)
+        setProgress(Math.round(((i + 1) / parsedData.length) * 20));
       }
+
+      // If all rows failed preparation, show results
+      if (batchParams.length === 0) {
+        setResults({
+          success: 0,
+          failed: failedList.length,
+          errors: failedList
+        });
+        setStep(4);
+        return;
+      }
+
+      // Call smart contract to create batch streams
+      console.log(`Creating batch of ${batchParams.length} streams on-chain...`);
+      setProgress(30);
+      
+      const result = await contractService.createStreamBatch(batchParams);
+      
+      setProgress(80);
+
+      if (result.success) {
+        console.log('Batch creation successful:', result);
+        console.log('Transaction hash:', result.txHash);
+        console.log('Stream IDs:', result.streamIds);
+        console.log('Gas used:', result.gasUsed);
+        
+        // Mark successful streams
+        const successfulIndices = batchParams.map((_, index) => index);
+        successfulIndices.forEach(index => {
+          if (index < parsedData.length) {
+            successList.push(parsedData[index]);
+          }
+        });
+      } else {
+        throw new Error(result.error || 'Batch creation failed');
+      }
+
+      setProgress(100);
 
       // Show results
       setResults({
         success: successList.length,
         failed: failedList.length,
-        errors: failedList
+        errors: failedList,
+        txHash: result.txHash,
+        streamIds: result.streamIds
       });
 
       setStep(4);
@@ -314,8 +394,24 @@ export default function BatchCreateStreamModal({ isOpen, onClose, onSuccess, acc
       }
     } catch (error) {
       console.error('Batch creation failed:', error);
-      alert('Batch creation failed: ' + error.message);
-      setStep(2);
+      
+      // Mark all prepared streams as failed
+      parsedData.forEach(row => {
+        if (!failedList.find(f => f.row.rowIndex === row.rowIndex)) {
+          failedList.push({
+            row,
+            error: error.message || 'Transaction failed'
+          });
+        }
+      });
+      
+      setResults({
+        success: 0,
+        failed: failedList.length,
+        errors: failedList
+      });
+      
+      setStep(4);
     }
   };
 
