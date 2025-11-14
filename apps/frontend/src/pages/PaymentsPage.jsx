@@ -5,6 +5,7 @@ import { Send, ArrowDownLeft, Clock, CheckCircle, XCircle, DollarSign, Euro, Pou
 import StreamPaymentPage from './StreamPaymentPage.jsx'
 import NetworkPaymentPage from './NetworkPaymentPage.jsx'
 import BatchPaymentPageV2 from './BatchPaymentPageV2.jsx'
+import BatchPaymentEnhanced from './BatchPaymentEnhanced.jsx'
 import StreamPaymentDemo from '../components/StreamPaymentDemo.jsx'
 import { useWeb3 } from '../contexts/Web3Context.jsx'
 
@@ -277,7 +278,7 @@ export default function PaymentsPage() {
 
       {/* Batch Payment Tab */}
       {activeTab === 'batch' && (
-        <BatchPaymentPageV2 provider={provider} account={account} />
+        <BatchPaymentEnhanced provider={provider} account={account} />
       )}
     </div>
   )
