@@ -1,0 +1,49 @@
+{
+  "network": {
+    "name": "Base Sepolia",
+    "chainId": 84532,
+    "rpcUrl": "https://sepolia.base.org",
+    "explorerUrl": "https://sepolia.basescan.org",
+    "faucetUrl": "https://www.coinbase.com/faucets/base-ethereum-goerli-faucet"
+  },
+  "contracts": {
+    "x402BatchSettlement": {
+      "address": "",
+      "deployedAt": "",
+      "description": "X402 Batch Settlement Contract - Deploy using deploy-x402-base-sepolia.js"
+    },
+    "mockUSDC": {
+      "address": "",
+      "symbol": "USDC",
+      "decimals": 6,
+      "deployedAt": "",
+      "description": "Mock USDC with EIP-3009 support for testing"
+    },
+    "realUSDC": {
+      "address": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+      "symbol": "USDC",
+      "decimals": 6,
+      "description": "Real USDC on Base Sepolia (if available)"
+    }
+  },
+  "features": {
+    "x402BatchSettlement": true,
+    "streamPayments": true,
+    "scheduledPayments": true,
+    "analytics": true
+  },
+  "limits": {
+    "minBatchSize": 5,
+    "maxBatchSize": 50,
+    "maxGasPrice": "100000000000",
+    "batchInterval": 60000
+  },
+  "security": {
+    "nonceExpiry": 86400,
+    "maxAuthorizationExpiry": 604800,
+    "rateLimit": {
+      "windowMs": 60000,
+      "maxRequests": 100
+    }
+  }
+}
