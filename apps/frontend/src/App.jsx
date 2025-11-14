@@ -28,6 +28,7 @@ import FlowPaymentVisualization from './pages/FlowPaymentVisualization.jsx'
 import Automation from './pages/Automation.jsx'
 import UnifiedAnalytics from './pages/UnifiedAnalytics.jsx'
 import CashFlowAnalytics from './pages/CashFlowAnalytics.jsx'
+import AnalyticsEnhanced from './pages/AnalyticsEnhanced.jsx'
 import StreamPaymentPage from './pages/StreamPaymentPage.jsx'
 import PaymentsPage from './pages/PaymentsPage.jsx'
 import LandingPage from './pages/LandingPage.jsx'
@@ -396,7 +397,7 @@ function AppContent() {
         )}
         {activeTab === 'analytics' && (
           <ErrorBoundary>
-            <CashFlowAnalytics />
+            <AnalyticsEnhanced />
           </ErrorBoundary>
         )}
         {activeTab === 'automation' && (
